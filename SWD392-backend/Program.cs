@@ -6,7 +6,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+using DotNetEnv;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Load env
+Env.Load();
+
+// Create connection string
+var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                       $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                       $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
+                       $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
+                       $"Password={Environment.GetEnvironmentVariable("DB_PASS")};";
+
+// Assign connection string to config
+builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
 
 // Load cấu hình
 builder.Configuration
