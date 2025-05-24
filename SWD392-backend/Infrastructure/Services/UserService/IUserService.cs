@@ -1,7 +1,7 @@
 ﻿using SWD392_backend.Models;
-using SWD392_backend.Repositories.UserRepository;
+using SWD392_backend.Infrastructure.Repositories.UserRepository;
 
-namespace SWD392_backend.Services.UserService
+namespace SWD392_backend.Infrastructure.Services.UserService
 {
     public interface IUserService
     {

@@ -28,9 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Infrastructure\Controllers\" />
-      <Folder Include="Infrastructure\Repositories\" />
-      <Folder Include="Infrastructure\Services\" />
+      <Folder Include="Controllers\" />
       <Folder Include="Infrastructure\UnitOfWork\" />
     </ItemGroup>
 

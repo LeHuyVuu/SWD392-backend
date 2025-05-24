@@ -8,8 +8,8 @@ using Microsoft.OpenApi.Models;
 
 using DotNetEnv;
 using SWD392_backend.Models;
-using SWD392_backend.Services.UserService;
-using SWD392_backend.Repositories.UserRepository;
+using SWD392_backend.Infrastructure.Repositories.UserRepository;
+using SWD392_backend.Infrastructure.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 

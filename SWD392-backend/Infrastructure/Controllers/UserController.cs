@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SWD392_backend.Infrastructure.Services.UserService;
 using SWD392_backend.Models;
-using SWD392_backend.Services.UserService;
 
-namespace SWD392_backend.Controllers
+namespace SWD392_backend.Infrastructure.Controllers
 {
     [AllowAnonymous]
     [Route("api/[controller]")]
