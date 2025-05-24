@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SWD392-backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e045db7ceea21291ab0750f40cf72fcdd3782b6a")]
 [assembly: System.Reflection.AssemblyProductAttribute("SWD392-backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SWD392-backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
