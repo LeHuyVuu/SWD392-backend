@@ -6,7 +6,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+using DotNetEnv;
+using SWD392_backend.Models;
+using SWD392_backend.Services.UserService;
+using SWD392_backend.Repositories.UserRepository;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Load env
+Env.Load();
+
+// Create connection string
+var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                       $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                       $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
+                       $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
+                       $"Password={Environment.GetEnvironmentVariable("DB_PASS")};";
 
 // Load cấu hình
 builder.Configuration
@@ -63,10 +78,14 @@ builder.Services.AddCors(options =>
 });
 
 // DbContext
-
+builder.Services.AddDbContext<DefaultdbContext>(options => options.UseNpgsql(connectionString));
 
 // DI các Repository và Service
+// Service
+builder.Services.AddScoped<IUserService, UserService>();
 
+// Repository
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Authentication + xử lý lỗi không có token
 builder.Services.AddAuthentication("Bearer")
