@@ -1,6 +1,6 @@
 ﻿using SWD392_backend.Models;
 
-namespace SWD392_backend.Repositories.UserRepository
+namespace SWD392_backend.Infrastructure.Repositories.UserRepository
 {
     public interface IUserRepository
     {
