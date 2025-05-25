@@ -112,3 +112,8 @@ D:\SWD392-backend\SWD392-backend\obj\Debug\net8.0\refint\SWD392-backend.dll
 D:\SWD392-backend\SWD392-backend\obj\Debug\net8.0\SWD392-backend.pdb
 D:\SWD392-backend\SWD392-backend\obj\Debug\net8.0\SWD392-backend.genruntimeconfig.cache
 D:\SWD392-backend\SWD392-backend\obj\Debug\net8.0\ref\SWD392-backend.dll
+D:\SWD392-backend\SWD392-backend\bin\Debug\net8.0\DotNetEnv.dll
+D:\SWD392-backend\SWD392-backend\bin\Debug\net8.0\Npgsql.dll
+D:\SWD392-backend\SWD392-backend\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\SWD392-backend\SWD392-backend\bin\Debug\net8.0\Sprache.dll
+D:\SWD392-backend\SWD392-backend\obj\Debug\net8.0\SWD392-backend.sourcelink.json
