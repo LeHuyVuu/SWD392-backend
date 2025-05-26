@@ -12,9 +12,7 @@ public partial class orders_detail
     [Key]
     public int id { get; set; }
 
-    public Guid order_id { get; set; }
-
-    public int product_attribute_id { get; set; }
+    public Guid product_id { get; set; }
 
     public int quantity { get; set; }
 
@@ -24,11 +22,7 @@ public partial class orders_detail
 
     public string note { get; set; } = null!;
 
-    [ForeignKey("order_id")]
+    [ForeignKey("product_id")]
     [InverseProperty("orders_details")]
-    public virtual order order { get; set; } = null!;
-
-    [ForeignKey("product_attribute_id")]
-    [InverseProperty("orders_details")]
-    public virtual product_attribute product_attribute { get; set; } = null!;
+    public virtual order product { get; set; } = null!;
 }

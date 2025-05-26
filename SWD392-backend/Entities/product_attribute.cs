@@ -21,9 +21,6 @@ public partial class product_attribute
 
     public double price { get; set; }
 
-    [InverseProperty("product_attribute")]
-    public virtual ICollection<orders_detail> orders_details { get; set; } = new List<orders_detail>();
-
     [ForeignKey("product_id")]
     [InverseProperty("product_attributes")]
     public virtual product product { get; set; } = null!;

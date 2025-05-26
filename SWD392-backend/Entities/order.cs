@@ -13,7 +13,6 @@ public partial class order
 
     public double total { get; set; }
 
-    [Column(TypeName = "timestamp without time zone")]
     public DateTime created_at { get; set; }
 
     public int user_id { get; set; }
@@ -25,13 +24,11 @@ public partial class order
 
     public int supplier_id { get; set; }
 
-    [Column(TypeName = "timestamp without time zone")]
     public DateTime? paid_at { get; set; }
 
-    [Column(TypeName = "timestamp without time zone")]
     public DateTime? deliveried_at { get; set; }
 
-    [InverseProperty("order")]
+    [InverseProperty("product")]
     public virtual ICollection<orders_detail> orders_details { get; set; } = new List<orders_detail>();
 
     [ForeignKey("supplier_id")]

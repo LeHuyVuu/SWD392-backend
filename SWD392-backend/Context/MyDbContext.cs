@@ -34,21 +34,9 @@ public partial class MyDbContext : DbContext
 
     public virtual DbSet<user> users { get; set; }
 
-
-    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            var connectionString =  $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
-                                   $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
-                                   $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
-                                   $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
-                                   $"Password={Environment.GetEnvironmentVariable("DB_PASS")};";
-
-            optionsBuilder.UseNpgsql(connectionString);
-        }
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=pg-28ce6480-fpt-3666.l.aivencloud.com;Port=13324;Database=defaultdb;Username=avnadmin;Password=AVNS_htWRbMFMZ-CLrxBh7h6");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -78,13 +66,9 @@ public partial class MyDbContext : DbContext
         {
             entity.HasKey(e => e.id).HasName("orders_detail_pkey");
 
-            entity.HasOne(d => d.order).WithMany(p => p.orders_details)
+            entity.HasOne(d => d.product).WithMany(p => p.orders_details)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_orders_detail_order");
-
-            entity.HasOne(d => d.product_attribute).WithMany(p => p.orders_details)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_orders_detail_product");
         });
 
         modelBuilder.Entity<product>(entity =>

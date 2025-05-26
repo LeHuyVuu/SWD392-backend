@@ -1,15 +1,56 @@
-﻿using SWD392_backend.Context;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using SWD392_backend.Context;
+using SWD392_backend.Infrastructure.Repositories.OrderDetailRepository;
+using SWD392_backend.Infrastructure.Repositories.OrderRepository;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
+using System.Threading.Tasks;
 
 public class UnitOfWork : IUnitOfWork
 {
     private readonly MyDbContext _context;
-    public IUserRepository UserRepository { get; }
+    private IDbContextTransaction _transaction;
 
-    public UnitOfWork(MyDbContext context, IUserRepository userRepository)
+    public IUserRepository UserRepository { get; }
+    public IOrderRepository OrderRepository { get; }
+    public IOrdersDetailRepository OrdersDetailRepository { get; }
+
+    public UnitOfWork(
+        MyDbContext context,
+        IUserRepository userRepository,
+        IOrderRepository orderRepository,
+        IOrdersDetailRepository ordersDetailRepository)
     {
         _context = context;
         UserRepository = userRepository;
+        OrderRepository = orderRepository;
+        OrdersDetailRepository = ordersDetailRepository;
+    }
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        _transaction = await _context.Database.BeginTransactionAsync();
+        return _transaction;
+    }
+
+    public async Task CommitTransactionAsync()
+    {
+        await _context.SaveChangesAsync();
+        if (_transaction != null)
+        {
+            await _transaction.CommitAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
+    }
+
+    public async Task RollbackTransactionAsync()
+    {
+        if (_transaction != null)
+        {
+            await _transaction.RollbackAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
     }
 
     public async Task SaveAsync()

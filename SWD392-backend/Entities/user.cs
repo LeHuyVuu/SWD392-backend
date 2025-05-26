@@ -23,7 +23,6 @@ public partial class user
 
     public string role { get; set; } = null!;
 
-    [Column(TypeName = "timestamp without time zone")]
     public DateTime created_at { get; set; }
 
     [StringLength(255)]

@@ -6,8 +6,11 @@ using Microsoft.OpenApi.Models;
 
 using DotNetEnv;
 using SWD392_backend.Context;
+using SWD392_backend.Infrastructure.Repositories.OrderDetailRepository;
+using SWD392_backend.Infrastructure.Repositories.OrderRepository;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
 using SWD392_backend.Infrastructure.Services.AuthService;
+using SWD392_backend.Infrastructure.Services.OrderService;
 using SWD392_backend.Infrastructure.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -83,13 +86,17 @@ builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connecti
 // Service
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
-
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+// Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrdersDetailRepository, OrdersDetailRepository>();
 
 // UnitOfWork
-builder.Services.AddScoped<UnitOfWork>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
 // Authentication + xử lý lỗi không có token
