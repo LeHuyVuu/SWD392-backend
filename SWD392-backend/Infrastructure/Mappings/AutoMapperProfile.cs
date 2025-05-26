@@ -10,6 +10,7 @@ namespace SWD392_backend.Infrastructure.Mappings
         {
             CreateMap<product, ProductResponse>();
             CreateMap<category, CategoryResponse>();
+            CreateMap<supplier, SupplierrResponse>();
         }
     }
 }

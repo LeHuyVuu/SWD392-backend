@@ -18,6 +18,6 @@
         public bool is_sale { get; set; }
         public string slug { get; set; } = null!;
         public CategoryResponse categories { get; set; }
-        public int supplier_id { get; set; }
+        public SupplierrResponse supplier { get; set; }
     }
 }

@@ -24,6 +24,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
 
             var products = await _context.products
                             .Include(p => p.categories)
+                            .Include(p => p.supplier)
                             .OrderBy(p => p.id)
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
