@@ -23,7 +23,6 @@ namespace SWD392_backend.Infrastructure.Controllers
         }
 
         [HttpGet]
-        [Route("list")]
         public async Task<ActionResult<PagedResult<ProductResponse>>> GetProducts(int page = 1, int pageSize = 10)
         {
             var products = await _productService.GetPagedProductAsync(page, pageSize);

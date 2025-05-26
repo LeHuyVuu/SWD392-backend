@@ -97,7 +97,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<UnitOfWork>();
 
 // Add mapper
-builder.Services.AddAutoMapper(typeof(ProductProfile));
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 
 // Authentication + xử lý lỗi không có token
