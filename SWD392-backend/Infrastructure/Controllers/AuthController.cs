@@ -48,7 +48,7 @@ public class AuthController : ControllerBase
     [HttpPost("logout")]
     public IActionResult Logout()
     {
-        return Ok(HTTPResponse<object>.Response(200, "Đăng xuất thành công. Hãy xóa token ở phía client.", null));
+        return Ok(HTTPResponse<object>.Response(200, " Đăng xuất thành công. Hãy xóa token ở phía client.", null));
     }
 
     /// <summary>
