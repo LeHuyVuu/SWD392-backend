@@ -1,20 +1,37 @@
-﻿using SWD392_backend.Entities;
+﻿using AutoMapper;
+using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
+using SWD392_backend.Models;
+using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Services.ProductService
 {
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly IMapper _mapper;
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
+            _mapper = mapper;
         }
 
-        public async Task<List<product>> GetAllProductAsync()
+        public async Task<PagedResult<ProductResponse>> GetPagedProductAsync(int page, int pageSize)
         {
-            return await _productRepository.GetAllProductAsync();
+            var pagedResult = await _productRepository.GetPagedProductsAsync(page, pageSize);
+
+            // Model mapper
+            var productDtos = _mapper.Map<List<ProductResponse>>(pagedResult.Items);
+
+
+            return new PagedResult<ProductResponse>
+            {
+                Items = productDtos,
+                TotalItems = pagedResult.TotalItems,
+                Page = pagedResult.Page,
+                PageSize = pagedResult.PageSize
+            };
         }
     }
 }

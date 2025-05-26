@@ -11,6 +11,7 @@ using SWD392_backend.Infrastructure.Services.AuthService;
 using SWD392_backend.Infrastructure.Services.UserService;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
+using SWD392_backend.Infrastructure.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,6 +95,9 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // UnitOfWork
 builder.Services.AddScoped<UnitOfWork>();
+
+// Add mapper
+builder.Services.AddAutoMapper(typeof(ProductProfile));
 
 
 // Authentication + xử lý lỗi không có token
