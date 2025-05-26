@@ -9,6 +9,8 @@ using SWD392_backend.Context;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
 using SWD392_backend.Infrastructure.Services.AuthService;
 using SWD392_backend.Infrastructure.Services.UserService;
+using SWD392_backend.Infrastructure.Services.ProductService;
+using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,10 +85,12 @@ builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connecti
 // Service
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 
 // Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // UnitOfWork
 builder.Services.AddScoped<UnitOfWork>();
