@@ -23,6 +23,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             var totalItems = await _context.products.CountAsync();
 
             var products = await _context.products
+                            .Include(p => p.categories)
                             .OrderBy(p => p.id)
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)

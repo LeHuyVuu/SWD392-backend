@@ -17,7 +17,7 @@
         public bool is_active { get; set; }
         public bool is_sale { get; set; }
         public string slug { get; set; } = null!;
-        public int categories_id { get; set; }
+        public CategoryResponse categories { get; set; }
         public int supplier_id { get; set; }
     }
 }

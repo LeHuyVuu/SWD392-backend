@@ -9,6 +9,7 @@ namespace SWD392_backend.Infrastructure.Mappings
         public AutoMapperProfile()
         {
             CreateMap<product, ProductResponse>();
+            CreateMap<category, CategoryResponse>();
         }
     }
 }
