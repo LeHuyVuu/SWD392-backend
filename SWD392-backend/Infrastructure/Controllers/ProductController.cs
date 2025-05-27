@@ -2,8 +2,10 @@
 using cybersoft_final_project.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Win32.SafeHandles;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Models;
 using SWD392_backend.Models.Response;
@@ -37,6 +39,16 @@ namespace SWD392_backend.Infrastructure.Controllers
             var products = await _productService.GetPagedProductAsync(page, pageSize);
             
             return Ok(HTTPResponse<object>.Response(200, "Lấy list product thành công", products));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProductResponse>> GetById(int id)
+        {
+            var products = await _productService.GetByIdAsync(id);
+            if (products == null)
+                return BadRequest(HTTPResponse<object>.Response(404, "Không có sản phầm trùng khớp", null));
+            else
+                return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
         }
     }
 }

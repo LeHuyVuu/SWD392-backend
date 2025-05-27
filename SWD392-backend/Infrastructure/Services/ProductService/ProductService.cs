@@ -17,6 +17,16 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             _mapper = mapper;
         }
 
+        public async Task<ProductResponse> GetByIdAsync(int id)
+        {
+            var products = await _productRepository.GetByIdAsync(id);
+
+            // Model mapper
+            var productDtos = _mapper.Map<ProductResponse>(products);
+
+            return productDtos;
+        }
+
         public async Task<PagedResult<ProductResponse>> GetPagedProductAsync(int page, int pageSize)
         {
             var pagedResult = await _productRepository.GetPagedProductsAsync(page, pageSize);

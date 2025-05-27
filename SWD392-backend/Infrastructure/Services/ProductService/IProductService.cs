@@ -8,5 +8,6 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
     public interface IProductService
     {
         Task<PagedResult<ProductResponse>> GetPagedProductAsync(int page, int pageSize);
+        Task<ProductResponse> GetByIdAsync(int id);
     }
 }

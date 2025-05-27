@@ -2,6 +2,7 @@
 using SWD392_backend.Context;
 using SWD392_backend.Entities;
 using SWD392_backend.Models;
+using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
 {
@@ -14,7 +15,15 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             _context = context;
         }
 
-        public async Task<PagedResult<product>> GetPagedProductsAsync(int page, int pageSize, string sortBy = "Id", string sortOrder = "asc")
+        public async Task<product?> GetByIdAsync(int id)
+        {
+            return await _context.products
+                                .Include(p => p.categories)
+                                .Include(p => p.supplier)
+                                .FirstOrDefaultAsync(p => p.id == id);
+        }
+
+        public async Task<PagedResult<product>> GetPagedProductsAsync(int page, int pageSize)
         {
             page = page < 1 ? 1 : page;
             pageSize = pageSize < 1 ? 10 : pageSize;
