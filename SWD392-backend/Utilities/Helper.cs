@@ -1,4 +1,7 @@
-﻿using BCrypt.Net;
+﻿using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
+using BCrypt.Net;
 
 namespace web_api_base.Helper;
 public static class PasswordHelper

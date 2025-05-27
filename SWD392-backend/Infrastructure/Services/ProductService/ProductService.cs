@@ -5,6 +5,7 @@ using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using SWD392_backend.Models;
 using SWD392_backend.Models.Response;
+using SWD392_backend.Utilities;
 
 namespace SWD392_backend.Infrastructure.Services.ProductService
 {
@@ -58,6 +59,17 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             // Map into exist product
             _mapper.Map(request, product);
 
+            product.discount_price = product.price - (product.price * product.discount_percent / 100);
+            product.available_quantity = product.stock_in_quantity - product.sold_quantity;
+            product.is_active = true;
+            product.slug = SlugHelper.Slugify(product.name);
+            product.supplier_id = 5;
+
+            // Update
+            _unitOfWork.ProductRepository.Update(product);
+
+            // Save
+            await _unitOfWork.SaveAsync();
 
             return true;
         }

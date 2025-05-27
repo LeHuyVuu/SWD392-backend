@@ -42,6 +42,11 @@ namespace SWD392_backend.Infrastructure.Controllers
             return Ok(HTTPResponse<object>.Response(200, "Lấy list product thành công", products));
         }
 
+        /// <summary>
+        /// Lấy product dựa theo ID.
+        /// </summary>
+        /// <param name="id">ID của product</param>
+        /// <response code="200">Trả về product thành công</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductResponse>> GetById(int id)
         {
@@ -52,8 +57,14 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Update(int id,[FromBody] UpdateProductRequest request)
+        /// <summary>
+        /// Cập nhật product.
+        /// </summary>
+        /// <param name="id">ID của sản phẩm cần cập nhật.</param>
+        /// <param name="request">Dữ liệu cập nhật cho sản phẩm.</param>
+        /// <response code="200">Trả về nếu cập nhật thành công</response>
+        [HttpPost("update/{id}")]
+        public async Task<IActionResult> UpdateProduct(int id,[FromBody] UpdateProductRequest request)
         {
             bool checkUpdate = await _productService.UpdateProductAsync(id, request);
 
