@@ -55,10 +55,9 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             if (product == null)
                 return false;
 
-            product.name = request.name;
-            product.price = request.price;
-            product.stock_in_quantity = request.stock_in_quantity;
-            product.description = request.description;
+            // Map into exist product
+            _mapper.Map(request, product);
+
 
             return true;
         }

@@ -13,6 +13,7 @@ public partial class product_image
 
     [StringLength(255)]
     public string product_image_url { get; set; } = null!;
+    public bool is_main { get; set; }
 
     public int products_id { get; set; }
 

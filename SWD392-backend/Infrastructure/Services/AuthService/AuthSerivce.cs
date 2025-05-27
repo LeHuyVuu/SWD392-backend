@@ -13,9 +13,9 @@ public class AuthService
 {
     private readonly MyDbContext _context;
     private readonly IConfiguration _config;
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AuthService(MyDbContext context, IConfiguration config, UnitOfWork unitOfWork)
+    public AuthService(MyDbContext context, IConfiguration config, IUnitOfWork unitOfWork)
     {
         _context = context;
         _config = config;
