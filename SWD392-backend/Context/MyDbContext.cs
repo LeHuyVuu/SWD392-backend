@@ -98,6 +98,15 @@ public partial class MyDbContext : DbContext
             entity.HasOne(d => d.supplier).WithMany(p => p.products)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_products_suppliers");
+
+            entity.Property(p => p.rating_average)
+                .HasDefaultValue(0.0);
+
+            entity.Property(p => p.discount_percent)
+                .HasDefaultValue(0.0);
+
+            entity.Property(p => p.sold_quantity)
+                .HasDefaultValue(0);
         });
 
         modelBuilder.Entity<product_attribute>(entity =>

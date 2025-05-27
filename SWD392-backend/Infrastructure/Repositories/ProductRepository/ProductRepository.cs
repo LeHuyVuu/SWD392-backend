@@ -47,5 +47,10 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
                 PageSize = pageSize
             };
         }
+
+        public void Update(product product)
+        {
+            _context.products.Update(product);
+        }
     }
 }

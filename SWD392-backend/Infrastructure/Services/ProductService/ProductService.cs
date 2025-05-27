@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
+using cybersoft_final_project.Models.Request;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using SWD392_backend.Models;
@@ -10,11 +12,13 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductService(IProductRepository productRepository, IMapper mapper)
+        public ProductService(IProductRepository productRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _productRepository = productRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ProductResponse> GetByIdAsync(int id)
@@ -42,6 +46,21 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
                 Page = pagedResult.Page,
                 PageSize = pagedResult.PageSize
             };
+        }
+
+        public async Task<bool> UpdateProductAsync(int id, UpdateProductRequest request)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+
+            if (product == null)
+                return false;
+
+            product.name = request.name;
+            product.price = request.price;
+            product.stock_in_quantity = request.stock_in_quantity;
+            product.description = request.description;
+
+            return true;
         }
     }
 }

@@ -24,16 +24,16 @@ public partial class product
 
     public int stock_in_quantity { get; set; }
 
-    public double rating_average { get; set; }
+    public double rating_average { get; set; } = 0.0;
 
     [StringLength(255)]
     public string sku { get; set; } = null!;
 
     public double discount_price { get; set; }
 
-    public double discount_percent { get; set; }
+    public double discount_percent { get; set; } = 0.0;
 
-    public int sold_quantity { get; set; }
+    public int sold_quantity { get; set; } = 0;
 
     public int available_quantity { get; set; }
 

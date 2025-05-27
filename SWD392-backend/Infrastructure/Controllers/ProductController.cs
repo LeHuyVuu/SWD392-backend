@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using cybersoft_final_project.Models;
+using cybersoft_final_project.Models.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -49,6 +50,17 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return BadRequest(HTTPResponse<object>.Response(404, "Không có sản phầm trùng khớp", null));
             else
                 return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(int id,[FromBody] UpdateProductRequest request)
+        {
+            bool checkUpdate = await _productService.UpdateProductAsync(id, request);
+
+            if (!checkUpdate)
+                return BadRequest(HTTPResponse<object>.Response(404, "Update không thành công", null));
+            else
+                return Ok(HTTPResponse<object>.Response(200, "Update thành công", null));
         }
     }
 }
