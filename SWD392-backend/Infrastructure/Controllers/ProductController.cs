@@ -22,8 +22,17 @@ namespace SWD392_backend.Infrastructure.Controllers
             _productService = productService;
         }
 
+        /// <summary>
+        /// Lấy danh sách product có phân trang.
+        /// </summary>
+        /// <param name="page">Số trang hiện tại (mặc định là 1)</param>
+        /// <param name="pageSize">Số lượng product trên mỗi trang (mặc định là 10)</param>
+        /// <response code="200">Trả về danh sách product thành công</response>
         [HttpGet]
-        public async Task<ActionResult<PagedResult<ProductResponse>>> GetProducts(int page = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedResult<ProductResponse>>> GetProducts(
+            [FromQuery]int page = 1, 
+            [FromQuery] int pageSize = 10
+            )
         {
             var products = await _productService.GetPagedProductAsync(page, pageSize);
             
