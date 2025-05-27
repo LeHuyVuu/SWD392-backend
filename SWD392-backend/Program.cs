@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
 using DotNetEnv;
 using SWD392_backend.Context;
 using SWD392_backend.Infrastructure.Repositories.OrderDetailRepository;
@@ -73,11 +72,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
     {
-        builder.WithOrigins("http://localhost:3000", "http://localhost:44376")
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
 });
+
 
 // DbContext
 builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connectionString));
@@ -145,8 +146,8 @@ var app = builder.Build();
 
 // Middleware pipeline
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 
 app.UseHttpsRedirection();
