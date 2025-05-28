@@ -28,7 +28,7 @@ public partial class user
     [Column("role")]
     public string Role { get; set; } = null!;
 
-    [Column("created_at")]
+    [Column("created_at", TypeName = "timestamp with time zone")]
     public DateTime CreatedAt { get; set; }
 
     [Column("phone")]

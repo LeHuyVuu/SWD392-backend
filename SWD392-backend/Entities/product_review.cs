@@ -24,7 +24,7 @@ public partial class product_review
     [Column("user_id")]
     public int UserId { get; set; }
 
-    [Column("created_at")]
+    [Column("created_at", TypeName = "timestamp with time zone")]
     public DateTime CreatedAt { get; set; }
 
     [ForeignKey("ProductId")]

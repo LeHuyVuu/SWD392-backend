@@ -15,6 +15,11 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             _context = context;
         }
 
+        public async Task AddAsync(product product)
+        {
+            await _context.products.AddAsync(product);
+        }
+
         public async Task<product?> GetByIdAsync(int id)
         {
             return await _context.products

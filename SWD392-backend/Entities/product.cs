@@ -17,7 +17,7 @@ public partial class product
     [StringLength(255)]
     public string Name { get; set; } = null!;
 
-    [Column("created_at")]
+    [Column("created_at", TypeName = "timestamp with time zone")]
     public DateTime CreatedAt { get; set; }
 
     [Column("price")]
