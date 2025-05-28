@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Win32.SafeHandles;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Models;
+using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Controllers
@@ -52,9 +53,25 @@ namespace SWD392_backend.Infrastructure.Controllers
         {
             var products = await _productService.GetByIdAsync(id);
             if (products == null)
-                return BadRequest(HTTPResponse<object>.Response(404, "Không có sản phầm trùng khớp", null));
+                return BadRequest(HTTPResponse<object>.Response(400, "Không có sản phầm trùng khớp", null));
             else
                 return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
+        }
+
+        /// <summary>
+        /// Thêm mới product.
+        /// </summary>
+        /// <param name="request">Dữ liệu thêm mới cho sản phẩm.</param>
+        /// <response code="200">Trả về nếu thêm mới thành công</response>
+        [HttpPost("add")]
+        public async Task<ActionResult<ProductResponse>> AddProduct([FromBody] AddProductRequest request)
+        {
+            var response = await _productService.AddProductAsync(request);
+
+            if (response == null)
+                return BadRequest(HTTPResponse<object>.Response(400, "Thêm sản phẩm thất bại", null));
+            else
+                return Ok(HTTPResponse<object>.Response(200, "Thêm sản phẩm thành công", response));
         }
 
         /// <summary>
@@ -69,9 +86,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             bool checkUpdate = await _productService.UpdateProductAsync(id, request);
 
             if (!checkUpdate)
-                return BadRequest(HTTPResponse<object>.Response(404, "Update không thành công", null));
+                return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật sản phẩm thất bại", null));
             else
-                return Ok(HTTPResponse<object>.Response(200, "Update thành công", null));
+                return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", null));
         }
     }
 }

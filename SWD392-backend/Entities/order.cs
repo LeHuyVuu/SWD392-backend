@@ -15,7 +15,7 @@ public partial class order
     [Column("total")]
     public double Total { get; set; }
 
-    [Column("created_at")]
+    [Column("created_at", TypeName = "timestamp with time zone")]
     public DateTime CreatedAt { get; set; }
 
     [Column("user_id")]
@@ -31,10 +31,10 @@ public partial class order
     [Column("supplier_id")]
     public int SupplierId { get; set; }
 
-    [Column("paid_at")]
+    [Column("paid_at", TypeName = "timestamp with time zone")]
     public DateTime? PaidAt { get; set; }
 
-    [Column("deliveried_at")]
+    [Column("deliveried_at", TypeName = "timestamp with time zone")]
     public DateTime? DeliveriedAt { get; set; }
 
     [InverseProperty("order")]

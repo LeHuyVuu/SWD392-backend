@@ -23,7 +23,7 @@ public partial class supplier
     [StringLength(255)]
     public string Slug { get; set; } = null!;
 
-    [Column("registered_at")]
+    [Column("registered_at", TypeName = "timestamp with time zone")]
     public DateTime RegisteredAt { get; set; }
 
     [Column("is_verified")]

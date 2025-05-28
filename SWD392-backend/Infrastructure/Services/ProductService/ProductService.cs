@@ -4,6 +4,7 @@ using cybersoft_final_project.Models.Request;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using SWD392_backend.Models;
+using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
 using SWD392_backend.Utilities;
 
@@ -25,6 +26,8 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
         public async Task<ProductResponse> GetByIdAsync(int id)
         {
             var products = await _productRepository.GetByIdAsync(id);
+            DateTime dt = products.CreatedAt;
+            Console.WriteLine(dt.Kind);
 
             // Model mapper
             var productDtos = _mapper.Map<ProductResponse>(products);
@@ -47,6 +50,29 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
                 Page = pagedResult.Page,
                 PageSize = pagedResult.PageSize
             };
+        }
+
+        public async Task<ProductResponse> AddProductAsync(AddProductRequest request)
+        {
+            // Map from request
+            var product = _mapper.Map<product>(request);
+
+            // Add another field
+            product.CreatedAt = DateTime.UtcNow;
+            product.DiscountPrice = product.Price - (product.Price * product.DiscountPercent / 100);
+            product.AvailableQuantity = product.StockInQuantity - product.SoldQuantity;
+            product.IsActive = true;
+            product.Slug = SlugHelper.Slugify(product.Name);
+            product.SupplierId = 5;
+
+            // Insert
+            await _productRepository.AddAsync(product);
+
+            // Save
+            await _unitOfWork.SaveAsync();
+
+            var response = _mapper.Map<ProductResponse>(product);
+            return response;
         }
 
         public async Task<bool> UpdateProductAsync(int id, UpdateProductRequest request)
