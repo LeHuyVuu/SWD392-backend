@@ -6,38 +6,49 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SWD392_backend.Entities;
 
-[Index("email", Name = "users_email_key", IsUnique = true)]
+[Index("Email", Name = "users_email_key", IsUnique = true)]
 public partial class user
 {
+    [Column("id")]
     [Key]
-    public int id { get; set; }
+    public int Id { get; set; }
 
+    [Column("username")]
     [StringLength(255)]
-    public string username { get; set; } = null!;
+    public string Username { get; set; } = null!;
 
+    [Column("email")]
     [StringLength(255)]
-    public string email { get; set; } = null!;
+    public string Email { get; set; } = null!;
 
+    [Column("password")]
     [StringLength(255)]
-    public string password { get; set; } = null!;
+    public string Password { get; set; } = null!;
 
-    public string role { get; set; } = null!;
+    [Column("role")]
+    public string Role { get; set; } = null!;
 
-    public DateTime created_at { get; set; }
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
 
+    [Column("phone")]
     [StringLength(255)]
-    public string phone { get; set; } = null!;
+    public string Phone { get; set; } = null!;
 
+    [Column("address")]
     [StringLength(255)]
-    public string address { get; set; } = null!;
+    public string Address { get; set; } = null!;
 
+    [Column("image_url")]
     [StringLength(255)]
-    public string? image_url { get; set; }
+    public string? ImageUrl { get; set; }
 
-    public bool is_active { get; set; }
+    [Column("is_active")]
+    public bool IsActive { get; set; }
 
+    [Column("full_name")]
     [StringLength(255)]
-    public string full_name { get; set; } = null!;
+    public string FullName { get; set; } = null!;
 
     [InverseProperty("user")]
     public virtual ICollection<order> orders { get; set; } = new List<order>();

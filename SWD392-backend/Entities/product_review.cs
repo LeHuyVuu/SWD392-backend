@@ -8,25 +8,30 @@ namespace SWD392_backend.Entities;
 
 public partial class product_review
 {
+    [Column("id")]
     [Key]
-    public int id { get; set; }
+    public int Id { get; set; }
 
-    public int product_id { get; set; }
+    [Column("product_id")]
+    public int ProductId { get; set; }
 
-    public string content { get; set; } = null!;
+    [Column("content")]
+    public string Content { get; set; } = null!;
 
-    public int rating { get; set; }
+    [Column("rating")]
+    public int Rating { get; set; }
 
-    public int user_id { get; set; }
+    [Column("user_id")]
+    public int UserId { get; set; }
 
-    [Column(TypeName = "timestamp without time zone")]
-    public DateTime created_at { get; set; }
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
 
-    [ForeignKey("product_id")]
+    [ForeignKey("ProductId")]
     [InverseProperty("product_reviews")]
     public virtual product product { get; set; } = null!;
 
-    [ForeignKey("user_id")]
+    [ForeignKey("UserId")]
     [InverseProperty("product_reviews")]
     public virtual user user { get; set; } = null!;
 }

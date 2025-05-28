@@ -6,49 +6,65 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SWD392_backend.Entities;
 
-[Index("name", Name = "products_name_index")]
+[Index("Name", Name = "products_name_index")]
 public partial class product
 {
+    [Column("id")]
     [Key]
-    public int id { get; set; }
+    public int Id { get; set; }
 
+    [Column("name")]
     [StringLength(255)]
-    public string name { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
-    [Column(TypeName = "timestamp without time zone")]
-    public DateTime created_at { get; set; }
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
 
-    public double price { get; set; }
+    [Column("price")]
+    public double Price { get; set; }
 
-    public string description { get; set; } = null!;
+    [Column("description")]
+    public string Description { get; set; } = null!;
 
-    public int stock_in_quantity { get; set; }
+    [Column("stock_in_quantity")]
+    public int StockInQuantity { get; set; }
 
-    public double rating_average { get; set; }
+    [Column("rating_average")]
+    public double RatingAverage { get; set; } = 0.0;
 
+    [Column("sku")]
     [StringLength(255)]
-    public string sku { get; set; } = null!;
+    public string Sku { get; set; } = null!;
 
-    public double discount_price { get; set; }
+    [Column("discount_price")]
+    public double DiscountPrice { get; set; }
 
-    public double discount_percent { get; set; }
+    [Column("discount_percent")]
+    public double DiscountPercent { get; set; } = 0.0;
 
-    public int sold_quantity { get; set; }
+    [Column("sold_quantity")]
+    public int SoldQuantity { get; set; } = 0;
 
-    public int available_quantity { get; set; }
+    [Column("available_quantity")]
+    public int AvailableQuantity { get; set; }
 
-    public bool is_active { get; set; }
+    [Column("is_active")]
+    public bool IsActive { get; set; }
 
-    public bool is_sale { get; set; }
+    [Column("is_sale")]
+    public bool IsSale { get; set; }
 
+    [Column("slug")]
     [StringLength(255)]
-    public string slug { get; set; } = null!;
+    public string Slug { get; set; } = null!;
 
-    public int categories_id { get; set; }
+    [Column("categories_id")]
+    public int CategoriesId { get; set; }
 
-    public int supplier_id { get; set; }
+    [Column("supplier_id")]
+    public int SupplierId { get; set; }
 
-    [ForeignKey("categories_id")]
+    [ForeignKey("CategoriesId")]
     [InverseProperty("products")]
     public virtual category categories { get; set; } = null!;
 
@@ -61,7 +77,10 @@ public partial class product
     [InverseProperty("product")]
     public virtual ICollection<product_review> product_reviews { get; set; } = new List<product_review>();
 
-    [ForeignKey("supplier_id")]
+    [InverseProperty("product")]
+    public virtual ICollection<orders_detail> orders_details { get; set; } = new List<orders_detail>();
+
+    [ForeignKey("SupplierId")]
     [InverseProperty("products")]
     public virtual supplier supplier { get; set; } = null!;
 }

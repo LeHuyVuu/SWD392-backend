@@ -11,6 +11,9 @@ using SWD392_backend.Infrastructure.Repositories.UserRepository;
 using SWD392_backend.Infrastructure.Services.AuthService;
 using SWD392_backend.Infrastructure.Services.OrderService;
 using SWD392_backend.Infrastructure.Services.UserService;
+using SWD392_backend.Infrastructure.Services.ProductService;
+using SWD392_backend.Infrastructure.Repositories.ProductRepository;
+using SWD392_backend.Infrastructure.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +42,10 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
+
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -88,6 +95,8 @@ builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connecti
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
 
 // Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -95,9 +104,13 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrdersDetailRepository, OrdersDetailRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Add mapper
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 
 // Authentication + xử lý lỗi không có token

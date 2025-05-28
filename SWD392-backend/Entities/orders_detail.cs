@@ -9,20 +9,33 @@ namespace SWD392_backend.Entities;
 [Table("orders_detail")]
 public partial class orders_detail
 {
+    [Column("id")]
     [Key]
-    public int id { get; set; }
+    public int Id { get; set; }
 
-    public Guid product_id { get; set; }
+    [Column("order_id")]
+    public Guid OrderId { get; set; }
 
-    public int quantity { get; set; }
+    [Column("product_id")]
+    public int ProductId { get; set; }
 
-    public double price { get; set; }
+    [Column("quantity")]
+    public int Quantity { get; set; }
 
-    public double discount_percent { get; set; }
+    [Column("price")]
+    public double Price { get; set; }
 
-    public string note { get; set; } = null!;
+    [Column("discount_percent")]
+    public double DiscountPercent { get; set; }
 
-    [ForeignKey("product_id")]
+    [Column("note")]
+    public string Note { get; set; } = null!;
+
+    [ForeignKey("OrderId")]
     [InverseProperty("orders_details")]
-    public virtual order product { get; set; } = null!;
+    public virtual order order { get; set; } = null!;
+
+    [ForeignKey("ProductId")]
+    [InverseProperty("orders_details")]
+    public virtual product product { get; set; } = null!;
 }
