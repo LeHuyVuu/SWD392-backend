@@ -20,7 +20,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             return await _context.products
                                 .Include(p => p.categories)
                                 .Include(p => p.supplier)
-                                .FirstOrDefaultAsync(p => p.id == id);
+                                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<PagedResult<product>> GetPagedProductsAsync(int page, int pageSize)
@@ -35,7 +35,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
                             .Include(p => p.categories)
                             .Include(p => p.supplier)
                             .Include(p => p.product_images)
-                            .OrderBy(p => p.id)
+                            .OrderBy(p => p.Id)
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
                             .ToListAsync();

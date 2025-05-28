@@ -6,6 +6,11 @@ namespace SWD392_backend.Utilities
 {
     public class SlugHelper
     {
+        /// <summary>
+        /// Function chuyển name của product thành slug
+        /// </summary>
+        /// <param name="input">Input đầu vào</param>
+        /// <returns>Trả về string slug, nếu không trả về null</returns>
         public static string Slugify(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return "";

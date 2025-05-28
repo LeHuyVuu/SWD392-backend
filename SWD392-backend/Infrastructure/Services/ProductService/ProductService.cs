@@ -59,11 +59,11 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             // Map into exist product
             _mapper.Map(request, product);
 
-            product.discount_price = product.price - (product.price * product.discount_percent / 100);
-            product.available_quantity = product.stock_in_quantity - product.sold_quantity;
-            product.is_active = true;
-            product.slug = SlugHelper.Slugify(product.name);
-            product.supplier_id = 5;
+            product.DiscountPrice = product.Price - (product.Price * product.DiscountPercent / 100);
+            product.AvailableQuantity = product.StockInQuantity - product.SoldQuantity;
+            product.IsActive = true;
+            product.Slug = SlugHelper.Slugify(product.Name);
+            product.SupplierId = 5;
 
             // Update
             _unitOfWork.ProductRepository.Update(product);

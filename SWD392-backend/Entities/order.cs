@@ -8,37 +8,43 @@ namespace SWD392_backend.Entities;
 
 public partial class order
 {
+    [Column("id")]
     [Key]
-    public Guid id { get; set; }
+    public Guid Id { get; set; }
 
-    public double total { get; set; }
+    [Column("total")]
+    public double Total { get; set; }
 
-    [Column(TypeName = "timestamp without time zone")]
-    public DateTime created_at { get; set; }
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
 
-    public int user_id { get; set; }
+    [Column("user_id")]
+    public int UserId { get; set; }
 
-    public double shipping_price { get; set; }
+    [Column("shipping_price")]
+    public double ShippingPrice { get; set; }
 
+    [Column("address")]
     [StringLength(255)]
-    public string address { get; set; } = null!;
+    public string Address { get; set; } = null!;
 
-    public int supplier_id { get; set; }
+    [Column("supplier_id")]
+    public int SupplierId { get; set; }
 
-    [Column(TypeName = "timestamp without time zone")]
-    public DateTime? paid_at { get; set; }
+    [Column("paid_at")]
+    public DateTime? PaidAt { get; set; }
 
-    [Column(TypeName = "timestamp without time zone")]
-    public DateTime? deliveried_at { get; set; }
+    [Column("deliveried_at")]
+    public DateTime? DeliveriedAt { get; set; }
 
     [InverseProperty("order")]
     public virtual ICollection<orders_detail> orders_details { get; set; } = new List<orders_detail>();
 
-    [ForeignKey("supplier_id")]
+    [ForeignKey("SupplierId")]
     [InverseProperty("orders")]
     public virtual supplier supplier { get; set; } = null!;
 
-    [ForeignKey("user_id")]
+    [ForeignKey("UserId")]
     [InverseProperty("orders")]
     public virtual user user { get; set; } = null!;
 }

@@ -24,8 +24,8 @@ public class AuthService
 
     public async Task<(bool Success, string Message, string? Token)> LoginAsync(string emailOrPhone, string password)
     {
-        var user = _context.users.FirstOrDefault(u => u.phone == emailOrPhone || u.email == emailOrPhone);
-        if (user == null || !PasswordHelper.VerifyPassword(password, user.password))
+        var user = _context.users.FirstOrDefault(u => u.Phone == emailOrPhone || u.Email == emailOrPhone);
+        if (user == null || !PasswordHelper.VerifyPassword(password, user.Password))
         {
             return (false, "Sai tên đăng nhập hoặc mật khẩu", null);
         }
@@ -42,9 +42,9 @@ public class AuthService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim("UserId", user.id.ToString()),
-                new Claim("FullName", user.full_name ?? ""),
-                new Claim("Role", user.role ?? "")
+                new Claim("UserId", user.Id.ToString()),
+                new Claim("FullName", user.FullName ?? ""),
+                new Claim("Role", user.Role ?? "")
             }),
             Expires = DateTime.UtcNow.AddMonths(5),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
@@ -60,26 +60,26 @@ public class AuthService
 
     public async Task<(bool Success, string Message)> RegisterAsync(string username, string password, string email)
     {
-        if (_context.users.Any(u => u.username.ToLower() == username.ToLower()))
+        if (_context.users.Any(u => u.Username.ToLower() == username.ToLower()))
             return (false, "Tên đăng nhập đã tồn tại");
 
-        if (_context.users.Any(u => u.email.ToLower() == email.ToLower()))
+        if (_context.users.Any(u => u.Email.ToLower() == email.ToLower()))
             return (false, "Email đã được sử dụng");
 
         var hashedPassword = PasswordHelper.HashPassword(password);
 
         var newUser = new user
         {
-            username = username,
-            password = hashedPassword,
-            email = email,
-            address = string.Empty,
-            role = "CUSTOMER",
-            full_name = "",
-            phone = "",
-            image_url = "http://default-avatar.com/avatar.png",
-            is_active = true,
-            created_at = DateTime.UtcNow
+            Username = username,
+            Password = hashedPassword,
+            Email = email,
+            Address = string.Empty,
+            Role = "CUSTOMER",
+            FullName = "",
+            Phone = "",
+            ImageUrl = "http://default-avatar.com/avatar.png",
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
         };
 
         await _unitOfWork.UserRepository.AddAsync(newUser);
