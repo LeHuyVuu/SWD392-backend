@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SWD392_backend.Entities;
 
+[Index("ProductsId", "IsMain", Name = "idx_product_images_productid_ismain")]
 public partial class product_image
 {
     [Column("id")]

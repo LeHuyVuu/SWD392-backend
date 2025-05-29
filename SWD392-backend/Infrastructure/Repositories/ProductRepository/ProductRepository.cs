@@ -28,7 +28,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
                                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<PagedResult<product>> GetPagedProductsAsync(int page, int pageSize)
+        public async Task<PagedResult<ProductResponse>> GetPagedProductsAsync(int page, int pageSize)
         {
             page = page < 1 ? 1 : page;
             pageSize = pageSize < 1 ? 10 : pageSize;
@@ -37,15 +37,26 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             var totalItems = await _context.products.CountAsync();
 
             var products = await _context.products
-                            .Include(p => p.categories)
-                            .Include(p => p.supplier)
-                            .Include(p => p.product_images)
                             .OrderBy(p => p.Id)
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
+                            .Select(p => new ProductResponse { 
+                                     Id = p.Id,
+                                     Name = p.Name,
+                                     Price = p.Price,
+                                     DiscountPrice = p.DiscountPrice,
+                                     Slug = p.Slug,
+                                     RatingAverage = p.RatingAverage,
+                                     IsSale = p.IsSale,
+                                     StockInQuantity = p.StockInQuantity,
+                                     ImageUrl = p.product_images
+                                                .Where(i => i.IsMain)
+                                                .Select(i => i.ProductImageUrl)
+                                                .FirstOrDefault() ?? "https://via.placeholder.com/150"
+                            })
                             .ToListAsync();
 
-            return new PagedResult<product>
+            return new PagedResult<ProductResponse>
             {
                 Items = products,
                 TotalItems = totalItems,
