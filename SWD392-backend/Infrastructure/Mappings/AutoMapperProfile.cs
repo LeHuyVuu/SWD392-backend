@@ -17,6 +17,8 @@ namespace SWD392_backend.Infrastructure.Mappings
             CreateMap<AddProductRequest, product>();
             CreateMap<category, CategoryResponse>();
             CreateMap<supplier, SupplierrResponse>();
+            CreateMap<ProductImageRequest, product_image>();
+            CreateMap<product_image, ProductImageResponse>();
         }
     }
 }

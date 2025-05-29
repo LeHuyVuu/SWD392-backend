@@ -1,4 +1,6 @@
-﻿namespace cybersoft_final_project.Models.Request;
+﻿using SWD392_backend.Models.Request;
+
+namespace cybersoft_final_project.Models.Request;
 
 public class UpdateProductRequest
 {
@@ -10,4 +12,5 @@ public class UpdateProductRequest
     public bool IsSale { get; set; }
     public string Sku { get; set; }
     public int CategoriesId { get; set; }
+    public List<ProductImageRequest> Images { get; set; }
 }

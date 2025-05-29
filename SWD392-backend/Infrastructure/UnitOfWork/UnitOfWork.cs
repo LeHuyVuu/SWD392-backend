@@ -10,13 +10,15 @@ public class UnitOfWork : IUnitOfWork
 
     public IProductRepository ProductRepository { get; }
     public ICategoryRepository CategoryRepository { get; }
+    public ICategoryRepository ProductImageRepository { get; }
 
-    public UnitOfWork(MyDbContext context, IUserRepository userRepository, IProductRepository productRepository, ICategoryRepository categoryRepository)
+    public UnitOfWork(MyDbContext context, IUserRepository userRepository, IProductRepository productRepository, ICategoryRepository categoryRepository, ICategoryRepository productImageRepository)
     {
         _context = context;
         UserRepository = userRepository;
         ProductRepository = productRepository;
         CategoryRepository = categoryRepository;
+        ProductImageRepository = productImageRepository;
     }
 
     public async Task SaveAsync()

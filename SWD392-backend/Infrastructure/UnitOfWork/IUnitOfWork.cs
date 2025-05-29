@@ -7,5 +7,6 @@ public interface IUnitOfWork
     IUserRepository UserRepository { get; }
     IProductRepository ProductRepository { get; }
     ICategoryRepository CategoryRepository { get; }
+    ICategoryRepository ProductImageRepository { get; }
     Task SaveAsync();
 }
