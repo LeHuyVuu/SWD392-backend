@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using SWD392_backend.Context;
+using SWD392_backend.Infrastructure.Repositories.CategoryRepository;
 using SWD392_backend.Infrastructure.Repositories.OrderDetailRepository;
 using SWD392_backend.Infrastructure.Repositories.OrderRepository;
+using SWD392_backend.Infrastructure.Repositories.ProductImageRepository;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
 using System.Threading.Tasks;
@@ -16,14 +18,16 @@ public class UnitOfWork : IUnitOfWork
     public IOrdersDetailRepository OrdersDetailRepository { get; }
     public IProductRepository ProductRepository { get; }
     public ICategoryRepository CategoryRepository { get; }
-    public ICategoryRepository ProductImageRepository { get; }
+    public IProductImageRepository ProductImageRepository { get; }
 
     public UnitOfWork(
         MyDbContext context,
         IUserRepository userRepository,
         IOrderRepository orderRepository,
         IOrdersDetailRepository ordersDetailRepository,
-        IProductRepository productRepository)
+        IProductRepository productRepository,
+        ICategoryRepository categoryRepository,
+        IProductImageRepository productImageRepository)
     {
         _context = context;
         UserRepository = userRepository;
