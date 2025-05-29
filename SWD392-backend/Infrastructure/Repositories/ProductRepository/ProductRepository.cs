@@ -25,6 +25,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             return await _context.products
                                 .Include(p => p.categories)
                                 .Include(p => p.supplier)
+                                .Include(p => p.product_images)
                                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -37,8 +38,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             var totalItems = await _context.products.CountAsync();
 
             var products = await _context.products
-                            .Include(p => p.categories)
-                            .Include(p => p.supplier)
+                            .Include(p => p.product_attributes)
                             .Include(p => p.product_images)
                             .OrderBy(p => p.Id)
                             .Skip((page - 1) * pageSize)

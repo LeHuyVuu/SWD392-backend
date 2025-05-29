@@ -14,6 +14,10 @@ using SWD392_backend.Infrastructure.Services.UserService;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using SWD392_backend.Infrastructure.Mappings;
+using SWD392_backend.Infrastructure.Services.CategoryService;
+using SWD392_backend.Infrastructure.Repositories.CategoryRepository;
+using SWD392_backend.Infrastructure.Repositories.ProductImageRepository;
+using SWD392_backend.Infrastructure.Services.ProductImageService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +100,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 
 
 // Repository
@@ -105,6 +111,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrdersDetailRepository, OrdersDetailRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
 
 // UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

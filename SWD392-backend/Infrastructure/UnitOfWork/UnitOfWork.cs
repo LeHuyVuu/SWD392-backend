@@ -15,6 +15,8 @@ public class UnitOfWork : IUnitOfWork
     public IOrderRepository OrderRepository { get; }
     public IOrdersDetailRepository OrdersDetailRepository { get; }
     public IProductRepository ProductRepository { get; }
+    public ICategoryRepository CategoryRepository { get; }
+    public ICategoryRepository ProductImageRepository { get; }
 
     public UnitOfWork(
         MyDbContext context,
@@ -28,6 +30,8 @@ public class UnitOfWork : IUnitOfWork
         OrderRepository = orderRepository;
         OrdersDetailRepository = ordersDetailRepository;
         ProductRepository = productRepository;
+        CategoryRepository = categoryRepository;
+        ProductImageRepository = productImageRepository;
     }
 
     public async Task<IDbContextTransaction> BeginTransactionAsync()

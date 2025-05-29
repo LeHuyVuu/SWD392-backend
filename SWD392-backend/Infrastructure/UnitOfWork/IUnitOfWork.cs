@@ -1,4 +1,5 @@
-﻿using SWD392_backend.Infrastructure.Repositories.ProductRepository;
+﻿using SWD392_backend.Infrastructure.Repositories.CategoryRepository;
+using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Threading.Tasks;
 using SWD392_backend.Infrastructure.Repositories.OrderDetailRepository;
@@ -11,7 +12,8 @@ public interface IUnitOfWork
     IProductRepository ProductRepository { get; }
     IOrderRepository OrderRepository { get; }
     IOrdersDetailRepository OrdersDetailRepository { get; }
-
+    ICategoryRepository CategoryRepository { get; }
+    ICategoryRepository ProductImageRepository { get; }
     Task SaveAsync();
 
     // Trả về transaction để có thể dùng using
