@@ -39,7 +39,17 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
         {
             var pagedResult = await _productRepository.GetPagedProductsAsync(page, pageSize);
 
-            return pagedResult;
+            // Model mapper
+            var productDtos = _mapper.Map<List<ProductResponse>>(pagedResult.Items);
+
+
+            return new PagedResult<ProductResponse>
+            {
+                Items = productDtos,
+                TotalItems = pagedResult.TotalItems,
+                Page = pagedResult.Page,
+                PageSize = pagedResult.PageSize
+            };
         }
 
         public async Task<ProductResponse> AddProductAsync(AddProductRequest request)

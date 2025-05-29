@@ -10,7 +10,8 @@ namespace SWD392_backend.Infrastructure.Mappings
     {
         public AutoMapperProfile()
         {
-            CreateMap<product, ProductResponse>();
+            CreateMap<product, ProductResponse>()               
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.product_images.Count(i => i.IsMain) > 0 ? src.product_images.FirstOrDefault(i => i.IsMain).ProductImageUrl : "https://via.placeholder.com/150"));
             CreateMap<UpdateProductRequest, product>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
             CreateMap<AddProductRequest, product>();

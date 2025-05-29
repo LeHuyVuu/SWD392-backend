@@ -12,6 +12,8 @@ using SWD392_backend.Infrastructure.Services.UserService;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using SWD392_backend.Infrastructure.Mappings;
+using SWD392_backend.Infrastructure.Services.CategoryService;
+using SWD392_backend.Infrastructure.Repositories.CategoryRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,11 +93,13 @@ builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connecti
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
 // Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -6,7 +6,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
 {
     public interface IProductRepository
     {
-        Task<PagedResult<ProductResponse>> GetPagedProductsAsync(int page, int pageSize);
+        Task<PagedResult<product>> GetPagedProductsAsync(int page, int pageSize);
         Task<product> GetByIdAsync(int id);
         Task AddAsync(product product);
         void Update(product product);
