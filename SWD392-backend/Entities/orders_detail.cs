@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using SWD392_backend.Entities.Enum;
 
 namespace SWD392_backend.Entities;
 
@@ -31,9 +30,6 @@ public partial class orders_detail
 
     [Column("note")]
     public string Note { get; set; } = null!;
-
-    [Column("status")]
-    public OrderDetailStatus Status { get; set; }
 
     [ForeignKey("OrderId")]
     [InverseProperty("orders_details")]

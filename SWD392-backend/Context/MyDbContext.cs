@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Entities;
-using SWD392_backend.Entities.Enum;
 
 namespace SWD392_backend.Context;
 
@@ -70,13 +69,6 @@ public partial class MyDbContext : DbContext
             entity.HasOne(d => d.product).WithMany(p => p.orders_details)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_orders_detail_order");
-
-            entity.Property(e => e.Status)
-                .HasConversion(
-                    v => v.ToString().ToLower(),
-                    v => (OrderDetailStatus)Enum.Parse(typeof(OrderDetailStatus), v, true)
-                )
-                .HasColumnType("status");
         });
 
         modelBuilder.Entity<product>(entity =>
