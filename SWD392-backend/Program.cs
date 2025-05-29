@@ -18,6 +18,7 @@ using SWD392_backend.Infrastructure.Services.CategoryService;
 using SWD392_backend.Infrastructure.Repositories.CategoryRepository;
 using SWD392_backend.Infrastructure.Repositories.ProductImageRepository;
 using SWD392_backend.Infrastructure.Services.ProductImageService;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,8 @@ builder.Configuration
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 // Swagger + JWT
