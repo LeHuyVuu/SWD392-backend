@@ -146,6 +146,10 @@ namespace SWD392_backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("quantity");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("order_status")
+                        .HasColumnName("status");
+
                     b.HasKey("Id")
                         .HasName("orders_detail_pkey");
 
@@ -508,14 +512,14 @@ namespace SWD392_backend.Migrations
                     b.HasOne("SWD392_backend.Entities.order", "order")
                         .WithMany("orders_details")
                         .HasForeignKey("OrderId")
-                        .IsRequired()
-                        .HasConstraintName("fk_orders_detail_order");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SWD392_backend.Entities.product", "product")
                         .WithMany("orders_details")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_orders_detail_order");
 
                     b.Navigation("order");
 

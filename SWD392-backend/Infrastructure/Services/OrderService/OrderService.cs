@@ -66,7 +66,7 @@
                         Price = detail.Price,
                         DiscountPercent = detail.DiscountPercent,
                         Note = detail.Note,
-                        Status = OrderDetailStatus.Pending
+                        Status = OrderStatus.Pending
                     };
 
                     await _unitOfWork.OrdersDetailRepository.AddAsync(orderDetail);

@@ -19,6 +19,9 @@ using SWD392_backend.Infrastructure.Repositories.CategoryRepository;
 using SWD392_backend.Infrastructure.Repositories.ProductImageRepository;
 using SWD392_backend.Infrastructure.Services.ProductImageService;
 using System.Text.Json.Serialization;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
+using Npgsql;
+using SWD392_backend.Entities.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,7 +98,11 @@ builder.Services.AddCors(options =>
 
 
 // DbContext
-builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connectionString));
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+//Map Enum
+dataSourceBuilder.MapEnum<OrderStatus>("order_status");
+var dataSource = dataSourceBuilder.Build();
+builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(dataSource));
 
 // DI các Repository và Service
 // Service
