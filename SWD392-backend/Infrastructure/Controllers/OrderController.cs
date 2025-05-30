@@ -23,7 +23,7 @@ public class OrderController : ControllerBase
 
         try
         {
-            var result = await _orderService.CheckoutAsync(orderDTO);
+             var result = await _orderService.CheckoutAsync(orderDTO);
             if (result)
                 return Ok(new { message = "Order created successfully" });
             else
