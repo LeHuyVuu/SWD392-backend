@@ -11,6 +11,14 @@ using SWD392_backend.Infrastructure.Repositories.UserRepository;
 using SWD392_backend.Infrastructure.Services.AuthService;
 using SWD392_backend.Infrastructure.Services.OrderService;
 using SWD392_backend.Infrastructure.Services.UserService;
+using SWD392_backend.Infrastructure.Services.ProductService;
+using SWD392_backend.Infrastructure.Repositories.ProductRepository;
+using SWD392_backend.Infrastructure.Mappings;
+using SWD392_backend.Infrastructure.Services.CategoryService;
+using SWD392_backend.Infrastructure.Repositories.CategoryRepository;
+using SWD392_backend.Infrastructure.Repositories.ProductImageRepository;
+using SWD392_backend.Infrastructure.Services.ProductImageService;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,12 +41,18 @@ builder.Configuration
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 // Swagger + JWT
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
+
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -88,6 +102,10 @@ builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connecti
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+
 
 // Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -95,9 +113,15 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrdersDetailRepository, OrdersDetailRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
 
 // UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Add mapper
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 
 // Authentication + xử lý lỗi không có token

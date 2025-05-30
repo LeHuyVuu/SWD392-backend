@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Entities;
+using SWD392_backend.Entities.Enums;
 
 namespace SWD392_backend.Context;
 
@@ -44,14 +45,14 @@ public partial class MyDbContext : DbContext
 
         modelBuilder.Entity<category>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("categories_pkey");
+            entity.HasKey(e => e.Id).HasName("categories_pkey");
         });
 
         modelBuilder.Entity<order>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("orders_pkey");
+            entity.HasKey(e => e.Id).HasName("orders_pkey");
 
-            entity.Property(e => e.id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedNever();
 
             entity.HasOne(d => d.supplier).WithMany(p => p.orders)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -64,16 +65,23 @@ public partial class MyDbContext : DbContext
 
         modelBuilder.Entity<orders_detail>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("orders_detail_pkey");
+            entity.HasKey(e => e.Id).HasName("orders_detail_pkey");
 
             entity.HasOne(d => d.product).WithMany(p => p.orders_details)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_orders_detail_order");
+
+            entity.Property(o => o.Status)
+            .HasConversion(
+                    v => v.ToString().ToLower(),
+                    v => (OrderDetailStatus)Enum.Parse(typeof(OrderDetailStatus), v, true)
+            )
+            .HasColumnType("status");
         });
 
         modelBuilder.Entity<product>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("products_pkey");
+            entity.HasKey(e => e.Id).HasName("products_pkey");
 
             entity.HasOne(d => d.categories).WithMany(p => p.products)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -82,11 +90,20 @@ public partial class MyDbContext : DbContext
             entity.HasOne(d => d.supplier).WithMany(p => p.products)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_products_suppliers");
+
+            entity.Property(p => p.RatingAverage)
+                .HasDefaultValue(0.0);
+
+            entity.Property(p => p.DiscountPercent)
+                .HasDefaultValue(0.0);
+
+            entity.Property(p => p.SoldQuantity)
+                .HasDefaultValue(0);
         });
 
         modelBuilder.Entity<product_attribute>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("product_attribute_pkey");
+            entity.HasKey(e => e.Id).HasName("product_attribute_pkey");
 
             entity.HasOne(d => d.product).WithMany(p => p.product_attributes)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -95,7 +112,7 @@ public partial class MyDbContext : DbContext
 
         modelBuilder.Entity<product_image>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("product_images_pkey");
+            entity.HasKey(e => e.Id).HasName("product_images_pkey");
 
             entity.HasOne(d => d.products).WithMany(p => p.product_images)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -104,7 +121,7 @@ public partial class MyDbContext : DbContext
 
         modelBuilder.Entity<product_review>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("product_reviews_pkey");
+            entity.HasKey(e => e.Id).HasName("product_reviews_pkey");
 
             entity.HasOne(d => d.product).WithMany(p => p.product_reviews)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -117,7 +134,7 @@ public partial class MyDbContext : DbContext
 
         modelBuilder.Entity<supplier>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("suppliers_pkey");
+            entity.HasKey(e => e.Id).HasName("suppliers_pkey");
 
             entity.HasOne(d => d.user).WithMany(p => p.suppliers)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -126,7 +143,7 @@ public partial class MyDbContext : DbContext
 
         modelBuilder.Entity<user>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("users_pkey");
+            entity.HasKey(e => e.Id).HasName("users_pkey");
         });
         modelBuilder.HasSequence("product_images_seq");
         modelBuilder.HasSequence("products_id_seq");

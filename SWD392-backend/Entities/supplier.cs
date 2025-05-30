@@ -8,26 +8,33 @@ namespace SWD392_backend.Entities;
 
 public partial class supplier
 {
+    [Column("id")]
     [Key]
-    public int id { get; set; }
+    public int Id { get; set; }
 
-    public int user_id { get; set; }
+    [Column("user_id")]
+    public int UserId { get; set; }
 
+    [Column("name")]
     [StringLength(255)]
-    public string name { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
+    [Column("slug")]
     [StringLength(255)]
-    public string slug { get; set; } = null!;
+    public string Slug { get; set; } = null!;
 
-    [Column(TypeName = "timestamp without time zone")]
-    public DateTime registered_at { get; set; }
+    [Column("registered_at", TypeName = "timestamp with time zone")]
+    public DateTime RegisteredAt { get; set; }
 
-    public bool is_verified { get; set; }
+    [Column("is_verified")]
+    public bool IsVerified { get; set; }
 
-    public string description { get; set; } = null!;
+    [Column("description")]
+    public string Description { get; set; } = null!;
 
+    [Column("image_url")]
     [StringLength(255)]
-    public string image_url { get; set; } = null!;
+    public string ImageUrl { get; set; } = null!;
 
     [InverseProperty("supplier")]
     public virtual ICollection<order> orders { get; set; } = new List<order>();
@@ -35,7 +42,7 @@ public partial class supplier
     [InverseProperty("supplier")]
     public virtual ICollection<product> products { get; set; } = new List<product>();
 
-    [ForeignKey("user_id")]
+    [ForeignKey("UserId")]
     [InverseProperty("suppliers")]
     public virtual user user { get; set; } = null!;
 }

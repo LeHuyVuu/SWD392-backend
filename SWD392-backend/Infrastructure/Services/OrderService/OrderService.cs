@@ -21,13 +21,13 @@ public class OrderService : IOrderService
         {
             var newOrder = new order()
             {
-                id = Guid.NewGuid(),
-                user_id = orderDTO.UserId,
-                supplier_id = orderDTO.SupplierId,
-                address = orderDTO.Address,
-                shipping_price = orderDTO.ShippingPrice,
-                total = orderDTO.Total,
-                created_at = DateTime.UtcNow,
+                Id = Guid.NewGuid(),
+                UserId = orderDTO.UserId,
+                SupplierId = orderDTO.SupplierId,
+                Address = orderDTO.Address,
+                ShippingPrice = orderDTO.ShippingPrice,
+                Total = orderDTO.Total,
+                CreatedAt = DateTime.UtcNow,
             };
 
             await _unitOfWork.OrderRepository.AddAsync(newOrder);
@@ -36,12 +36,12 @@ public class OrderService : IOrderService
             {
                 var orderDetail = new orders_detail
                 {
-                    product_id = newOrder.id,
-                    id = detail.ProductId,
-                    quantity = detail.Quantity,
-                    price = detail.Price,
-                    discount_percent = detail.DiscountPercent,
-                    note = detail.Note,
+                    OrderId = newOrder.Id,
+                    Id = detail.ProductId,
+                    Quantity = detail.Quantity,
+                    Price = detail.Price,
+                    DiscountPercent = detail.DiscountPercent,
+                    Note = detail.Note,
                     
                 };
                 await _unitOfWork.OrdersDetailRepository.AddAsync(orderDetail);

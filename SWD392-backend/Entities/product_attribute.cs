@@ -9,19 +9,24 @@ namespace SWD392_backend.Entities;
 [Table("product_attribute")]
 public partial class product_attribute
 {
+    [Column("id")]
     [Key]
-    public int id { get; set; }
+    public int Id { get; set; }
 
+    [Column("name")]
     [StringLength(255)]
-    public string name { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
-    public int product_id { get; set; }
+    [Column("product_id")]
+    public int ProductId { get; set; }
 
-    public int quantity { get; set; }
+    [Column("quantity")]
+    public int Quantity { get; set; }
 
-    public double price { get; set; }
+    [Column("price")]
+    public double Price { get; set; }
 
-    [ForeignKey("product_id")]
+    [ForeignKey("ProductId")]
     [InverseProperty("product_attributes")]
     public virtual product product { get; set; } = null!;
 }
