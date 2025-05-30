@@ -9,4 +9,6 @@ public interface IOrderRepository
 {
     Task AddAsync(order entity);
     // Thêm các method cần thiết khác nếu muốn, ví dụ GetById, Update...
+    IQueryable<order> GetAll();
+
 }

@@ -20,6 +20,15 @@ public class OrderRepository : IOrderRepository
     {
         await _context.orders.AddAsync(entity);
     }
+    
+    
+    public IQueryable<order> GetAll()
+    {
+        return _context.orders
+            .Include(o => o.orders_details)
+            .AsQueryable(); // Quan trọng để chuỗi LINQ hoạt động
+    }
+
 
     // Các method khác nếu cần
 }
