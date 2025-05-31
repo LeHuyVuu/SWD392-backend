@@ -62,7 +62,7 @@ public class AuthController : ControllerBase
             return BadRequest(HTTPResponse<object>.Response(400, "Dữ liệu không hợp lệ", null));
         }
 
-        var (success, message) = await _authService.RegisterAsync(request.Username, request.Password, request.Email);
+        var (success, message) = await _authService.RegisterAsync(request.Phone, request.Password, request.Email, request.Fullname);
 
         if (!success)
         {
@@ -71,7 +71,7 @@ public class AuthController : ControllerBase
 
         return Ok(HTTPResponse<object>.Response(200, message, new
         {
-            Username = request.Username,
+            Username = request.Phone,
             Email = request.Email
         }));
     }
