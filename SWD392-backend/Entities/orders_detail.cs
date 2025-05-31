@@ -33,7 +33,7 @@ public partial class orders_detail
     public string Note { get; set; } = null!;
 
     [Column("status")]
-    public OrderDetailStatus Status { get; set; }
+    public OrderStatus Status { get; set; }
 
     [ForeignKey("OrderId")]
     [InverseProperty("orders_details")]

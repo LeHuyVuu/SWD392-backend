@@ -36,12 +36,15 @@ public partial class MyDbContext : DbContext
     public virtual DbSet<user> users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=pg-28ce6480-fpt-3666.l.aivencloud.com;Port=13324;Database=defaultdb;Username=avnadmin;Password=AVNS_htWRbMFMZ-CLrxBh7h6");
+    {
+
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasPostgresEnum("order_status", new[] { "pending", "preparing", "delivery", "delivered", "returned", "cancelled", "refunding", "refunded" });
+        //modelBuilder.HasPostgresEnum("order_status", new[] { "pending", "preparing", "delivery", "delivered", "returned", "cancelled", "refunding", "refunded" });
+
+        modelBuilder.HasPostgresEnum<OrderStatus>("order_status");
 
         modelBuilder.Entity<category>(entity =>
         {
@@ -65,18 +68,15 @@ public partial class MyDbContext : DbContext
 
         modelBuilder.Entity<orders_detail>(entity =>
         {
+
             entity.HasKey(e => e.Id).HasName("orders_detail_pkey");
 
             entity.HasOne(d => d.product).WithMany(p => p.orders_details)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_orders_detail_order");
 
-            entity.Property(o => o.Status)
-            .HasConversion(
-                    v => v.ToString().ToLower(),
-                    v => (OrderDetailStatus)Enum.Parse(typeof(OrderDetailStatus), v, true)
-            )
-            .HasColumnType("status");
+            entity.Property(e => e.Status)
+                .HasColumnType("order_status");
         });
 
         modelBuilder.Entity<product>(entity =>

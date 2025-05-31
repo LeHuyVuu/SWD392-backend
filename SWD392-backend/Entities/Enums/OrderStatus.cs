@@ -1,6 +1,6 @@
 ﻿namespace SWD392_backend.Entities.Enums
 {
-    public enum OrderDetailStatus
+    public enum OrderStatus
     {
         Pending,
         Preparing,
