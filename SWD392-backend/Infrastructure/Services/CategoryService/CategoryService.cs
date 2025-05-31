@@ -25,5 +25,10 @@ namespace SWD392_backend.Infrastructure.Services.CategoryService
 
             return categoryDtos;
         }
+
+        public async Task<string> GetCategorySlugByIdAsync(int id)
+        {
+            return await _categoryRepository.GetCategorySlugByIdAsync(id);
+        }
     }
 }

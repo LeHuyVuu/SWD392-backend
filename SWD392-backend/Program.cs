@@ -22,6 +22,8 @@ using System.Text.Json.Serialization;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Npgsql;
 using SWD392_backend.Entities.Enums;
+using SWD392_backend.Infrastructure.Services.S3Service;
+using SWD392_backend.Infrastructure.Services.UploadService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -111,7 +113,9 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
+builder.Services.AddScoped<IS3Service, S3Service>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 
 // Repository
@@ -122,7 +126,8 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrdersDetailRepository, OrdersDetailRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IProductImageService, ProductImageService>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+
 
 // UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
