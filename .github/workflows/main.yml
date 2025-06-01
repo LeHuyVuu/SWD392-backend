@@ -13,6 +13,16 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
+      - name: Clean old source code on VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          port: 22
+          script: |
+            rm -rf /var/www/SWD392-backend
+
       - name: Copy source code to VPS via SCP
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -41,7 +51,7 @@ jobs:
             docker rm swd392-api || true
 
             # Build lại Docker image
-            docker build -t swd392-api .
+            docker build --no-cache -t swd392-api .
 
             # Chạy container mới (host port 8080 -> container port 5000)
             docker run -d --name swd392-api -p 1801:5000 --env-file .env swd392-api
