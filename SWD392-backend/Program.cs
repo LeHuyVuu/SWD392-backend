@@ -112,6 +112,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+builder.Services.AddSingleton<PayPalClient>();
+builder.Services.AddScoped<PaymentService>();
 
 
 // Repository
