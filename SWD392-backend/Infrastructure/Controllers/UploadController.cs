@@ -22,11 +22,11 @@ namespace SWD392_backend.Infrastructure.Controllers
             _uploadService = uploadService;
         }
 
-        [HttpPost("upload-main-image")]
-        public async Task<ActionResult<UploadMainProductImgResponse>> GetPresignedUrl([FromBody] UploadMainProductImgRequest request)
+        [HttpPost("upload-images")]
+        public async Task<ActionResult<UploadProductImgResponse>> GetPresignedUrl([FromBody] UploadProductImgsRequest request)
         {
 
-            var upload = await _uploadService.UploadImage(request);
+            var upload = await _uploadService.UploadMultipleImage(request);
 
             if (upload == null)
                 return BadRequest(HTTPResponse<object>.Response(400, "Có lỗi xảy ra", null));

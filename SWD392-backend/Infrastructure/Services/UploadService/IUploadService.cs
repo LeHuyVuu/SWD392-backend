@@ -5,6 +5,6 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
 {
     public interface IUploadService
     {
-        Task<UploadMainProductImgResponse> UploadImage(UploadMainProductImgRequest request);
+        Task<UploadMultipleProductImgsResponse> UploadMultipleImage(UploadProductImgsRequest request);
     }
 }

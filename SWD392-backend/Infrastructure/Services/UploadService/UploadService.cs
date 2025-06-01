@@ -17,20 +17,42 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
             _categoryService = categoryService;
         }
 
-        public async Task<UploadMainProductImgResponse> UploadImage(UploadMainProductImgRequest request)
+        public async Task<UploadMultipleProductImgsResponse> UploadMultipleImage(UploadProductImgsRequest request)
         {
-            // Get category slug
             var categorySlug = await _categoryService.GetCategorySlugByIdAsync(request.CategoryId);
-
-            var key = $"{categorySlug}/{request.ProductSlug}-{Guid.NewGuid()}-{request.ProductId}_{request.SupplierId}_1";
-
-            var url = _s3Service.GeneratePreSignedURL(key, request.ContentType);
-
-            // Generate image link
+            var uploads = new List<UploadProductImgResponse>();
             var cdnDomain = Environment.GetEnvironmentVariable("CDN_DOMAIN");
-            var imageUrl = $"{cdnDomain}/{key}";
 
-            return new UploadMainProductImgResponse{ Url = url, Key = key, ImageUrl = imageUrl};
+            for (int i = 0; i < request.ContentTypes.Count; i++)
+            {
+                var contentType = request.ContentTypes[i].Trim();
+                var extension = contentType switch
+                {
+                    "image/jpeg" => "jpg",
+                    "image/png" => "png",
+                    "image/gif" => "gif",
+                    "image/webp" => "webp",
+                    "image/bmp" => "bmp",
+                    "image/svg+xml" => "svg",
+                    "image/avif" => "avif",
+                    _ => "img"
+                };
+                var key = $"{categorySlug}/{request.ProductSlug}-{Guid.NewGuid()}-{request.ProductId}_{request.SupplierId}_{i+1}.{extension}";
+                var url = _s3Service.GeneratePreSignedURL(key, contentType);
+
+                // Generate image link
+                var imageUrl = $"{cdnDomain}/{key}";
+
+                //Add to List
+                uploads.Add(new UploadProductImgResponse
+                {
+                    Url = url,
+                    Key = key,
+                    ImageUrl = imageUrl
+                });
+            }
+
+            return new UploadMultipleProductImgsResponse { Uploads = uploads };
         }
     }
 }
