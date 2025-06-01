@@ -105,5 +105,21 @@ namespace SWD392_backend.Infrastructure.Controllers
             else
                 return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
         }
+
+        /// <summary>
+        /// Ẩn/hiện product.
+        /// </summary>
+        /// <param name="id">ID của sản phẩm cần cập nhật.</param>
+        /// <response code="200">Trả về nếu cập nhật thành công</response>
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> StatusProduct(int id, [FromBody] UpdateStatusProductRequest request)
+        {
+            var response = await _productService.UpdateProductStatusAsync(id, request);
+
+            if (!response)
+                return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật sản phẩm thất bại", null));
+            else
+                return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
+        }
     }
 }

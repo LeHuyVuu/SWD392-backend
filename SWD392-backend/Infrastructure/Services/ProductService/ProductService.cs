@@ -108,5 +108,19 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
 
             return response;
         }
+
+        public async Task<bool> UpdateProductStatusAsync(int id, UpdateStatusProductRequest request)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+
+            if (product == null)
+                return false;
+
+            product.IsActive = request.IsActive;
+
+            // Save
+            await _unitOfWork.SaveAsync();
+            return true;
+        }
     }
 }

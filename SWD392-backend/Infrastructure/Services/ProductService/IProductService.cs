@@ -14,5 +14,6 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
         Task<ProductDetailResponse> GetBySlugAsync(string slug);
         Task<ProductResponse> AddProductAsync(AddProductRequest product);
         Task<ProductResponse> UpdateProductAsync(int id, UpdateProductRequest request);
+        Task<bool> UpdateProductStatusAsync(int id, UpdateStatusProductRequest request);
     }
 }
