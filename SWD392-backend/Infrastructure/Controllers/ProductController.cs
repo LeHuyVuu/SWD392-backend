@@ -49,7 +49,7 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// <param name="id">ID của product</param>
         /// <response code="200">Trả về product thành công</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductResponse>> GetById(int id)
+        public async Task<ActionResult<ProductDetailResponse>> GetById(int id)
         {
             var products = await _productService.GetByIdAsync(id);
             if (products == null)
@@ -81,14 +81,14 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// <param name="request">Dữ liệu cập nhật cho sản phẩm.</param>
         /// <response code="200">Trả về nếu cập nhật thành công</response>
         [HttpPost("update/{id}")]
-        public async Task<IActionResult> UpdateProduct(int id,[FromBody] UpdateProductRequest request)
+        public async Task<ActionResult<ProductResponse>> UpdateProduct(int id,[FromBody] UpdateProductRequest request)
         {
-            bool checkUpdate = await _productService.UpdateProductAsync(id, request);
+            var response = await _productService.UpdateProductAsync(id, request);
 
-            if (!checkUpdate)
+            if (response == null)
                 return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật sản phẩm thất bại", null));
             else
-                return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", null));
+                return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
         }
     }
 }

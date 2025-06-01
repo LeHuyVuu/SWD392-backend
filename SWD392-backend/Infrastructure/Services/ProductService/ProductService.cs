@@ -23,14 +23,14 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ProductResponse> GetByIdAsync(int id)
+        public async Task<ProductDetailResponse> GetByIdAsync(int id)
         {
             var products = await _productRepository.GetByIdAsync(id);
             DateTime dt = products.CreatedAt;
             Console.WriteLine(dt.Kind);
 
             // Model mapper
-            var productDtos = _mapper.Map<ProductResponse>(products);
+            var productDtos = _mapper.Map<ProductDetailResponse>(products);
 
             return productDtos;
         }
@@ -63,7 +63,7 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             product.AvailableQuantity = product.StockInQuantity - product.SoldQuantity;
             product.IsActive = true;
             product.Slug = SlugHelper.Slugify(product.Name);
-            product.SupplierId = 5;
+            product.SupplierId = request.SupplierId;
 
             // Insert
             await _productRepository.AddAsync(product);
@@ -75,12 +75,12 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             return response;
         }
 
-        public async Task<bool> UpdateProductAsync(int id, UpdateProductRequest request)
+        public async Task<ProductResponse> UpdateProductAsync(int id, UpdateProductRequest request)
         {
             var product = await _productRepository.GetByIdAsync(id);
 
             if (product == null)
-                return false;
+                return null;
 
             // Map into exist product
             _mapper.Map(request, product);
@@ -89,7 +89,6 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             product.AvailableQuantity = product.StockInQuantity - product.SoldQuantity;
             product.IsActive = true;
             product.Slug = SlugHelper.Slugify(product.Name);
-            product.SupplierId = 5;
 
             // Update
             _unitOfWork.ProductRepository.Update(product);
@@ -97,7 +96,9 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             // Save
             await _unitOfWork.SaveAsync();
 
-            return true;
+            var response = _mapper.Map<ProductResponse>(product);
+
+            return response;
         }
     }
 }
