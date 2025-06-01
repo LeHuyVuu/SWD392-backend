@@ -22,6 +22,8 @@ using System.Text.Json.Serialization;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Npgsql;
 using SWD392_backend.Entities.Enums;
+using SWD392_backend.Infrastructure.Services.S3Service;
+using SWD392_backend.Infrastructure.Services.UploadService;
 
 var builder = WebApplication.CreateBuilder(args);
 

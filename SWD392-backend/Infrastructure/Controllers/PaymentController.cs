@@ -26,7 +26,7 @@ public class PaymentController : ControllerBase
     
     
     [HttpPost("checkout")]
-    public async Task<IActionResult> Checkout([FromBody] OrderCheckoutDTO orderDTO)
+    public async Task<IActionResult> Checkout([FromBody] OrderCheckoutDTO orderCheckoutDto)
     {
         // Lấy userId từ claim, nếu không có trả về 401 Unauthorized
         var userIdClaim = User.FindFirst("UserId")?.Value;
@@ -41,7 +41,7 @@ public class PaymentController : ControllerBase
 
         try
         {
-            var result = await _orderService.CheckoutAsync(orderDTO, userId);
+            var result = await _orderService.CheckoutAsync(orderCheckoutDto, userId);
             if (result)
                 return Ok(new { message = "Order created successfully" });
             else
