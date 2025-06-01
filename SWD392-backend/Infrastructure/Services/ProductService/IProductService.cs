@@ -10,8 +10,10 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
     public interface IProductService
     {
         Task<PagedResult<ProductResponse>> GetPagedProductAsync(int page, int pageSize);
-        Task<ProductResponse> GetByIdAsync(int id);
+        Task<ProductDetailResponse> GetByIdAsync(int id);
+        Task<ProductDetailResponse> GetBySlugAsync(string slug);
         Task<ProductResponse> AddProductAsync(AddProductRequest product);
-        Task<bool> UpdateProductAsync(int id, UpdateProductRequest request);
+        Task<ProductResponse> UpdateProductAsync(int id, UpdateProductRequest request);
+        Task<bool> UpdateProductStatusAsync(int id, UpdateStatusProductRequest request);
     }
 }

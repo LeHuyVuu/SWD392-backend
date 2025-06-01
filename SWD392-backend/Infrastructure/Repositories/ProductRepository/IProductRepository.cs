@@ -8,6 +8,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
     {
         Task<PagedResult<product>> GetPagedProductsAsync(int page, int pageSize);
         Task<product> GetByIdAsync(int id);
+        Task<product> GetBySlugAsync(string slug);
         Task AddAsync(product product);
         void Update(product product);
     }

@@ -17,7 +17,15 @@ namespace SWD392_backend.Infrastructure.Repositories.CategoryRepository
 
         public async Task<List<category>> GetCategoriesAsync()
         {
-           return await _context.categories.ToListAsync();
+            return await _context.categories.ToListAsync();
+        }
+
+        public async Task<string> GetCategorySlugByIdAsync(int id)
+        {
+            return await _context.categories
+                        .Where(c => c.Id == id)
+                        .Select(c => c.Slug)
+                        .FirstOrDefaultAsync();
         }
     }
 }

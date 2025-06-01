@@ -6,5 +6,6 @@ namespace SWD392_backend.Infrastructure.Services.CategoryService
     public interface ICategoryService
     {
         Task<List<CategoryResponse>> GetCategoriesAsync();
+        Task<string> GetCategorySlugByIdAsync(int id);
     }
 }

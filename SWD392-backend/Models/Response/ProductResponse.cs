@@ -11,5 +11,7 @@
         public bool IsSale { get; set; }
         public int StockInQuantity { get; set; }
         public string ImageUrl { get; set; }
+        public int CategoriesId { get; set; }
+        public int SupplierId { get; set; }
     }
 }

@@ -48,10 +48,25 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// </summary>
         /// <param name="id">ID của product</param>
         /// <response code="200">Trả về product thành công</response>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProductResponse>> GetById(int id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ProductDetailResponse>> GetById(int id)
         {
             var products = await _productService.GetByIdAsync(id);
+            if (products == null)
+                return BadRequest(HTTPResponse<object>.Response(400, "Không có sản phầm trùng khớp", null));
+            else
+                return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
+        }
+
+        /// <summary>
+        /// Lấy product dựa theo Slug.
+        /// </summary>
+        /// <param name="slug">Slug của product</param>
+        /// <response code="200">Trả về product thành công</response>
+        [HttpGet("{slug}")]
+        public async Task<ActionResult<ProductDetailResponse>> GetBySlug(string slug)
+        {
+            var products = await _productService.GetBySlugAsync(slug);
             if (products == null)
                 return BadRequest(HTTPResponse<object>.Response(400, "Không có sản phầm trùng khớp", null));
             else
@@ -81,14 +96,30 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// <param name="request">Dữ liệu cập nhật cho sản phẩm.</param>
         /// <response code="200">Trả về nếu cập nhật thành công</response>
         [HttpPost("update/{id}")]
-        public async Task<IActionResult> UpdateProduct(int id,[FromBody] UpdateProductRequest request)
+        public async Task<ActionResult<ProductResponse>> UpdateProduct(int id,[FromBody] UpdateProductRequest request)
         {
-            bool checkUpdate = await _productService.UpdateProductAsync(id, request);
+            var response = await _productService.UpdateProductAsync(id, request);
 
-            if (!checkUpdate)
+            if (response == null)
                 return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật sản phẩm thất bại", null));
             else
-                return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", null));
+                return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
+        }
+
+        /// <summary>
+        /// Ẩn/hiện product.
+        /// </summary>
+        /// <param name="id">ID của sản phẩm cần cập nhật.</param>
+        /// <response code="200">Trả về nếu cập nhật thành công</response>
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> StatusProduct(int id, [FromBody] UpdateStatusProductRequest request)
+        {
+            var response = await _productService.UpdateProductStatusAsync(id, request);
+
+            if (!response)
+                return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật sản phẩm thất bại", null));
+            else
+                return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
         }
     }
 }

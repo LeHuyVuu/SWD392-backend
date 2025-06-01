@@ -17,7 +17,7 @@
         public bool IsActive { get; set; }
         public bool IsSale { get; set; }
         public string Slug { get; set; } = null!;
-        public string ImageUrl { get; set; }
+        public List<ProductImageResponse> Images { get; set; }
         public CategoryResponse categories { get; set; }
         public SupplierrResponse supplier { get; set; }
     }

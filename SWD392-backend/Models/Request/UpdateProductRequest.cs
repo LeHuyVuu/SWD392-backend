@@ -12,5 +12,4 @@ public class UpdateProductRequest
     public bool IsSale { get; set; }
     public string Sku { get; set; }
     public int CategoriesId { get; set; }
-    public List<ProductImageRequest> Images { get; set; }
 }
