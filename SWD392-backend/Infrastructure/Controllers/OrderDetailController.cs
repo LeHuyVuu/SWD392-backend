@@ -16,11 +16,5 @@ namespace SWD392_backend.Infrastructure.Controllers
             _context = context;
         }
 
-        [HttpGet("test-status")]
-        public async Task<ActionResult<IEnumerable<object>>> TestStatus()
-        {
-            var result = await _context.orders_details.ToListAsync();
-            return Ok(result);
-        }
     }
 }

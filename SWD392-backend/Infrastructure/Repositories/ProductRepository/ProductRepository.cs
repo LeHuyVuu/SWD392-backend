@@ -29,6 +29,15 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
                                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<product?> GetBySlugAsync(string slug)
+        {
+            return await _context.products
+                                .Include(p => p.categories)
+                                .Include(p => p.supplier)
+                                .Include(p => p.product_images)
+                                .FirstOrDefaultAsync(p => p.Slug.ToLower() == slug.ToLower());
+        }
+
         public async Task<PagedResult<product>> GetPagedProductsAsync(int page, int pageSize)
         {
             page = page < 1 ? 1 : page;

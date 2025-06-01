@@ -48,10 +48,25 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// </summary>
         /// <param name="id">ID của product</param>
         /// <response code="200">Trả về product thành công</response>
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<ProductDetailResponse>> GetById(int id)
         {
             var products = await _productService.GetByIdAsync(id);
+            if (products == null)
+                return BadRequest(HTTPResponse<object>.Response(400, "Không có sản phầm trùng khớp", null));
+            else
+                return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
+        }
+
+        /// <summary>
+        /// Lấy product dựa theo Slug.
+        /// </summary>
+        /// <param name="slug">Slug của product</param>
+        /// <response code="200">Trả về product thành công</response>
+        [HttpGet("{slug}")]
+        public async Task<ActionResult<ProductDetailResponse>> GetBySlug(string slug)
+        {
+            var products = await _productService.GetBySlugAsync(slug);
             if (products == null)
                 return BadRequest(HTTPResponse<object>.Response(400, "Không có sản phầm trùng khớp", null));
             else

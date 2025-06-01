@@ -11,6 +11,7 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
     {
         Task<PagedResult<ProductResponse>> GetPagedProductAsync(int page, int pageSize);
         Task<ProductDetailResponse> GetByIdAsync(int id);
+        Task<ProductDetailResponse> GetBySlugAsync(string slug);
         Task<ProductResponse> AddProductAsync(AddProductRequest product);
         Task<ProductResponse> UpdateProductAsync(int id, UpdateProductRequest request);
     }

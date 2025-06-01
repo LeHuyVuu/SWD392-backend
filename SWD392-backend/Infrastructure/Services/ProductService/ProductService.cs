@@ -25,14 +25,22 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
 
         public async Task<ProductDetailResponse> GetByIdAsync(int id)
         {
-            var products = await _productRepository.GetByIdAsync(id);
-            DateTime dt = products.CreatedAt;
-            Console.WriteLine(dt.Kind);
+            var product = await _productRepository.GetByIdAsync(id);
 
             // Model mapper
-            var productDtos = _mapper.Map<ProductDetailResponse>(products);
+            var response = _mapper.Map<ProductDetailResponse>(product);
 
-            return productDtos;
+            return response;
+        }
+
+        public async Task<ProductDetailResponse> GetBySlugAsync(string slug)
+        {
+            var product = await _productRepository.GetBySlugAsync(slug);
+
+            // Model mapper
+            var response = _mapper.Map<ProductDetailResponse>(product);
+
+            return response;
         }
 
         public async Task<PagedResult<ProductResponse>> GetPagedProductAsync(int page, int pageSize)
