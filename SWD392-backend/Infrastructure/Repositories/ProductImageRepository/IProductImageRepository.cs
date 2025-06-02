@@ -5,6 +5,8 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductImageRepository
     public interface IProductImageRepository
     {
         Task AddImages(List<product_image> images);
+        Task AddImage(product_image image);
         Task<List<product_image>> FindAllMainImage(int productId);
+        Task<product_image> GetProductImageByProductIdAsync(int productId);
     }
 }

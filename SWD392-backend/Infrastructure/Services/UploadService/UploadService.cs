@@ -1,5 +1,8 @@
 ﻿using System.Threading.Tasks;
+using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Services.CategoryService;
+using SWD392_backend.Infrastructure.Services.ProductImageService;
+using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Infrastructure.Services.S3Service;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
@@ -10,11 +13,43 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
     {
         private readonly IS3Service _s3Service;
         private readonly ICategoryService _categoryService;
+        private readonly IProductService _productService;
+        private readonly IProductImageService _productImageService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UploadService(IS3Service s3Service, ICategoryService categoryService)
+        public UploadService(IUnitOfWork unitOfWork, IS3Service s3Service, ICategoryService categoryService, IProductService productService, IProductImageService productImageService)
         {
+            _unitOfWork = unitOfWork;
             _s3Service = s3Service;
             _categoryService = categoryService;
+            _productService = productService;
+            _productImageService = productImageService;
+        }
+
+        public async Task<bool> ConfirmUploadImage(int id, List<string> imageUrl)
+        {
+            var product = await _productService.GetByIdAsync(id);
+
+            if (product == null)
+                return false;
+
+            int index = 0;
+            foreach (var url in imageUrl)
+            {
+                var image = new product_image
+                {
+                    ProductImageUrl = url,
+                    ProductsId = id,
+                    IsMain = (index == 0)
+                };
+
+                await _productImageService.AddProductImageFromUploadAsync(image);
+                index++;
+            }
+
+            await _unitOfWork.SaveAsync();
+
+            return true;
         }
 
         public async Task<UploadMultipleProductImgsResponse> UploadMultipleImage(UploadProductImgsRequest request)

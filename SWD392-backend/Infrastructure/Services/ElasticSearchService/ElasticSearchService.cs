@@ -19,17 +19,29 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
             _client = new ElasticsearchClient(settings);
         }
 
-        public async Task<ProductResponse> SearchAsync(string query)
+        public async Task<List<ProductResponse>> SearchAsync(string query)
         {
             var response = await _client.SearchAsync<ProductResponse>(s => s
                     .Indices("products")
                     .Query(q => q
                         .MultiMatch(m => m
                             .Query(query)
-                            .Fields(new Field("name",))
+                            .Fields(Fields.FromStrings(new[]
+                            {
+                                "name.vi",
+                                "name.autocomplete",
+                                "description",
+                                "description.vi",
+                                "slug"
+                            }))
                             )
                         )
                     );
+            if (!response.IsValidResponse)
+                return null;
+
+            return response.Hits.Select(h => h.Source).ToList();
+
         }
     }
 }

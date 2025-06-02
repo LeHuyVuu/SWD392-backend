@@ -4,6 +4,6 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
 {
     public interface IElasticSearchService
     {
-        Task<ProductResponse> SearchAsync(string query);
+        Task<List<ProductResponse>> SearchAsync(string query);
     }
 }

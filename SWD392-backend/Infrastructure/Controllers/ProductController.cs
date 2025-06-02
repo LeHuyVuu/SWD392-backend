@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Win32.SafeHandles;
+using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
@@ -20,10 +21,12 @@ namespace SWD392_backend.Infrastructure.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IElasticSearchService _elasticsearchService;
 
-        public ProductController(IProductService productService, IMapper mapper)
+        public ProductController(IProductService productService, IElasticSearchService elasticSearchService)
         {
             _productService = productService;
+            _elasticsearchService = elasticSearchService;
         }
 
         /// <summary>
@@ -120,6 +123,17 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật sản phẩm thất bại", null));
             else
                 return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<List<ProductResponse>>> SearchProduct(string query)
+        {
+            var response = await _elasticsearchService.SearchAsync(query);
+
+            if(response == null)
+                return NotFound();
+            else 
+                return Ok(response);
         }
     }
 }
