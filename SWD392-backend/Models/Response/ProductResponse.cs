@@ -1,4 +1,6 @@
-﻿namespace SWD392_backend.Models.Response
+﻿using System.Text.Json.Serialization;
+
+namespace SWD392_backend.Models.Response
 {
     public class ProductResponse
     {
