@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Elastic.Clients.Elasticsearch.Requests;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ProductImageRepository;
 using SWD392_backend.Models.Request;
@@ -42,6 +43,22 @@ namespace SWD392_backend.Infrastructure.Services.ProductImageService
             var response = _mapper.Map<List<ProductImageResponse>>(images);
 
             return response;
+        }
+
+        public async Task<product_image> AddProductImageFromUploadAsync(product_image productImage)
+        {
+
+            await _productImageRepository.AddImage(productImage);
+            await _unitOfWork.SaveAsync();
+
+            return productImage;
+        }
+
+        public async Task<product_image> GetProductImageByProductIdAsync(int productId)
+        {
+            var productImage = await _productImageRepository.GetProductImageByProductIdAsync(productId);
+
+            return productImage;
         }
     }
 }

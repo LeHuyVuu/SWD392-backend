@@ -33,5 +33,16 @@ namespace SWD392_backend.Infrastructure.Controllers
 
             return Ok(HTTPResponse<object>.Response(200, "Successfully", upload));
         }
+
+        [HttpPost("{id:int}/confirm-upload")]
+        public async Task<IActionResult> ConfirmUploadImage(int id, [FromBody] List<string> imageUrl)
+        {
+            var confirm = await _uploadService.ConfirmUploadImage(id, imageUrl);
+
+            if (!confirm)
+                return BadRequest(HTTPResponse<object>.Response(400, "Upload ảnh thất bại", confirm));
+            else 
+                return Ok(HTTPResponse<object>.Response(200,"Upload ảnh thành công", confirm));
+        }
     }
 }
