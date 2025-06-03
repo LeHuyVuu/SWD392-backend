@@ -114,9 +114,12 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
             await _client.IndexAsync(doc, x => x.Index("products").Id(id));
         }
 
-        public Task UpdateProductAsync(product product)
+        public async Task UpdateProductAsync(product product)
         {
-            throw new NotImplementedException();
+            var doc = _mapper.Map<ProductElasticDoc>(product);
+            var id = product.Id.ToString();
+
+            await _client.UpdateAsync<ProductElasticDoc, ProductElasticDoc>("products", id, u => u.Doc(doc));
         }
 
         public Task UpdateStatusProductAsync(product product)

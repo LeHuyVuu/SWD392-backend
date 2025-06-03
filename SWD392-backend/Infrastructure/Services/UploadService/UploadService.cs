@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Services.CategoryService;
+using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 using SWD392_backend.Infrastructure.Services.ProductImageService;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Infrastructure.Services.S3Service;
@@ -16,19 +17,21 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
         private readonly IProductService _productService;
         private readonly IProductImageService _productImageService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IElasticSearchService _elasticSearchService;
 
-        public UploadService(IUnitOfWork unitOfWork, IS3Service s3Service, ICategoryService categoryService, IProductService productService, IProductImageService productImageService)
+        public UploadService(IUnitOfWork unitOfWork, IS3Service s3Service, ICategoryService categoryService, IProductService productService, IProductImageService productImageService, IElasticSearchService elasticSearchService)
         {
             _unitOfWork = unitOfWork;
             _s3Service = s3Service;
             _categoryService = categoryService;
             _productService = productService;
             _productImageService = productImageService;
+            _elasticSearchService = elasticSearchService;
         }
 
         public async Task<bool> ConfirmUploadImage(int id, List<string> imageUrl)
         {
-            var product = await _productService.GetByIdAsync(id);
+            var product = await _productService.GetByIdEntityAsync(id);
 
             if (product == null)
                 return false;
@@ -47,7 +50,11 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
                 index++;
             }
 
+            // Save
             await _unitOfWork.SaveAsync();
+
+            // Update to els
+            await _elasticSearchService.UpdateProductAsync(product);
 
             return true;
         }

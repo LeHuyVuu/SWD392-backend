@@ -36,6 +36,13 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             return response;
         }
 
+
+        public async Task<product> GetByIdEntityAsync(int id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            return product;
+        }
+
         public async Task<ProductDetailResponse> GetBySlugAsync(string slug)
         {
             var product = await _productRepository.GetBySlugAsync(slug);
