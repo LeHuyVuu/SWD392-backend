@@ -4,6 +4,8 @@ using cybersoft_final_project.Models.Request;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using SWD392_backend.Infrastructure.Services.ElasticSearchService;
+using SWD392_backend.Infrastructure.Services.ProductImageService;
+using SWD392_backend.Infrastructure.Services.S3Service;
 using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
@@ -17,13 +19,17 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IElasticSearchService _elasticSearchService;
+        private readonly IS3Service _s3Service;
+        private readonly IProductImageService _productImageService;
 
-        public ProductService(IProductRepository productRepository, IMapper mapper, IUnitOfWork unitOfWork, IElasticSearchService elasticSearchService)
+        public ProductService(IProductRepository productRepository, IMapper mapper, IUnitOfWork unitOfWork, IElasticSearchService elasticSearchService, IS3Service s3Service, IProductImageService productImageService)
         {
             _productRepository = productRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _elasticSearchService = elasticSearchService;
+            _s3Service = s3Service;
+            _productImageService = productImageService;
         }
 
         public async Task<ProductDetailResponse> GetByIdAsync(int id)
@@ -140,6 +146,33 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             // Update into Elastic Search
             await _elasticSearchService.UpdateProductAsync(product);
 
+            return true;
+        }
+
+        public async Task<bool> RemoveProductStatusAsync(int id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null)
+                return false;
+
+            var listUrls = await _productImageService.GetAllImages(id);
+
+            // Remove image
+            await _productRepository.RemoveImagesByProductIdAsync(id);
+
+            // Remove image from s3
+            if (listUrls.Count > 0)
+                await _s3Service.DeleteFileAsync(listUrls);
+
+            // Remove product
+            await _productRepository.RemoveAsync(product);
+
+            // Save to DB
+            await _unitOfWork.SaveAsync();
+
+            // Remove from els
+            await _elasticSearchService.RemoveProductAsync(id);
+    
             return true;
         }
     }

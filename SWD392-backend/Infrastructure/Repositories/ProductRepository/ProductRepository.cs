@@ -20,6 +20,19 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             await _context.products.AddAsync(product);
         }
 
+        public async Task RemoveAsync(product product)
+        {
+            _context.products.Remove(product);
+            await Task.CompletedTask;        
+        }
+
+        public Task RemoveImagesByProductIdAsync(int productId)
+        {
+            var images = _context.product_images.Where(p => p.ProductsId == productId);
+            _context.product_images.RemoveRange(images);
+            return Task.CompletedTask;
+        }
+
         public async Task<product?> GetByIdAsync(int id)
         {
             return await _context.products

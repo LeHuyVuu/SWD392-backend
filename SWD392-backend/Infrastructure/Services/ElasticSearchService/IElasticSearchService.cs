@@ -17,5 +17,6 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
 
         Task IndexProductAsync(product product);
         Task UpdateProductAsync(product product);
+        Task RemoveProductAsync(int id);
     }
 }

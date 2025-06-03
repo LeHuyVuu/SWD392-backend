@@ -11,5 +11,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
         Task<product> GetBySlugAsync(string slug);
         Task AddAsync(product product);
         void Update(product product);
+        Task RemoveAsync(product product);
+        Task RemoveImagesByProductIdAsync(int productId);
     }
 }

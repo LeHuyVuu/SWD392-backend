@@ -125,6 +125,17 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
         }
 
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var response = await _productService.RemoveProductStatusAsync(id);
+
+            if (!response)
+                return BadRequest(HTTPResponse<object>.Response(400, "Xóa sản phẩm thất bại", response));
+            else
+                return Ok(HTTPResponse<object>.Response(200, "Xóa sản phẩm thành công", response));
+        }
+
         [HttpGet("search")]
         public async Task<ActionResult<List<ProductResponse>>> SearchProduct(
             [FromQuery] string q = "",

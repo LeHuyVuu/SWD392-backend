@@ -8,5 +8,6 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductImageRepository
         Task AddImage(product_image image);
         Task<List<product_image>> FindAllMainImage(int productId);
         Task<product_image> GetProductImageByProductIdAsync(int productId);
+        Task<List<string>> GetAllImagesAsync(int productId);
     }
 }

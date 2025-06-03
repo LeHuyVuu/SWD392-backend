@@ -3,5 +3,6 @@
     public interface IS3Service
     {
         string GeneratePreSignedURL(string key, string contentType, int expireMintues = 15);
+        Task DeleteFileAsync(List<string> urls);
     }
 }

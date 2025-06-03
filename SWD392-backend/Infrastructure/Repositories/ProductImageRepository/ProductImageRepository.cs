@@ -31,6 +31,14 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductImageRepository
                         .ToListAsync();
         }
 
+        public async Task<List<string>> GetAllImagesAsync(int productId)
+        {
+            return await _context.product_images
+                        .Where(p => p.ProductsId == productId)
+                        .Select(p => p.ProductImageUrl)
+                        .ToListAsync();
+        }
+
         public async Task<product_image?> GetProductImageByProductIdAsync(int productId)
         {
             return await _context.product_images
