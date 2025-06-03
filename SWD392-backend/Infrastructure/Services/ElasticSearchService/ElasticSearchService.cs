@@ -70,6 +70,7 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
                             "description.vi"
                         },
                         Operator = Operator.And,
+                        Fuzziness = new Fuzziness("AUTO"),
                         MinimumShouldMatch = "75%"
                     },
                     new MatchPhrasePrefixQuery("name.autocomplete")
