@@ -126,9 +126,16 @@ namespace SWD392_backend.Infrastructure.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<List<ProductResponse>>> SearchProduct(string query)
+        public async Task<ActionResult<List<ProductResponse>>> SearchProduct(
+            [FromQuery] string q = "",
+            [FromQuery]  int? categoryId = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int size = 10,
+            [FromQuery] string sortBy = "createdAt",
+            [FromQuery] string sortOrder = "desc"
+        )
         {
-            var response = await _elasticsearchService.SearchAsync(query);
+            var response = await _elasticsearchService.SearchAsync(q, categoryId, page, size);
 
             if(response == null)
                 return NotFound();
