@@ -1,4 +1,5 @@
-﻿using SWD392_backend.Models;
+﻿using SWD392_backend.Entities;
+using SWD392_backend.Models;
 using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
@@ -13,5 +14,9 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
             string sortBy = "createdAt",
             string sortOrder = "desc"
         );
+
+        Task IndexProductAsync(product product);
+        Task UpdateProductAsync(product product);
+        Task UpdateStatusProductAsync(product product);
     }
 }

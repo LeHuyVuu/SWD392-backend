@@ -1,8 +1,11 @@
 ﻿using System.Linq;
+using AutoMapper;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.Core.TermVectors;
 using Elastic.Clients.Elasticsearch.QueryDsl;
+using SWD392_backend.Entities;
 using SWD392_backend.Models;
+using SWD392_backend.Models.ElasticDocs;
 using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
@@ -10,7 +13,8 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
     public class ElasticSearchService : IElasticSearchService
     {
         private readonly ElasticsearchClient _client;
-        public ElasticSearchService()
+        private readonly IMapper _mapper;
+        public ElasticSearchService(IMapper mapper)
         {
             var uri = Environment.GetEnvironmentVariable("ELS_URI");
 
@@ -21,6 +25,7 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
 
             // Create client
             _client = new ElasticsearchClient(settings);
+            _mapper = mapper;
         }
 
         public async Task<PagedResult<ProductResponse>> SearchAsync(
@@ -99,6 +104,24 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
                 PageSize = size,               
             };
 
+        }
+
+        public async Task IndexProductAsync(product product)
+        {
+            var doc = _mapper.Map<ProductElasticDoc>(product);
+            var id = product.Id.ToString();
+
+            await _client.IndexAsync(doc, x => x.Index("products").Id(id));
+        }
+
+        public Task UpdateProductAsync(product product)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateStatusProductAsync(product product)
+        {
+            throw new NotImplementedException();
         }
     }
 }

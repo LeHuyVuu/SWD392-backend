@@ -3,6 +3,7 @@ using AutoMapper;
 using cybersoft_final_project.Models.Request;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
+using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
@@ -15,12 +16,14 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IElasticSearchService _elasticSearchService;
 
-        public ProductService(IProductRepository productRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public ProductService(IProductRepository productRepository, IMapper mapper, IUnitOfWork unitOfWork, IElasticSearchService elasticSearchService)
         {
             _productRepository = productRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _elasticSearchService = elasticSearchService;
         }
 
         public async Task<ProductDetailResponse> GetByIdAsync(int id)
@@ -79,6 +82,9 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             // Save
             await _unitOfWork.SaveAsync();
 
+            // Index into Elastic Search
+            await _elasticSearchService.IndexProductAsync(product);
+
             var response = _mapper.Map<ProductResponse>(product);
             return response;
         }
@@ -104,6 +110,9 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             // Save
             await _unitOfWork.SaveAsync();
 
+            // Update into Elastic Search
+            await _elasticSearchService.UpdateProductAsync(product);
+
             var response = _mapper.Map<ProductResponse>(product);
 
             return response;
@@ -120,6 +129,9 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
 
             // Save
             await _unitOfWork.SaveAsync();
+
+            // Update into Elastic Search
+            await _elasticSearchService.UpdateStatusProductAsync(product);
             return true;
         }
     }

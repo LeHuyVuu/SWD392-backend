@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using cybersoft_final_project.Models.Request;
 using SWD392_backend.Entities;
+using SWD392_backend.Models.ElasticDocs;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
 
@@ -17,6 +18,7 @@ namespace SWD392_backend.Infrastructure.Mappings
             CreateMap<product, ProductDetailResponse>()
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.product_images));
             CreateMap<AddProductRequest, product>();
+            CreateMap<product, ProductElasticDoc>();
             CreateMap<category, CategoryResponse>();
             CreateMap<supplier, SupplierrResponse>();
             CreateMap<ProductImageRequest, product_image>();
