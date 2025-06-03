@@ -138,7 +138,8 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             await _unitOfWork.SaveAsync();
 
             // Update into Elastic Search
-            await _elasticSearchService.UpdateStatusProductAsync(product);
+            await _elasticSearchService.UpdateProductAsync(product);
+
             return true;
         }
     }
