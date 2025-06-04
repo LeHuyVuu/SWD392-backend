@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Elastic.Clients.Elasticsearch.Security;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ReviewRepository;
 using SWD392_backend.Infrastructure.Services.UserService;
@@ -21,6 +22,21 @@ namespace SWD392_backend.Infrastructure.Services.ReviewService
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _userService = userService;
+        }
+
+        public async Task<PagedResult<ReviewResponse>> GetReviewsByProductIdAsync(int productId, int page = 1, int pageSize = 10)
+        {
+            var pagedResult = await _reviewRepository.GetReviewsByProductIdAsync(productId, page, pageSize);
+
+            var response = _mapper.Map<List<ReviewResponse>>(pagedResult.Items);
+
+            return new PagedResult<ReviewResponse>
+            {
+                Items = response,
+                TotalItems = pagedResult.TotalItems,
+                Page = pagedResult.Page,
+                PageSize = pagedResult.PageSize
+            };
         }
 
         public async Task<ReviewResponse> AddReviewAsync(int userId, int productId, ReviewRequest request)
@@ -49,19 +65,25 @@ namespace SWD392_backend.Infrastructure.Services.ReviewService
             return response;
         }
 
-        public async Task<PagedResult<ReviewResponse>> GetReviewsByProductIdAsync(int productId, int page = 1, int pageSize = 10)
+        public async Task<ReviewResponse?> UpdateReviewAsync(int userId, int productId, ReviewRequest request)
         {
-            var pagedResult = await _reviewRepository.GetReviewsByProductIdAsync(productId, page, pageSize);
+            var review = await _reviewRepository.FindExistReviewAsync(userId, productId);
+            review.Content = request.Content;
+            review.Rating = request.Rating;
+            review.CreatedAt = DateTime.UtcNow;
 
-            var response = _mapper.Map<List<ReviewResponse>>(pagedResult.Items);
+            // update
+            _reviewRepository.UpdateReviewAsync(review);
 
-            return new PagedResult<ReviewResponse>
-            {
-                Items = response,
-                TotalItems = pagedResult.TotalItems,
-                Page = pagedResult.Page,
-                PageSize = pagedResult.PageSize
-            };
+            // Save to DB
+            await _unitOfWork.SaveAsync();
+
+            // Load user
+            await _reviewRepository.LoadUserAsync(review);
+
+            var response = _mapper.Map<ReviewResponse>(review);
+
+            return response;
         }
     }
 }

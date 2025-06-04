@@ -62,5 +62,37 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
             }
         }
+
+        [HttpPut("update")]
+        public async Task<ActionResult<ReviewResponse>> UpdateReview([FromQuery] int productId, [FromBody] ReviewRequest request)
+        {
+            try
+            {
+                var role = User.FindFirst("Role")?.Value;
+
+                if (string.IsNullOrEmpty(role))
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Role claim not found.", null));
+
+                string? idClaimType = role == "CUSTOMER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
+
+                if (idClaimType == null)
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Unsupported role.", null));
+
+                var idClaim = User.FindFirst(idClaimType)?.Value;
+
+                if (string.IsNullOrEmpty(idClaim) || !int.TryParse(idClaim, out int id))
+                    return BadRequest(HTTPResponse<object>.Response(400, $"Invalid or missing {idClaimType}.", null));
+
+                var response = await _reviewService.UpdateReviewAsync(id, productId, request);
+                if (response == null)
+                    return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật đánh giá thất bại", null));
+                else
+                    return Ok(HTTPResponse<ReviewResponse>.Response(200, "Cập nhật đánh giá thành công", response));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
+        }
     }
 }

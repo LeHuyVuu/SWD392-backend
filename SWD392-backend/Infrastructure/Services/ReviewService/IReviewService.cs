@@ -7,7 +7,8 @@ namespace SWD392_backend.Infrastructure.Services.ReviewService
 {
     public interface IReviewService
     {
-        Task<ReviewResponse> AddReviewAsync(int userId, int productId, ReviewRequest request);
         Task<PagedResult<ReviewResponse>> GetReviewsByProductIdAsync(int productId, int page = 1, int pageSize = 10);
+        Task<ReviewResponse> AddReviewAsync(int userId, int productId, ReviewRequest request);
+        Task<ReviewResponse?> UpdateReviewAsync(int userId, int productId, ReviewRequest request);
     }
 }

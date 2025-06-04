@@ -19,6 +19,11 @@ namespace SWD392_backend.Infrastructure.Repositories.ReviewRepository
             await _context.product_reviews.AddAsync(review);
         }
 
+        public void UpdateReviewAsync(product_review review)
+        {
+            _context.product_reviews.Update(review);
+        }
+
         public async Task<product_review?> FindExistReviewAsync(int userId, int productId)
         {
             return await _context.product_reviews
