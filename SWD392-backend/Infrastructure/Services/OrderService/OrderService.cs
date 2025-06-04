@@ -3,6 +3,7 @@
     using Microsoft.EntityFrameworkCore;
     using SWD392_backend.Entities;
     using SWD392_backend.Entities.Enums;
+    using SWD392_backend.Models.Request;
     using SWD392_backend.Models.Response;
 
     namespace SWD392_backend.Infrastructure.Services.OrderService;
@@ -85,12 +86,34 @@
         }
         
         
-        public async Task<object> GetAllOrdersAsync(int userId, int page, int pageSize)
+        public async Task<object> GetOrdersByRoleAsync(string role, int id, int page, int pageSize)
         {
-            var query = _unitOfWork.OrderRepository
-                .GetAll()
-                .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.CreatedAt);
+            IQueryable<order> query;
+
+            if (role == "CUSTOMER")
+            {
+                query = _unitOfWork.OrderRepository
+                    .GetAll()
+                    .Include(order => order.orders_details )
+                    .Where(o => o.UserId == id);
+
+                Console.WriteLine(query.ToString());
+            }
+            else if (role == "SUPPLIER")
+            {
+                query = _unitOfWork.OrderRepository
+                    .GetAll()
+                    .Include(order =>order.orders_details)
+                    .Where(o => o.SupplierId == id);
+                Console.WriteLine(query.ToString());
+
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Invalid role.");
+            }
+
+            query = query.OrderByDescending(o => o.CreatedAt);
 
             var totalItems = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
@@ -100,7 +123,7 @@
                 .Take(pageSize)
                 .ToListAsync();
 
-             var orderDTOs = _mapper.Map<List<OrderResponse>>(orders);
+            var orderDTOs = _mapper.Map<List<OrderResponse>>(orders);
 
             return new
             {
@@ -111,4 +134,34 @@
                 Items = orderDTOs
             };
         }
+
+        public async Task<bool> UpdateOrderItemStatusAsync(UpdateOrderItemStatus dto)
+        {
+            if (!int.TryParse(dto.OrderDetailId, out int orderDetailId))
+            {
+                throw new ArgumentException("Invalid OrderDetailId");
+            }
+
+            var orderDetail = await _unitOfWork.OrdersDetailRepository
+                .GetAll()
+                .AsQueryable()
+                .FirstOrDefaultAsync(od => od.Id == orderDetailId && od.ProductId == dto.ProductId);
+
+
+
+             if (orderDetail == null)
+                 throw new KeyNotFoundException("Order item not found.");
+
+             if (orderDetail.Status == dto.NewStatus)
+                 return false;
+
+             orderDetail.Status = dto.NewStatus;
+             _unitOfWork.OrdersDetailRepository.Update(orderDetail);
+             await _unitOfWork.SaveAsync();
+
+            return true;
+        }
+
+        
+        
     }

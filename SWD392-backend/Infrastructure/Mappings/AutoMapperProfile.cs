@@ -22,9 +22,10 @@ namespace SWD392_backend.Infrastructure.Mappings
             CreateMap<ProductImageRequest, product_image>();
             CreateMap<product_image, ProductImageResponse>();
             CreateMap<order, OrderResponse>()
-                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.orders_details));
+                .ForMember(dest => dest.orders_details, opt => opt.MapFrom(src => src.orders_details));
 
-            CreateMap<orders_detail, OrderDetailResponse>();
+            CreateMap<orders_detail, OrderDetailResponse>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
 
         }
     }
