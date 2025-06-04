@@ -22,9 +22,11 @@ using System.Text.Json.Serialization;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Npgsql;
 using SWD392_backend.Entities.Enums;
+using SWD392_backend.Infrastructure.Repositories.SupplierRepository;
 using SWD392_backend.Infrastructure.Services.S3Service;
 using SWD392_backend.Infrastructure.Services.UploadService;
 using SWD392_backend.Infrastructure.Services.ElasticSearchService;
+using SWD392_backend.Infrastructure.Services.SupplerSerivce;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -121,7 +123,7 @@ builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddSingleton<PayPalClient>();
 builder.Services.AddScoped<PaymentService>();
 builder.Services.AddScoped<IElasticSearchService, ElasticSearchService>();
-
+builder.Services.AddScoped<ISupplierService, SupplierService>();
 
 // Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -132,7 +134,7 @@ builder.Services.AddScoped<IOrdersDetailRepository, OrdersDetailRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductImageService, ProductImageService>();
-
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 // UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

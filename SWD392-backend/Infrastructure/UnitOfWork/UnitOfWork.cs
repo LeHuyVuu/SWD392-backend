@@ -7,6 +7,7 @@ using SWD392_backend.Infrastructure.Repositories.ProductImageRepository;
 using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
 using System.Threading.Tasks;
+using SWD392_backend.Infrastructure.Repositories.SupplierRepository;
 
 public class UnitOfWork : IUnitOfWork
 {
@@ -19,6 +20,7 @@ public class UnitOfWork : IUnitOfWork
     public IProductRepository ProductRepository { get; }
     public ICategoryRepository CategoryRepository { get; }
     public IProductImageRepository ProductImageRepository { get; }
+    public ISupplierRepository SupplierRepository { get; }
 
     public UnitOfWork(
         MyDbContext context,
@@ -27,7 +29,8 @@ public class UnitOfWork : IUnitOfWork
         IOrdersDetailRepository ordersDetailRepository,
         IProductRepository productRepository,
         ICategoryRepository categoryRepository,
-        IProductImageRepository productImageRepository)
+        IProductImageRepository productImageRepository,
+        ISupplierRepository supplierRepository)
     {
         _context = context;
         UserRepository = userRepository;
@@ -36,6 +39,7 @@ public class UnitOfWork : IUnitOfWork
         ProductRepository = productRepository;
         CategoryRepository = categoryRepository;
         ProductImageRepository = productImageRepository;
+        SupplierRepository = supplierRepository;
     }
 
     public async Task<IDbContextTransaction> BeginTransactionAsync()

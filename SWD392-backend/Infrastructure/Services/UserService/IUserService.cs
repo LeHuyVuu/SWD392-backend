@@ -8,6 +8,7 @@ namespace SWD392_backend.Infrastructure.Services.UserService
     {
         Task<List<user>> GetAllUserAsync();
         Task<user?> GetUserByIdAsync(int id);
+        Task<int> GetTotalUserAsync();
 
     }
 }

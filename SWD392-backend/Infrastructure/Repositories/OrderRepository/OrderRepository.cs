@@ -28,6 +28,12 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.orders_details)
             .AsQueryable(); // Quan trọng để chuỗi LINQ hoạt động
     }
+    
+    public async Task<int> GetTotalOrdersAsync()
+    {
+        return await _context.orders.CountAsync();
+    }
+
 
 
     // Các method khác nếu cần

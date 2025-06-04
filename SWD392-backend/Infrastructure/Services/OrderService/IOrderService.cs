@@ -10,6 +10,9 @@ public interface IOrderService
     Task<object> GetOrdersByRoleAsync(string role, int id, int page, int pageSize);
 
     Task<bool> UpdateOrderItemStatusAsync(UpdateOrderItemStatus dto);
-    
-    
+
+
+    Task<int> GetTotalOrdersAsync();
+
+
 }

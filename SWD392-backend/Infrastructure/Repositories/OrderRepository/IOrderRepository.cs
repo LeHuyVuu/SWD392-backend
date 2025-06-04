@@ -11,4 +11,6 @@ public interface IOrderRepository
     // Thêm các method cần thiết khác nếu muốn, ví dụ GetById, Update...
     IQueryable<order> GetAll();
 
+    Task<int> GetTotalOrdersAsync();
+
 }
