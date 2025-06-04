@@ -85,5 +85,20 @@ namespace SWD392_backend.Infrastructure.Services.ReviewService
 
             return response;
         }
+
+        public async Task<bool> RemoveReview(int userId, int productId)
+        {
+            var existingReview = await _reviewRepository.FindExistReviewAsync(userId, productId);
+            if (existingReview == null)
+                return false;
+            
+            // Remove 
+            _reviewRepository.RemoveReview(existingReview);
+
+            // Save to DB
+            await _unitOfWork.SaveAsync();
+
+            return true;
+        }
     }
 }

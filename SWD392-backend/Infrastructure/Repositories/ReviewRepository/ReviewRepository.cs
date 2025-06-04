@@ -60,5 +60,10 @@ namespace SWD392_backend.Infrastructure.Repositories.ReviewRepository
         {
             await _context.Entry(review).Reference(r => r.user).LoadAsync();
         }
+
+        public void RemoveReview(product_review review)
+        {
+            _context.Remove(review);
+        }
     }
 }
