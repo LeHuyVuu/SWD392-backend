@@ -40,6 +40,7 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
             List<ProductResponse> response;
 
             var order = sortOrder.ToLower() == "asc" ? SortOrder.Asc : SortOrder.Desc;
+            var sortField = sortBy.ToLower() == "name" ? "name.keyword" : sortBy;
 
             // Filter category
             var filters = new List<Query>();
@@ -89,7 +90,7 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
 
             var searchResponse = await _client.SearchAsync<ProductResponse>(s => s
                     .Indices("products")
-                    .Sort(sort => sort.Field(sortBy, new FieldSort { Order = order }))
+                    .Sort(sort => sort.Field(sortField, new FieldSort { Order = order }))
                     .From((page - 1) * size)
                     .Size(size)
                     .Query(query)

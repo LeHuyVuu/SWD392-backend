@@ -30,13 +30,13 @@ namespace SWD392_backend.Infrastructure.Controllers
         }
 
         /// <summary>
-        /// Tìm kiếm sản phẩm sử dụng Elasticsearch với phân trang, sắp xếp và lọc(hỗ trợ sau).
+        /// Tìm kiếm sản phẩm sử dụng Elasticsearch với phân trang, sắp xếp và lọc.
         /// </summary>
         /// <param name="q">Từ khóa tìm kiếm (mặc định rỗng).</param>
         /// <param name="categoryId">ID danh mục để lọc sản phẩm (tùy chọn).</param>
         /// <param name="page">Số trang hiện tại (mặc định 1).</param>
         /// <param name="size">Số lượng sản phẩm mỗi trang (mặc định 10).</param>
-        /// <param name="sortBy">Trường để sắp xếp (mặc định "createdAt")(Sort by latest). Các giá trị hợp lệ: createdAt || name, price.(hỗ trợ sau)</param>
+        /// <param name="sortBy">Trường để sắp xếp (mặc định "createdAt")(Sort by latest). Các giá trị hợp lệ: createdAt , name, price.</param>
         /// <param name="sortOrder">Thứ tự sắp xếp: "asc" hoặc "desc" (mặc định "desc").</param>
         /// <returns>
         /// - 200 OK: Trả về danh sách sản phẩm phân trang (PagedResult&lt;ProductResponse&gt;).
@@ -45,7 +45,7 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// - 500 Internal Server Error: Nếu xảy ra lỗi server.
         /// </returns>
         /// <remarks>
-        /// Sử dụng Elasticsearch để tìm kiếm sản phẩm dựa trên từ khóa và danh mục, hỗ trợ phân trang, sắp xếp và lọc(hỗ trợ sau).
+        /// Sử dụng Elasticsearch để tìm kiếm sản phẩm dựa trên từ khóa và danh mục, hỗ trợ phân trang, sắp xếp và lọc. DONE
         /// </remarks>
         [HttpGet("search")]
         public async Task<ActionResult<List<ProductResponse>>> SearchProduct(
@@ -57,7 +57,7 @@ namespace SWD392_backend.Infrastructure.Controllers
             [FromQuery] string sortOrder = "desc"
         )
         {
-            var response = await _elasticsearchService.SearchAsync(q, categoryId, page, size);
+            var response = await _elasticsearchService.SearchAsync(q, categoryId, page, size, sortBy, sortOrder);
 
             if (response == null)
                 return NotFound();
