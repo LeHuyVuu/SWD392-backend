@@ -26,6 +26,11 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
         {
             await _context.users.AddAsync(entity);
         }
+        public async Task<int> CountAsync()
+        {
+          return  await _context.users.CountAsync();
+        }
 
+        
     }
 }

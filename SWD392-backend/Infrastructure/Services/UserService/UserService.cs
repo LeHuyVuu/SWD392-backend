@@ -7,10 +7,12 @@ namespace SWD392_backend.Infrastructure.Services.UserService
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private IUnitOfWork _unitOfWork;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<List<user>> GetAllUserAsync()
@@ -22,6 +24,12 @@ namespace SWD392_backend.Infrastructure.Services.UserService
         {
             return await _userRepository.GetUserByIdAsync(id);
         }
+        
+        public async Task<int> GetTotalUserAsync()
+        {
+            return await _unitOfWork.UserRepository.CountAsync();
+        }
+
 
     }
 }

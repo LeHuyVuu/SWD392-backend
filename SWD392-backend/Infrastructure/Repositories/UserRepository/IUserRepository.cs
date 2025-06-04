@@ -9,6 +9,8 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
         
         Task AddAsync(user entity);
 
+        Task<int> CountAsync();
+
 
     }
 }

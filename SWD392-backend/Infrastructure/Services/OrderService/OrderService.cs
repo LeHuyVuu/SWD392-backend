@@ -161,6 +161,13 @@
 
             return true;
         }
+        
+        
+        public async Task<int> GetTotalOrdersAsync()
+        {
+            return await _unitOfWork.OrderRepository.GetTotalOrdersAsync();
+        }
+
 
         
         
