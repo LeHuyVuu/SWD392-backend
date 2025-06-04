@@ -24,6 +24,7 @@ using Npgsql;
 using SWD392_backend.Entities.Enums;
 using SWD392_backend.Infrastructure.Services.S3Service;
 using SWD392_backend.Infrastructure.Services.UploadService;
+using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -119,6 +120,7 @@ builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddSingleton<PayPalClient>();
 builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<IElasticSearchService, ElasticSearchService>();
 
 
 // Repository
