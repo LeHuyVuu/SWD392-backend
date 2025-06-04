@@ -19,6 +19,12 @@ namespace SWD392_backend.Infrastructure.Controllers
             _categoryService = categoryService;
         }
 
+        /// <summary>
+        /// Lấy danh sách tất cả các danh mục (categories).
+        /// </summary>
+        /// <returns>Danh sách các category dưới dạng mảng JSON.</returns>
+        /// <response code="200">Trả về danh sách category thành công.</response>
+        /// <response code="400">Không tìm thấy category nào hoặc có lỗi trong quá trình xử lý.</response>
         [HttpGet]
         public async Task<ActionResult<List<CategoryResponse>>> GetCategories()
         {

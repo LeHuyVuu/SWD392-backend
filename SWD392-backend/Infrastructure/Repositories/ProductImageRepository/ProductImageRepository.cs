@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Context;
 using SWD392_backend.Entities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SWD392_backend.Infrastructure.Repositories.ProductImageRepository
 {
@@ -13,6 +14,11 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductImageRepository
             _context = context;
         }
 
+        public async Task AddImage(product_image image)
+        {
+            await _context.product_images.AddAsync(image);
+        }
+
         public Task AddImages(List<product_image> images)
         {
             return _context.product_images.AddRangeAsync(images);
@@ -23,6 +29,21 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductImageRepository
             return await _context.product_images
                         .Where(img => img.ProductsId == productId && img.IsMain)
                         .ToListAsync();
+        }
+
+        public async Task<List<string>> GetAllImagesAsync(int productId)
+        {
+            return await _context.product_images
+                        .Where(p => p.ProductsId == productId)
+                        .Select(p => p.ProductImageUrl)
+                        .ToListAsync();
+        }
+
+        public async Task<product_image?> GetProductImageByProductIdAsync(int productId)
+        {
+            return await _context.product_images
+                        .Where(img => img.ProductsId == productId)
+                        .FirstOrDefaultAsync();
         }
     }
 }

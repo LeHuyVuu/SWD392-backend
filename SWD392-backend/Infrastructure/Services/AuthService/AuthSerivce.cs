@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using web_api_base.Helper; // sửa theo namespace dự án bạn
 using Microsoft.Extensions.Configuration;
 
@@ -25,8 +26,7 @@ namespace SWD392_backend.Infrastructure.Services.AuthService
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<(bool Success, string Message, string? Token)> LoginAsync(string emailOrPhone,
-            string password)
+        public async Task<(bool Success, string Message, string? Token)> LoginAsync(string emailOrPhone, string password)
         {
             var user = _context.users.FirstOrDefault(u => u.Phone == emailOrPhone || u.Email == emailOrPhone);
             if (user == null || !PasswordHelper.VerifyPassword(password, user.Password))
@@ -42,17 +42,30 @@ namespace SWD392_backend.Infrastructure.Services.AuthService
 
             var key = Encoding.UTF8.GetBytes(keyString);
             var tokenHandler = new JwtSecurityTokenHandler();
+
+            // 👉 Khởi tạo danh sách claim cơ bản
+            var claims = new List<Claim>
+            {
+                new Claim("UserId", user.Id.ToString()),
+                new Claim("FullName", user.FullName ?? ""),
+                new Claim("Role", user.Role ?? "")
+            };
+
+            // 👉 Nếu là SUPPLIER thì truy vấn bảng supplier và thêm SupplierId
+            if (user.Role == "SUPPLIER")
+            {
+                var supplier = await _context.suppliers.FirstOrDefaultAsync(s => s.UserId == user.Id);
+                if (supplier != null)
+                {
+                    claims.Add(new Claim("SupplierId", supplier.Id.ToString()));
+                }
+            }
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("UserId", user.Id.ToString()),
-                    new Claim("FullName", user.FullName ?? ""),
-                    new Claim("Role", user.Role ?? "")
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMonths(5),
-                SigningCredentials =
-                    new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = _config["Jwt:Issuer"],
                 Audience = _config["Jwt:Audience"]
             };
@@ -62,6 +75,7 @@ namespace SWD392_backend.Infrastructure.Services.AuthService
 
             return (true, "Đăng nhập thành công", jwt);
         }
+
 
         public async Task<(bool Success, string Message)> RegisterAsync(string phone, string password, string email,
             string fullname)

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Win32.SafeHandles;
+using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
@@ -20,10 +21,48 @@ namespace SWD392_backend.Infrastructure.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IElasticSearchService _elasticsearchService;
 
-        public ProductController(IProductService productService, IMapper mapper)
+        public ProductController(IProductService productService, IElasticSearchService elasticSearchService)
         {
             _productService = productService;
+            _elasticsearchService = elasticSearchService;
+        }
+
+        /// <summary>
+        /// Tìm kiếm sản phẩm sử dụng Elasticsearch với phân trang, sắp xếp và lọc(hỗ trợ sau).
+        /// </summary>
+        /// <param name="q">Từ khóa tìm kiếm (mặc định rỗng).</param>
+        /// <param name="categoryId">ID danh mục để lọc sản phẩm (tùy chọn).</param>
+        /// <param name="page">Số trang hiện tại (mặc định 1).</param>
+        /// <param name="size">Số lượng sản phẩm mỗi trang (mặc định 10).</param>
+        /// <param name="sortBy">Trường để sắp xếp (mặc định "createdAt")(Sort by latest). Các giá trị hợp lệ: createdAt || name, price.(hỗ trợ sau)</param>
+        /// <param name="sortOrder">Thứ tự sắp xếp: "asc" hoặc "desc" (mặc định "desc").</param>
+        /// <returns>
+        /// - 200 OK: Trả về danh sách sản phẩm phân trang (PagedResult&lt;ProductResponse&gt;).
+        /// - 400 Bad Request: Nếu tham số không hợp lệ (page, size, sortBy, sortOrder).
+        /// - 404 Not Found: Nếu không tìm thấy sản phẩm.
+        /// - 500 Internal Server Error: Nếu xảy ra lỗi server.
+        /// </returns>
+        /// <remarks>
+        /// Sử dụng Elasticsearch để tìm kiếm sản phẩm dựa trên từ khóa và danh mục, hỗ trợ phân trang, sắp xếp và lọc(hỗ trợ sau).
+        /// </remarks>
+        [HttpGet("search")]
+        public async Task<ActionResult<List<ProductResponse>>> SearchProduct(
+            [FromQuery] string q = "",
+            [FromQuery] int? categoryId = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int size = 10,
+            [FromQuery] string sortBy = "createdAt",
+            [FromQuery] string sortOrder = "desc"
+        )
+        {
+            var response = await _elasticsearchService.SearchAsync(q, categoryId, page, size);
+
+            if (response == null)
+                return NotFound();
+            else
+                return Ok(response);
         }
 
         /// <summary>
@@ -120,6 +159,29 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật sản phẩm thất bại", null));
             else
                 return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
+        }
+
+        /// <summary>
+        /// Xóa một sản phẩm dựa trên ID.
+        /// </summary>
+        /// <param name="id">ID của sản phẩm cần xóa (kiểu số nguyên).</param>
+        /// <returns>
+        /// - 204 No Content: Nếu sản phẩm được xóa thành công.
+        /// - 400 Bad Request: Nếu ID không hợp lệ hoặc xóa thất bại.
+        /// - 500 Internal Server Error: Nếu xảy ra lỗi server.
+        /// </returns>
+        /// <remarks>
+        /// Gọi dịch vụ để xóa sản phẩm. Trả về thông báo thành công hoặc lỗi kèm chi tiết.
+        /// </remarks>
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var response = await _productService.RemoveProductStatusAsync(id);
+
+            if (!response)
+                return BadRequest(HTTPResponse<object>.Response(400, "Xóa sản phẩm thất bại", response));
+            else
+                return Ok(HTTPResponse<object>.Response(200, "Xóa sản phẩm thành công", response));
         }
     }
 }

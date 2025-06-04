@@ -8,4 +8,9 @@ public interface IOrdersDetailRepository
 {
     Task AddAsync(orders_detail entity);
     // Thêm các method khác nếu cần
+    IQueryable<orders_detail> GetAll();
+    
+    void Update(orders_detail entity);
+
+
 }

@@ -24,6 +24,7 @@ using Npgsql;
 using SWD392_backend.Entities.Enums;
 using SWD392_backend.Infrastructure.Services.S3Service;
 using SWD392_backend.Infrastructure.Services.UploadService;
+using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -116,6 +117,10 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductImageService, ProductImageService>();
 builder.Services.AddScoped<IS3Service, S3Service>();
 builder.Services.AddScoped<IUploadService, UploadService>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+builder.Services.AddSingleton<PayPalClient>();
+builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<IElasticSearchService, ElasticSearchService>();
 
 
 // Repository
@@ -126,8 +131,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrdersDetailRepository, OrdersDetailRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
-
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
 
 // UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

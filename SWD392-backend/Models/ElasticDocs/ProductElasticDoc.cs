@@ -1,14 +1,13 @@
-﻿using System.Text.Json.Serialization;
-
-namespace SWD392_backend.Models.Response
+﻿namespace SWD392_backend.Models.ElasticDocs
 {
-    public class ProductResponse
+    public class ProductElasticDoc
     {
         // Basic info
         public int Id { get; set; }
         public string Name { get; set; } = null!;
         public string Slug { get; set; } = null!;
-        public string ImageUrl { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string ImageUrl { get; set; } = "";
 
         // Pricing
         public double Price { get; set; }

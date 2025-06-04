@@ -20,6 +20,19 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             await _context.products.AddAsync(product);
         }
 
+        public async Task RemoveAsync(product product)
+        {
+            _context.products.Remove(product);
+            await Task.CompletedTask;        
+        }
+
+        public Task RemoveImagesByProductIdAsync(int productId)
+        {
+            var images = _context.product_images.Where(p => p.ProductsId == productId);
+            _context.product_images.RemoveRange(images);
+            return Task.CompletedTask;
+        }
+
         public async Task<product?> GetByIdAsync(int id)
         {
             return await _context.products
@@ -50,7 +63,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
                             .Include(p => p.product_attributes)
                             .Include(p => p.product_images)
                             .Where(p => p.IsActive)
-                            .OrderBy(p => p.Id)
+                            .OrderByDescending(p => p.CreatedAt)
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
                             .ToListAsync();

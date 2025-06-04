@@ -21,4 +21,14 @@ public class OrdersDetailRepository : IOrdersDetailRepository
     }
 
     // Các method khác nếu cần
+    public IQueryable<orders_detail> GetAll()
+    {
+        return _context.orders_details.AsQueryable();
+    }
+    
+    public void Update(orders_detail entity)
+    {
+        _context.orders_details.Update(entity);
+    }
+
 }

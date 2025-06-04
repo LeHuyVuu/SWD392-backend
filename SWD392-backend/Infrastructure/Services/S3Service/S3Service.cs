@@ -30,6 +30,24 @@ namespace SWD392_backend.Infrastructure.Services.S3Service
             _s3Client = new AmazonS3Client(accessKey, secretKey, RegionEndpoint.GetBySystemName(region));
         }
 
+        public async Task DeleteFileAsync(List<string> urls)
+        {
+            List<string> keys = new List<string>();
+
+            foreach (var url in urls)
+            {
+                keys.Add(new Uri(url).AbsolutePath.TrimStart('/'));
+            }
+
+            var request = new DeleteObjectsRequest
+            {
+                BucketName = _bucketName,
+                Objects = keys.Select(k => new KeyVersion { Key = k }).ToList()
+            };
+
+            await _s3Client.DeleteObjectsAsync(request);
+        }
+
         public string GeneratePreSignedURL(string key, string contentType, int expireMintues = 15)
         {
             Console.WriteLine(contentType);

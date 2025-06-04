@@ -9,5 +9,6 @@ public class OrderResponse
     public double ShippingPrice { get; set; }
     public DateTime? PaidAt { get; set; }
     public DateTime? DeliveriedAt { get; set; }
-    public List<OrderDetailResponse> OrderDetails { get; set; } = new();
+
+    public List<OrderDetailResponse> orders_details { get; set; } = new();
 }
