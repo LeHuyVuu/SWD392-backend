@@ -93,7 +93,13 @@ public class OrderController : ControllerBase
     }
 
 
-
+    /// <summary>
+    /// Lấy danh sách các trạng thái đơn hàng có thể sử dụng tùy theo vai trò.
+    /// </summary>
+    /// <returns>Danh sách trạng thái đơn hàng dựa trên vai trò người dùng.</returns>
+    /// <response code="200">Trả về danh sách các trạng thái đơn hàng thành công.</response>
+    /// <response code="401">Role claim không hợp lệ hoặc không có quyền truy cập.</response>
+    /// <response code="500">Lỗi hệ thống khi lấy danh sách trạng thái.</response>
     [HttpGet("status")]
     public IActionResult GetEnumStatus()
     {
