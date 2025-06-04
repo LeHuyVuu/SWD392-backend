@@ -67,7 +67,6 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
                         Fields = new[] {
                             "name.vi^3",
                             "slug^2",
-                            "description.vi"
                         },
                         Operator = Operator.And,
                         Fuzziness = new Fuzziness("AUTO"),
