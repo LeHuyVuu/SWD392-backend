@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ReviewRepository;
+using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
 
@@ -38,6 +39,21 @@ namespace SWD392_backend.Infrastructure.Services.ReviewService
             var response = _mapper.Map<ReviewResponse>(review);
 
             return response;
+        }
+
+        public async Task<PagedResult<ReviewResponse>> GetReviewsByProductIdAsync(int productId, int page = 1, int pageSize = 10)
+        {
+            var pagedResult = await _reviewRepository.GetReviewsByProductIdAsync(productId, page, pageSize);
+
+            var response = _mapper.Map<List<ReviewResponse>>(pagedResult.Items);
+
+            return new PagedResult<ReviewResponse>
+            {
+                Items = response,
+                TotalItems = pagedResult.TotalItems,
+                Page = pagedResult.Page,
+                PageSize = pagedResult.PageSize
+            };
         }
     }
 }

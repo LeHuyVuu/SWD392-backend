@@ -1,4 +1,5 @@
 ﻿using SWD392_backend.Entities;
+using SWD392_backend.Models;
 
 namespace SWD392_backend.Infrastructure.Repositories.ReviewRepository
 {
@@ -6,5 +7,6 @@ namespace SWD392_backend.Infrastructure.Repositories.ReviewRepository
     {
         Task AddReviewAsync(product_review review);
         Task LoadUserAsync(product_review review);
+        Task<PagedResult<product_review>> GetReviewsByProductIdAsync(int productId, int page = 1, int pageSize = 10);
     }
 }

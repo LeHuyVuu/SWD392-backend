@@ -1,8 +1,10 @@
 ﻿using cybersoft_final_project.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Services.ReviewService;
+using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
 
@@ -17,6 +19,16 @@ namespace SWD392_backend.Infrastructure.Controllers
         public ReviewController(IReviewService reviewService)
         {
             _reviewService = reviewService;
+        }
+
+        [HttpGet("all")]
+        public async Task<ActionResult<PagedResult<ReviewResponse>>> GetAllReviews([FromQuery] int productId, int page = 1, int pageSize = 10)
+        {
+            var response = await _reviewService.GetReviewsByProductIdAsync(productId, page, pageSize);
+            if (response.Items == null || !response.Items.Any())
+                return BadRequest(HTTPResponse<object>.Response(400, "Lấy đánh giá thất bại", response));
+            else 
+                return Ok(HTTPResponse<object>.Response(200, "Lấy đánh giá thành công", response));
         }
 
         [HttpPost("add")]
