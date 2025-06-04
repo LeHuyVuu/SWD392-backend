@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ReviewRepository;
+using SWD392_backend.Infrastructure.Services.UserService;
 using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
@@ -12,16 +13,23 @@ namespace SWD392_backend.Infrastructure.Services.ReviewService
         private readonly IReviewRepository _reviewRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public ReviewService(IReviewRepository reviewRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public ReviewService(IReviewRepository reviewRepository, IUnitOfWork unitOfWork, IMapper mapper, IUserService userService)
         {
             _reviewRepository = reviewRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userService = userService;
         }
 
         public async Task<ReviewResponse> AddReviewAsync(int userId, int productId, ReviewRequest request)
         {
+            // Check exist review from user
+            var existingReview = await _reviewRepository.FindExistReviewAsync(userId, productId);
+            if (existingReview != null)
+                return null;
+
             var review = _mapper.Map<product_review>(request);
             review.UserId = userId;
             review.ProductId = productId;

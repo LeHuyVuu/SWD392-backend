@@ -19,6 +19,13 @@ namespace SWD392_backend.Infrastructure.Repositories.ReviewRepository
             await _context.product_reviews.AddAsync(review);
         }
 
+        public async Task<product_review?> FindExistReviewAsync(int userId, int productId)
+        {
+            return await _context.product_reviews
+                            .FirstOrDefaultAsync(r => r.UserId == userId 
+                                                   && r.ProductId == productId);
+        }
+
         public async Task<PagedResult<product_review>> GetReviewsByProductIdAsync(int productId, int page = 1, int pageSize = 10)
         {
             page = page < 1 ? 1 : page;

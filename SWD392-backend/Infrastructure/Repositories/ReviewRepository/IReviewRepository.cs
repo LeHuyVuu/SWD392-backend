@@ -8,5 +8,6 @@ namespace SWD392_backend.Infrastructure.Repositories.ReviewRepository
         Task AddReviewAsync(product_review review);
         Task LoadUserAsync(product_review review);
         Task<PagedResult<product_review>> GetReviewsByProductIdAsync(int productId, int page = 1, int pageSize = 10);
+        Task<product_review> FindExistReviewAsync(int userId, int productId);
     }
 }
