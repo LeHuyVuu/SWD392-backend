@@ -47,11 +47,19 @@ jobs:
             echo "${{ secrets.ENV_FILE }}" > .env
 
             # Dừng và xóa container cũ nếu có
-            docker stop swd392-api || true
-            docker rm swd392-api || true
+            for name in swd392-api swd392-api-nginx-1 swd392-api-nginx-2 swd392-api-nginx-3; 
+            do
+              docker stop $name || true
+              docker rm $name || true
+            done
 
             # Build lại Docker image
             docker build --no-cache -t swd392-api .
 
             # Chạy container mới (host port 8080 -> container port 5000)
             docker run -d --name swd392-api -p 1801:5000 --env-file .env swd392-api
+
+            # Chạy container nginx load balancer test
+            docker run -d --name swd392-api-nginx-1 -p 1802:5000 --env-file .env swd392-api
+            docker run -d --name swd392-api-nginx-2 -p 1803:5000 --env-file .env swd392-api
+            docker run -d --name swd392-api-nginx-3 -p 1804:5000 --env-file .env swd392-api
