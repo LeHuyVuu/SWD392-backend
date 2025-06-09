@@ -3,6 +3,7 @@ using AutoMapper;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.Core.TermVectors;
 using Elastic.Clients.Elasticsearch.QueryDsl;
+using Elastic.Transport;
 using SWD392_backend.Entities;
 using SWD392_backend.Models;
 using SWD392_backend.Models.ElasticDocs;
@@ -17,11 +18,14 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
         public ElasticSearchService(IMapper mapper)
         {
             var uri = Environment.GetEnvironmentVariable("ELS_URI");
+            var username = Environment.GetEnvironmentVariable("ELS_USERNAME");
+            var password = Environment.GetEnvironmentVariable("ELS_PASSWORD");
 
             if (string.IsNullOrEmpty(uri))
                 throw new Exception("env not set!");
 
-            var settings = new ElasticsearchClientSettings(new Uri(uri));
+            var settings = new ElasticsearchClientSettings(new Uri(uri))
+                .Authentication(new BasicAuthentication(username, password));
 
             // Create client
             _client = new ElasticsearchClient(settings);
