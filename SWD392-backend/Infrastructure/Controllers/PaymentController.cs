@@ -73,6 +73,14 @@ namespace SWD392_backend.Infrastructure.Controllers
 
             try
             {
+                if (orderCheckoutDto.Distance < 1)
+                {
+                    return BadRequest(HTTPResponse<object>.Response(400, "Distance must be at least 1 km.", null));
+                }
+                if (orderCheckoutDto.Distance > 1000)
+                {
+                    return BadRequest(HTTPResponse<object>.Response(400, "Distance must not exceed 1000 km.", null));
+                }
                 var result = await _orderService.CheckoutAsync(orderCheckoutDto, userId);
                 if (result)
                     return Ok(HTTPResponse<object>.Response(200, "Order created successfully", null));

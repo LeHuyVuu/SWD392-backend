@@ -33,7 +33,7 @@
                     UserId = userId,
                     SupplierId = orderDTO.SupplierId,
                     Address = orderDTO.Address,
-                    ShippingPrice = orderDTO.ShippingPrice,
+                    ShippingPrice = CalculateShippingPrice(orderDTO.Distance),
                     Total = orderDTO.Total,
                     CreatedAt = DateTime.UtcNow,
                 };
@@ -84,6 +84,20 @@
                 throw;
             }
         }
+
+        private double CalculateShippingPrice(double distance)
+        {
+            if (distance <= 0)
+                return 0;
+            else if (distance <= 5)
+                return distance * 10000; // ví dụ: 10.000đ/km cho <= 5km
+            else if (distance <= 20)
+                return distance * 8000;  // 8.000đ/km
+            else
+                return distance * 5000;  // 5.000đ/km
+        }
+
+
         
         
         public async Task<object> GetOrdersByRoleAsync(string role, int id, int page, int pageSize)
