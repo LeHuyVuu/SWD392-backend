@@ -68,5 +68,30 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
             }
         }
+        
+        
+        [HttpGet]
+        [Route("/profile")]
+        public async Task<IActionResult> GetUserProfile()
+        {
+
+            var userId = User.FindFirst("UserId")?.Value;
+            
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(Int32.Parse(userId));
+
+                if (user == null)
+                {
+                    return NotFound(HTTPResponse<object>.Response(404, "User not found", null));
+                }
+
+                return Ok(HTTPResponse<object>.Response(200, "User fetched successfully", user));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
+        }
     }
 }
