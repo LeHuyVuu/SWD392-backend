@@ -30,6 +30,10 @@ namespace SWD392_backend.Infrastructure.Mappings
             CreateMap<orders_detail, OrderDetailResponse>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
 
+            CreateMap<ReviewRequest, product_review>();
+            CreateMap<product_review, ReviewResponse>();
+
+            CreateMap<user, UserResponse>();
         }
     }
 }

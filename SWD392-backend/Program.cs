@@ -27,6 +27,8 @@ using SWD392_backend.Infrastructure.Services.S3Service;
 using SWD392_backend.Infrastructure.Services.UploadService;
 using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 using SWD392_backend.Infrastructure.Services.SupplerSerivce;
+using SWD392_backend.Infrastructure.Services.ReviewService;
+using SWD392_backend.Infrastructure.Repositories.ReviewRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -124,6 +126,7 @@ builder.Services.AddSingleton<PayPalClient>();
 builder.Services.AddScoped<PaymentService>();
 builder.Services.AddScoped<IElasticSearchService, ElasticSearchService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 // Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -135,6 +138,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductImageService, ProductImageService>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 // UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
