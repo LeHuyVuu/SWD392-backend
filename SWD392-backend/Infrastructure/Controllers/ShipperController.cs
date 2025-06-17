@@ -30,7 +30,7 @@ namespace SWD392_backend.Infrastructure.Controllers
                 if (string.IsNullOrEmpty(role))
                     return Unauthorized(HTTPResponse<object>.Response(401, "Role claim not found.", null));
 
-                string? idClaimType = role == "CUSTOMER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
+                string? idClaimType = role == "SHIPPER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
 
                 if (idClaimType == null)
                     return Unauthorized(HTTPResponse<object>.Response(401, "Unsupported role.", null));
@@ -60,7 +60,7 @@ namespace SWD392_backend.Infrastructure.Controllers
                 if (string.IsNullOrEmpty(role))
                     return Unauthorized(HTTPResponse<object>.Response(401, "Role claim not found.", null));
 
-                string? idClaimType = role == "CUSTOMER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
+                string? idClaimType = role == "SHIPPER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
 
                 if (idClaimType == null)
                     return Unauthorized(HTTPResponse<object>.Response(401, "Unsupported role.", null));
