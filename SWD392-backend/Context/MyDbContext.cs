@@ -31,6 +31,8 @@ public partial class MyDbContext : DbContext
 
     public virtual DbSet<product_review> product_reviews { get; set; }
 
+    public virtual DbSet<shipper> shipper { get; set; }
+
     public virtual DbSet<supplier> suppliers { get; set; }
 
     public virtual DbSet<user> users { get; set; }
@@ -42,8 +44,6 @@ public partial class MyDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //modelBuilder.HasPostgresEnum("order_status", new[] { "pending", "preparing", "delivery", "delivered", "returned", "cancelled", "refunding", "refunded" });
-
         modelBuilder.HasPostgresEnum<OrderStatus>("order_status");
 
         modelBuilder.Entity<category>(entity =>
@@ -130,6 +130,16 @@ public partial class MyDbContext : DbContext
             entity.HasOne(d => d.user).WithMany(p => p.product_reviews)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_product_reviews_user");
+        });
+
+        modelBuilder.Entity<shipper>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("shipper_pkey");
+
+            entity.HasOne(d => d.user).WithOne(p => p.shipper)
+                .HasForeignKey<shipper>(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_shipper_user");
         });
 
         modelBuilder.Entity<supplier>(entity =>

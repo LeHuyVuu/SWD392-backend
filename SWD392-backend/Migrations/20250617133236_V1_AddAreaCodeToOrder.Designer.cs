@@ -6,14 +6,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SWD392_backend.Context;
+using SWD392_backend.Entities.Enums;
 
 #nullable disable
 
 namespace SWD392_backend.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250529063736_V4_UpdateIndexToProductImage")]
-    partial class V4_UpdateIndexToProductImage
+    [Migration("20250617133236_V1_AddAreaCodeToOrder")]
+    partial class V1_AddAreaCodeToOrder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,7 +24,7 @@ namespace SWD392_backend.Migrations
                 .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "order_status", new[] { "pending", "preparing", "delivery", "delivered", "returned", "cancelled", "refunding", "refunded" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "order_status", "order_status", new[] { "pending", "preparing", "delivery", "delivered", "returned", "cancelled", "refunding", "refunded" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.HasSequence("product_images_seq");
@@ -76,6 +77,11 @@ namespace SWD392_backend.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("address");
+
+                    b.Property<string>("AreaCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("area_code");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -148,6 +154,10 @@ namespace SWD392_backend.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
                         .HasColumnName("quantity");
+
+                    b.Property<OrderStatus>("Status")
+                        .HasColumnType("order_status")
+                        .HasColumnName("status");
 
                     b.HasKey("Id")
                         .HasName("orders_detail_pkey");
@@ -430,6 +440,11 @@ namespace SWD392_backend.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("address");
 
+                    b.Property<string>("AreaCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("area_code");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -511,14 +526,14 @@ namespace SWD392_backend.Migrations
                     b.HasOne("SWD392_backend.Entities.order", "order")
                         .WithMany("orders_details")
                         .HasForeignKey("OrderId")
-                        .IsRequired()
-                        .HasConstraintName("fk_orders_detail_order");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SWD392_backend.Entities.product", "product")
                         .WithMany("orders_details")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_orders_detail_order");
 
                     b.Navigation("order");
 

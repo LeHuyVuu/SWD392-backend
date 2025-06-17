@@ -1,5 +1,8 @@
 ﻿using cybersoft_final_project.Models.Request;
+using SWD392_backend.Entities;
+using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
+using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Services.OrderService;
 
@@ -14,5 +17,5 @@ public interface IOrderService
 
     Task<int> GetTotalOrdersAsync();
 
-
+    Task<PagedResult<OrderResponse>> GetOrdersToShipper(int userId, int pageNumber, int pageSize); 
 }

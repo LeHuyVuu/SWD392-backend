@@ -2,6 +2,7 @@
 
 // IOrderRepository.cs
 using SWD392_backend.Entities;
+using SWD392_backend.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -12,5 +13,7 @@ public interface IOrderRepository
     IQueryable<order> GetAll();
 
     Task<int> GetTotalOrdersAsync();
+
+    Task<PagedResult<order>> GetOrdersToShipperAsync(string areaCode, int pageNumber, int pageSize);
 
 }

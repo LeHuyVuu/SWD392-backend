@@ -28,6 +28,10 @@ public partial class order
     [StringLength(255)]
     public string Address { get; set; } = null!;
 
+    [Column("area_code")]
+    [StringLength(32)]
+    public string? AreaCode { get; set; }
+
     [Column("supplier_id")]
     public int SupplierId { get; set; }
 

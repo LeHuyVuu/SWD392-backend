@@ -1,9 +1,14 @@
 ﻿    using AutoMapper;
     using cybersoft_final_project.Models.Request;
-    using Microsoft.EntityFrameworkCore;
-    using SWD392_backend.Entities;
+using Elastic.Clients.Elasticsearch.MachineLearning;
+using Elastic.Clients.Elasticsearch.Requests;
+using Microsoft.EntityFrameworkCore;
+using SWD392_backend.Entities;
     using SWD392_backend.Entities.Enums;
-    using SWD392_backend.Models.Request;
+using SWD392_backend.Infrastructure.Repositories.OrderRepository;
+using SWD392_backend.Infrastructure.Services.ShipperService;
+using SWD392_backend.Models;
+using SWD392_backend.Models.Request;
     using SWD392_backend.Models.Response;
 
     namespace SWD392_backend.Infrastructure.Services.OrderService;
@@ -14,29 +19,37 @@
 
         private readonly IMapper _mapper;
 
-        public OrderService(IUnitOfWork unitOfWork, IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+    private readonly IShipperService _shipperService;
+    private readonly IOrderRepository _orderRepository;
+
+    public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IShipperService shipperService, IOrderRepository orderRepository)
+    {
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
+        _shipperService = shipperService;
+        _orderRepository = orderRepository;
+    }
 
 
-        public async Task<bool> CheckoutAsync(OrderCheckoutDTO orderDTO, int userId)
+    public async Task<bool> CheckoutAsync(OrderCheckoutDTO orderDTO, int userId)
         {
             await using var transaction = await _unitOfWork.BeginTransactionAsync();
+        try
+        {
+            var areaCode = 
+                $"{orderDTO.assignAreaRequest.ProvinceCode}_{orderDTO.assignAreaRequest.DistrictCode}_{orderDTO.assignAreaRequest.WardCode}";
 
-            try
+            var newOrder = new order()
             {
-                var newOrder = new order()
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = userId,
-                    SupplierId = orderDTO.SupplierId,
-                    Address = orderDTO.Address,
-                    ShippingPrice = CalculateShippingPrice(orderDTO.Distance),
-                    Total = orderDTO.Total,
-                    CreatedAt = DateTime.UtcNow,
-                };
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                SupplierId = orderDTO.SupplierId,
+                Address = orderDTO.Address,
+                AreaCode = areaCode,
+                ShippingPrice = CalculateShippingPrice(orderDTO.Distance),
+                Total = orderDTO.Total,
+                CreatedAt = DateTime.UtcNow,
+            };
 
                 await _unitOfWork.OrderRepository.AddAsync(newOrder);
                 await _unitOfWork.SaveAsync();
@@ -182,7 +195,42 @@
             return await _unitOfWork.OrderRepository.GetTotalOrdersAsync();
         }
 
+    public async Task<PagedResult<OrderResponse>> GetOrdersToShipper(int userId, int pageNumber, int pageSize)
+    {
+        var shipper = await _shipperService.GetShipperByUserIdAsync(userId);
 
-        
-        
+        if (shipper == null)
+            return new PagedResult<OrderResponse>
+            {
+                Items = null,
+                TotalItems = 0,
+                Page = 0,
+                PageSize = 0
+            };
+
+        var pagedResult = await _orderRepository.GetOrdersToShipperAsync(shipper.AreaCode, pageNumber, pageSize);
+
+        var itemAvailable = new List<order>();
+
+        foreach (var item in pagedResult.Items)
+        {
+            if (item.orders_details.Any(od => od.Status == OrderStatus.Preparing ||
+                od.Status == OrderStatus.Delivery ||
+                od.Status == OrderStatus.Delivered
+            ))
+            {
+                itemAvailable.Add(item);
+            }
+        }
+
+        var ordersDtos = _mapper.Map<List<OrderResponse>>(itemAvailable);
+
+        return new PagedResult<OrderResponse>
+        {
+            Items = ordersDtos,
+            TotalItems = pagedResult.TotalItems,
+            Page = pagedResult.Page,
+            PageSize = pagedResult.PageSize
+        };
     }
+}

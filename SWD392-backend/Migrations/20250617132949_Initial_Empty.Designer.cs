@@ -6,14 +6,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SWD392_backend.Context;
+using SWD392_backend.Entities.Enums;
 
 #nullable disable
 
 namespace SWD392_backend.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250528182451_V3_UpdateNewTimestampWithTimeZone")]
-    partial class V3_UpdateNewTimestampWithTimeZone
+    [Migration("20250617132949_Initial_Empty")]
+    partial class Initial_Empty
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,7 +24,7 @@ namespace SWD392_backend.Migrations
                 .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "order_status", new[] { "pending", "preparing", "delivery", "delivered", "returned", "cancelled", "refunding", "refunded" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "order_status", "order_status", new[] { "pending", "preparing", "delivery", "delivered", "returned", "cancelled", "refunding", "refunded" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.HasSequence("product_images_seq");
@@ -148,6 +149,10 @@ namespace SWD392_backend.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
                         .HasColumnName("quantity");
+
+                    b.Property<OrderStatus>("Status")
+                        .HasColumnType("order_status")
+                        .HasColumnName("status");
 
                     b.HasKey("Id")
                         .HasName("orders_detail_pkey");
@@ -318,7 +323,7 @@ namespace SWD392_backend.Migrations
                     b.HasKey("Id")
                         .HasName("product_images_pkey");
 
-                    b.HasIndex("ProductsId");
+                    b.HasIndex(new[] { "ProductsId", "IsMain" }, "idx_product_images_productid_ismain");
 
                     b.ToTable("product_images");
                 });
@@ -511,14 +516,14 @@ namespace SWD392_backend.Migrations
                     b.HasOne("SWD392_backend.Entities.order", "order")
                         .WithMany("orders_details")
                         .HasForeignKey("OrderId")
-                        .IsRequired()
-                        .HasConstraintName("fk_orders_detail_order");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SWD392_backend.Entities.product", "product")
                         .WithMany("orders_details")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_orders_detail_order");
 
                     b.Navigation("order");
 

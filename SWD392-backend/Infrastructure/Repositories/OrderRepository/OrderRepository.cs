@@ -6,6 +6,8 @@ namespace SWD392_backend.Infrastructure.Repositories.OrderRepository;
 using SWD392_backend.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using SWD392_backend.Models;
+using SWD392_backend.Entities.Enums;
 
 public class OrderRepository : IOrderRepository
 {
@@ -28,7 +30,34 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.orders_details)
             .AsQueryable(); // Quan trọng để chuỗi LINQ hoạt động
     }
-    
+
+    public async Task<PagedResult<order>> GetOrdersToShipperAsync(string areaCode, int pageNumber, int pageSize)
+    {
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+        pageSize = pageSize < 1 ? 10 : pageSize;
+
+        //Total items
+        var totalItems = await _context.orders
+                        .Where(o => o.AreaCode == areaCode)
+                        .CountAsync();
+
+        var orders = await _context.orders
+                    .Include(o => o.orders_details)
+                    .Where(o => o.AreaCode == areaCode)
+                    .OrderByDescending(o => o.CreatedAt)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+        return new PagedResult<order>
+        {
+            Items = orders,
+            TotalItems = totalItems,
+            Page = pageNumber,
+            PageSize = pageSize
+        };
+    }
+
     public async Task<int> GetTotalOrdersAsync()
     {
         return await _context.orders.CountAsync();

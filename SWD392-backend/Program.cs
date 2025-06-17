@@ -29,6 +29,8 @@ using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 using SWD392_backend.Infrastructure.Services.SupplerSerivce;
 using SWD392_backend.Infrastructure.Services.ReviewService;
 using SWD392_backend.Infrastructure.Repositories.ReviewRepository;
+using SWD392_backend.Infrastructure.Services.ShipperService;
+using SWD392_backend.Infrastructure.Repositories.ShipperRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -127,9 +129,8 @@ builder.Services.AddScoped<PaymentService>();
 builder.Services.AddScoped<IElasticSearchService, ElasticSearchService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IShipperService, ShipperService>();
 
-// Repository
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -139,6 +140,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductImageService, ProductImageService>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IShipperRepository, ShipperRepository>();
+
 // UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
