@@ -233,4 +233,13 @@ using SWD392_backend.Models.Request;
             PageSize = pagedResult.PageSize
         };
     }
-}
+
+    public void UpdateOrderStatus(string orderId, int productId, OrderStatus status)
+    {
+      orders_detail x =  _unitOfWork.OrderRepository.GetOrdersDetail(orderId, productId);
+      x.Status = status;
+      _unitOfWork.OrdersDetailRepository.Update(x);
+      _unitOfWork.SaveAsync();
+    }
+    
+    }

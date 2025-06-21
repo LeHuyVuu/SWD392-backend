@@ -58,6 +58,14 @@ public class OrderRepository : IOrderRepository
         };
     }
 
+    public orders_detail? GetOrdersDetail(string orderId, int productId)
+    {
+        return   _context.orders_details.FirstOrDefault(p => p.OrderId.ToString() == orderId && p.ProductId == productId);
+  
+
+        
+    }
+
     public async Task<int> GetTotalOrdersAsync()
     {
         return await _context.orders.CountAsync();

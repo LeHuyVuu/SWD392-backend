@@ -16,4 +16,5 @@ public interface IOrderRepository
 
     Task<PagedResult<order>> GetOrdersToShipperAsync(string areaCode, int pageNumber, int pageSize);
 
+    orders_detail GetOrdersDetail(string orderId, int productId);
 }

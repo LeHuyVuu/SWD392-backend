@@ -1,5 +1,6 @@
 ﻿using cybersoft_final_project.Models.Request;
 using SWD392_backend.Entities;
+using SWD392_backend.Entities.Enums;
 using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
@@ -17,5 +18,6 @@ public interface IOrderService
 
     Task<int> GetTotalOrdersAsync();
 
-    Task<PagedResult<OrderResponse>> GetOrdersToShipper(int userId, int pageNumber, int pageSize); 
+    Task<PagedResult<OrderResponse>> GetOrdersToShipper(int userId, int pageNumber, int pageSize);
+    void UpdateOrderStatus(string orderId, int productId, OrderStatus status);
 }

@@ -1,6 +1,9 @@
 ﻿using cybersoft_final_project.Models;
 using cybersoft_final_project.Models.Request;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SWD392_backend.Context;
 using SWD392_backend.Entities.Enums;
 using SWD392_backend.Infrastructure.Services.OrderService;
 using SWD392_backend.Models.Request;
@@ -12,6 +15,7 @@ namespace SWD392_backend.Infrastructure.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly IOrderService _orderService;
+    private readonly MyDbContext _context;
 
     public OrderController(IOrderService orderService)
     {
@@ -20,7 +24,7 @@ public class OrderController : ControllerBase
 
 
     /// <summary>
-    /// Lấy danh sách đơn hàng của người dùng hiện tại.
+    /// Lấy danh sách đơn hàng của người dùng hiện tại. (Support for Supplier và Customer)
     /// </summary>
     /// <param name="page">Trang hiện tại (mặc định là 1).</param>
     /// <param name="pageSize">Số lượng đơn hàng mỗi trang (mặc định là 10).</param>
@@ -169,4 +173,34 @@ public class OrderController : ControllerBase
             return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
         }
     }
+    
+    [HttpPut("update-status")]
+    public async Task<IActionResult> UpdateStatus(string orderId, int productId, OrderStatus status)
+    {
+        try
+        {
+            // Validate input
+            if (orderId.IsNullOrEmpty() || productId <= 0)
+            {
+                return BadRequest("Invalid orderId or productId.");
+            }
+
+            _orderService.UpdateOrderStatus(orderId, productId, status);
+
+     
+
+            return Ok(new
+            {
+                message = "Order detail status updated successfully.",
+                orderId,
+                productId,
+                newStatus = status.ToString()
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
 }
