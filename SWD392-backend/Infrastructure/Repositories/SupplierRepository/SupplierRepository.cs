@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Context;
+using SWD392_backend.Entities;
 
 namespace SWD392_backend.Infrastructure.Repositories.SupplierRepository;
 
@@ -12,10 +13,14 @@ public class SupplierRepository : ISupplierRepository
         _context = context;
     }
 
-
-    public Task<int> GetTotalCountAsync()
+    public async Task<supplier?> GetSupplierByIdAsync(int id)
     {
-        return _context.suppliers.CountAsync();
+        return await _context.suppliers.FirstOrDefaultAsync(s => s.Id == id);
+    }
+
+    public async Task<int> GetTotalCountAsync()
+    {
+        return await _context.suppliers.CountAsync();
     }
 }
 

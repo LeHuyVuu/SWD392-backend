@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Win32.SafeHandles;
+using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Models;
@@ -154,15 +155,37 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// <param name="id">ID của sản phẩm cần cập nhật.</param>
         /// <param name="request">Dữ liệu cập nhật cho sản phẩm.</param>
         /// <response code="200">Trả về nếu cập nhật thành công</response>
-        [HttpPost("update/{id}")]
-        public async Task<ActionResult<ProductResponse>> UpdateProduct(int id,[FromBody] UpdateProductRequest request)
+        [HttpPost("update/{productId}")]
+        public async Task<ActionResult<ProductResponse>> UpdateProduct(int productId,[FromBody] UpdateProductRequest request)
         {
-            var response = await _productService.UpdateProductAsync(id, request);
+            try
+            {
+                var role = User.FindFirst("Role")?.Value;
 
-            if (response == null)
-                return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật sản phẩm thất bại", null));
-            else
-                return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
+                if (string.IsNullOrEmpty(role))
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Role claim not found.", null));
+
+                string? idClaimType = role == "CUSTOMER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
+
+                if (idClaimType == null)
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Unsupported role.", null));
+
+                var idClaim = User.FindFirst(idClaimType)?.Value;
+
+                if (string.IsNullOrEmpty(idClaim) || !int.TryParse(idClaim, out int id))
+                    return BadRequest(HTTPResponse<object>.Response(400, $"Invalid or missing {idClaimType}.", null));
+
+                var result = await _productService.UpdateProductAsync(id, productId, request);
+
+                if (result == null)
+                    return BadRequest(HTTPResponse<object>.Response(400, "Cập nhật sản phẩm thất bại", null));
+
+                return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
         }
 
         /// <summary>

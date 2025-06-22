@@ -6,6 +6,7 @@ using SWD392_backend.Infrastructure.Repositories.ProductRepository;
 using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 using SWD392_backend.Infrastructure.Services.ProductImageService;
 using SWD392_backend.Infrastructure.Services.S3Service;
+using SWD392_backend.Infrastructure.Services.SupplerSerivce;
 using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
@@ -21,8 +22,9 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
         private readonly IElasticSearchService _elasticSearchService;
         private readonly IS3Service _s3Service;
         private readonly IProductImageService _productImageService;
+        private readonly ISupplierService _supplierService;
 
-        public ProductService(IProductRepository productRepository, IMapper mapper, IUnitOfWork unitOfWork, IElasticSearchService elasticSearchService, IS3Service s3Service, IProductImageService productImageService)
+        public ProductService(IProductRepository productRepository, IMapper mapper, IUnitOfWork unitOfWork, IElasticSearchService elasticSearchService, IS3Service s3Service, IProductImageService productImageService, ISupplierService supplierService)
         {
             _productRepository = productRepository;
             _mapper = mapper;
@@ -30,6 +32,7 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             _elasticSearchService = elasticSearchService;
             _s3Service = s3Service;
             _productImageService = productImageService;
+            _supplierService = supplierService;
         }
 
         public async Task<ProductDetailResponse> GetByIdAsync(int id)
@@ -103,11 +106,19 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             return response;
         }
 
-        public async Task<ProductResponse> UpdateProductAsync(int id, UpdateProductRequest request)
+        public async Task<ProductResponse> UpdateProductAsync(int id, int productId, UpdateProductRequest request)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var supplier = await _supplierService.GetSupplierByIdAsync(id);
+
+            if (supplier == null)
+                return null;
+
+            var product = await _productRepository.GetByIdAsync(productId);
 
             if (product == null)
+                return null;
+
+            if (supplier.Id != product.SupplierId)
                 return null;
 
             // Map into exist product
