@@ -120,12 +120,32 @@ namespace SWD392_backend.Infrastructure.Controllers
         [HttpPost("add")]
         public async Task<ActionResult<ProductResponse>> AddProduct([FromBody] AddProductRequest request)
         {
-            var response = await _productService.AddProductAsync(request);
 
-            if (response == null)
-                return BadRequest(HTTPResponse<object>.Response(400, "Thêm sản phẩm thất bại", null));
-            else
-                return Ok(HTTPResponse<object>.Response(200, "Thêm sản phẩm thành công", response));
+            try
+            {
+                var role = User.FindFirst("Role")?.Value;
+
+                if (string.IsNullOrEmpty(role))
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Role claim not found.", null));
+
+                string? idClaimType = role == "CUSTOMER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
+
+                if (idClaimType == null)
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Unsupported role.", null));
+
+                var idClaim = User.FindFirst(idClaimType)?.Value;
+
+                if (string.IsNullOrEmpty(idClaim) || !int.TryParse(idClaim, out int id))
+                    return BadRequest(HTTPResponse<object>.Response(400, $"Invalid or missing {idClaimType}.", null));
+
+                var result = await _productService.AddProductAsync(id, request);
+
+                return Ok(HTTPResponse<object>.Response(200, "Thêm sản phẩm thành công", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
         }
 
         /// <summary>

@@ -76,8 +76,9 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             };
         }
 
-        public async Task<ProductResponse> AddProductAsync(AddProductRequest request)
+        public async Task<ProductResponse> AddProductAsync(int id, AddProductRequest request)
         {
+
             // Map from request
             var product = _mapper.Map<product>(request);
 
@@ -87,7 +88,7 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             product.AvailableQuantity = product.StockInQuantity - product.SoldQuantity;
             product.IsActive = true;
             product.Slug = SlugHelper.Slugify(product.Name);
-            product.SupplierId = request.SupplierId;
+            product.SupplierId = id;
 
             // Insert
             await _productRepository.AddAsync(product);

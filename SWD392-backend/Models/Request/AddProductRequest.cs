@@ -10,6 +10,5 @@
         public bool IsSale { get; set; }
         public string Sku { get; set; }
         public int CategoriesId { get; set; }
-        public int SupplierId { get; set; }
     }
 }
