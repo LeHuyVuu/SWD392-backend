@@ -1,9 +1,11 @@
 ﻿using cybersoft_final_project.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using SWD392_backend.Infrastructure.Services.OrderService;
 using SWD392_backend.Infrastructure.Services.ShipperService;
 using SWD392_backend.Models.Request;
+using System.Text.Json;
 
 namespace SWD392_backend.Infrastructure.Controllers
 {
@@ -13,11 +15,13 @@ namespace SWD392_backend.Infrastructure.Controllers
     {
         private readonly IShipperService _shipperService;
         private readonly IOrderService _orderService;
+        private readonly IDistributedCache _cache;
 
-        public ShipperController(IShipperService shipperService, IOrderService orderService)
+        public ShipperController(IShipperService shipperService, IOrderService orderService, IDistributedCache cache)
         {
             _shipperService = shipperService;
             _orderService = orderService;
+            _cache = cache;
         }
 
         [HttpGet("orders")]
@@ -40,9 +44,24 @@ namespace SWD392_backend.Infrastructure.Controllers
                 if (string.IsNullOrEmpty(idClaim) || !int.TryParse(idClaim, out int id))
                     return BadRequest(HTTPResponse<object>.Response(400, $"Invalid or missing {idClaimType}.", null));
 
-                var result = await _orderService.GetOrdersToShipper(id, pageNumber, pageSize);
+                // Tạo key cache theo shipper + page
+                string cacheKey = $"shipper:orders:{id}:page:{pageNumber}:size:{pageSize}";
+                var cachedData = await _cache.GetStringAsync(cacheKey);
+                if (cachedData != null)
+                {
+                    var result = JsonSerializer.Deserialize<object>(cachedData);
+                    return Ok(HTTPResponse<object>.Response(200, "Fetched from cache", result));
+                }
 
-                return Ok(HTTPResponse<object>.Response(200, "Fetch successfully", result));
+                var freshData = await _orderService.GetOrdersToShipper(id, pageNumber, pageSize);
+
+                var serializedData = JsonSerializer.Serialize(freshData);
+                await _cache.SetStringAsync(cacheKey, serializedData, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30)
+                });
+
+                return Ok(HTTPResponse<object>.Response(200, "Fetched successfully", freshData));
             }
             catch (Exception ex)
             {

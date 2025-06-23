@@ -64,6 +64,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
                             .Include(p => p.product_images)
                             .Where(p => p.IsActive)
                             .OrderByDescending(p => p.CreatedAt)
+                            .AsNoTracking() 
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
                             .ToListAsync();
