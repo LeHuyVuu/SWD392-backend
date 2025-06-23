@@ -19,8 +19,10 @@ using SWD392_backend.Infrastructure.Repositories.CategoryRepository;
 using SWD392_backend.Infrastructure.Repositories.ProductImageRepository;
 using SWD392_backend.Infrastructure.Services.ProductImageService;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Caching.Distributed;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Npgsql;
+using StackExchange.Redis;
 using SWD392_backend.Entities.Enums;
 using SWD392_backend.Infrastructure.Repositories.SupplierRepository;
 using SWD392_backend.Infrastructure.Services.S3Service;
@@ -190,11 +192,58 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 builder.Services.AddAuthorization();
+// Add service CACHING
+builder.Services.AddOutputCache();
+// Create policy cache
+builder.Services.AddOutputCache(options =>
+{
+    options.AddPolicy("cache-long", p => p.Expire(TimeSpan.FromDays(30)));
+});
 
+
+var redisHost = Environment.GetEnvironmentVariable("REDIS_HOST") ?? "localhost";
+var redisPort = Environment.GetEnvironmentVariable("REDIS_PORT") ?? "6379";
+var redisPassword = Environment.GetEnvironmentVariable("REDIS_PASSWORD") ?? "";
+var redisInstance = Environment.GetEnvironmentVariable("REDIS_INSTANCE") ?? "swd392-backend:";
+
+var redisConnectionString = $"{redisHost}:{redisPort},password={redisPassword}";
+
+// Cấu hình cache Redis
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisConnectionString;
+    options.InstanceName = redisInstance;
+});
+
+// Cấu hình connection multiplexer để dùng truy cập key
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var config = ConfigurationOptions.Parse($"{redisHost}:{redisPort}", true);
+    if (!string.IsNullOrWhiteSpace(redisPassword))
+    {
+        config.Password = redisPassword;
+    }
+    return ConnectionMultiplexer.Connect(config);
+});
 var app = builder.Build();
+app.MapGet("/set-cache", async (IDistributedCache cache) =>
+{
+    await cache.SetStringAsync("testKey", "Redis OK!", new DistributedCacheEntryOptions
+    {
+        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+    });
+
+    return Results.Ok("Cache set");
+});
+
+app.MapGet("/get-cache", async (IDistributedCache cache) =>
+{
+    var value = await cache.GetStringAsync("testKey");
+    return Results.Ok(value ?? "Cache not found");
+});
 
 // Middleware pipeline
-
+app.UseOutputCache();
 app.UseSwagger();
 app.UseSwaggerUI();
 
