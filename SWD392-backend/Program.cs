@@ -215,16 +215,24 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = redisInstance;
 });
 
-// Cấu hình connection multiplexer để dùng truy cập key
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
-    var config = ConfigurationOptions.Parse($"{redisHost}:{redisPort}", true);
+    var config = new ConfigurationOptions
+    {
+        EndPoints = { $"{redisHost}:{redisPort}" },
+        AbortOnConnectFail = false, // 👈 THÊM DÒNG NÀY!
+        ConnectRetry = 5,           // Retry 5 lần
+        ConnectTimeout = 5000       // Timeout sau 5s
+    };
+
     if (!string.IsNullOrWhiteSpace(redisPassword))
     {
         config.Password = redisPassword;
     }
+
     return ConnectionMultiplexer.Connect(config);
 });
+
 var app = builder.Build();
 app.MapGet("/set-cache", async (IDistributedCache cache) =>
 {
