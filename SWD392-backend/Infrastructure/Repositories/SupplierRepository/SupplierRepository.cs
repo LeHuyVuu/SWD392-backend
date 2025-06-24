@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Context;
 using SWD392_backend.Entities;
+using SWD392_backend.Models;
 
 namespace SWD392_backend.Infrastructure.Repositories.SupplierRepository;
 
@@ -11,6 +12,32 @@ public class SupplierRepository : ISupplierRepository
     public SupplierRepository(MyDbContext context)
     {
         _context = context;
+    }
+
+    public async Task<PagedResult<product>> GetPagedProductsAsync(int supplierId, int pageNumber, int pageSize)
+    {
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+
+        // Total Items
+        var totalItems = await _context.products.Where(i => i.SupplierId == supplierId).CountAsync();
+
+        var products = await _context.products
+                            .Include(p => p.product_attributes)
+                            .Include(p => p.product_images)
+                            .Where(p => p.SupplierId == supplierId)
+                            .OrderByDescending(p => p.CreatedAt)
+                            .AsNoTracking()
+                            .Skip((pageNumber - 1) * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+
+        return new PagedResult<product>
+        {
+            Items = products,
+            TotalItems = totalItems,
+            Page = pageNumber,
+            PageSize = pageSize
+        };
     }
 
     public async Task<supplier?> GetSupplierByIdAsync(int id)
