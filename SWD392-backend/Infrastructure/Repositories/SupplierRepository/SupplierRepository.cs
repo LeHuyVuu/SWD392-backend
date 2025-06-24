@@ -40,6 +40,35 @@ public class SupplierRepository : ISupplierRepository
         };
     }
 
+    public async Task<PagedResult<order>> GetPagedOrdersAsync(int supplierId, int pageNumber, int pageSize)
+    {
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+
+        // Total Items
+        var totalItems = await _context.orders.Where(o => o.SupplierId == supplierId).CountAsync();
+
+        var orders = await _context.orders
+                            .Include(o => o.user)
+                            .Include(o => o.supplier)
+                            .Include(o => o.orders_details)
+                                .ThenInclude(od => od.product)
+                                    .ThenInclude(od => od.product_images)
+                            .Where(o => o.SupplierId == supplierId)
+                            .OrderByDescending(p => p.CreatedAt)
+                            .AsNoTracking()
+                            .Skip((pageNumber - 1) * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+
+        return new PagedResult<order>
+        {
+            Items = orders,
+            TotalItems = totalItems,
+            Page = pageNumber,
+            PageSize = pageSize
+        };
+    }
+
     public async Task<product?> GetProductByIdAsync(int id, int productId)
     {
         return await _context.products

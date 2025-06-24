@@ -25,10 +25,14 @@ namespace SWD392_backend.Infrastructure.Mappings
             CreateMap<ProductImageRequest, product_image>();
             CreateMap<product_image, ProductImageResponse>();
             CreateMap<order, OrderResponse>()
-                .ForMember(dest => dest.orders_details, opt => opt.MapFrom(src => src.orders_details));
+                .ForMember(dest => dest.orders_details, opt => opt.MapFrom(src => src.orders_details))
+                .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.user.FullName))
+                .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.supplier.Name));
 
             CreateMap<orders_detail, OrderDetailResponse>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.product.Name))
+                .ForMember(dest => dest.ProductImage, opt => opt.MapFrom(src => src.product.product_images.FirstOrDefault(p => p.IsMain).ProductImageUrl));
 
             CreateMap<ReviewRequest, product_review>();
             CreateMap<product_review, ReviewResponse>();

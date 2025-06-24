@@ -21,6 +21,25 @@ public class SupplierService : ISupplierService
         _mapper = mapper;
     }
 
+    public async Task<PagedResult<OrderResponse>> GetPagedOrdersAsync(int supplierId, int pageNumber, int pageSize)
+    {
+        var supplier = await _supploerRepository.GetSupplierByIdAsync(supplierId);
+        if (supplier == null)
+            return null;
+
+        var pagedResult = await _supploerRepository.GetPagedOrdersAsync(supplierId, pageNumber, pageSize);
+
+        var orderDtos = _mapper.Map<List<OrderResponse>>(pagedResult.Items);
+
+        return new PagedResult<OrderResponse>
+        {
+            Items = orderDtos,
+            TotalItems = pagedResult.TotalItems,
+            Page = pagedResult.Page,
+            PageSize = pagedResult.PageSize
+        };
+    }
+
     public async Task<PagedResult<ProductResponse>> GetPagedProductsAsync(int supplierId, int pageNumber, int pageSize)
     {
         var supplier = await _supploerRepository.GetSupplierByIdAsync(supplierId);

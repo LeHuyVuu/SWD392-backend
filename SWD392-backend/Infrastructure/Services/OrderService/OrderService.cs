@@ -241,5 +241,4 @@ using SWD392_backend.Models.Request;
       _unitOfWork.OrdersDetailRepository.Update(x);
       _unitOfWork.SaveAsync();
     }
-    
-    }
+}

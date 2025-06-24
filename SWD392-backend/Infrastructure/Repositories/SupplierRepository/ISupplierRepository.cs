@@ -9,4 +9,5 @@ public interface ISupplierRepository
     Task<supplier> GetSupplierByIdAsync(int id);
     Task<PagedResult<product>> GetPagedProductsAsync(int supplierId, int pageNumber, int pageSize);
     Task<product> GetProductByIdAsync(int id, int productId);
+    Task<PagedResult<order>> GetPagedOrdersAsync(int supplierId, int pageNumber, int pageSize);
 }
