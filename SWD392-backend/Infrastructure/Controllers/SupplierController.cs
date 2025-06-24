@@ -20,7 +20,7 @@ namespace SWD392_backend.Infrastructure.Controllers
         }
 
         [HttpGet("products")]
-        public async Task<ActionResult<PagedResult<ProductDetailResponse>>> GetListProducts(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedResult<ProductResponse>>> GetListProducts(int pageNumber = 1, int pageSize = 10)
         {
             try
             {

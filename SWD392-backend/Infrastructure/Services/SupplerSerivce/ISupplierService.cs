@@ -11,5 +11,5 @@ public interface ISupplierService
     Task<int> GetTotalSuppliersAsync();
     Task<supplier> GetSupplierByIdAsync(int id);
 
-    Task<PagedResult<ProductDetailResponse>> GetPagedProductsAsync(int supplierId, int pageNumber, int pageSize);
+    Task<PagedResult<ProductResponse>> GetPagedProductsAsync(int supplierId, int pageNumber, int pageSize);
 }

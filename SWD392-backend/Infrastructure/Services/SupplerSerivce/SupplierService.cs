@@ -21,14 +21,14 @@ public class SupplierService : ISupplierService
         _mapper = mapper;
     }
 
-    public async Task<PagedResult<ProductDetailResponse>> GetPagedProductsAsync(int supplierId, int pageNumber, int pageSize)
+    public async Task<PagedResult<ProductResponse>> GetPagedProductsAsync(int supplierId, int pageNumber, int pageSize)
     {
         var pagedResult = await _supploerRepository.GetPagedProductsAsync(supplierId, pageNumber, pageSize);
 
         // Model Mapper
-        var productDtos = _mapper.Map<List<ProductDetailResponse>>(pagedResult.Items);
+        var productDtos = _mapper.Map<List<ProductResponse>>(pagedResult.Items);
 
-        return new PagedResult<ProductDetailResponse>
+        return new PagedResult<ProductResponse>
         {
             Items = productDtos,
             TotalItems = pagedResult.TotalItems,
