@@ -48,6 +48,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             }
         }
 
+        /// <summary>
+        /// Search product
+        /// </summary>
         [HttpGet("search")]
         public async Task<ActionResult<List<ProductResponse>>> SearchProduct(
             [FromQuery] string q = "",
@@ -65,6 +68,9 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return Ok(response);
         }
 
+        /// <summary>
+        /// Get list product
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<PagedResult<ProductResponse>>> GetProducts(
             [FromQuery] int page = 1,
@@ -89,6 +95,10 @@ namespace SWD392_backend.Infrastructure.Controllers
             return Ok(HTTPResponse<object>.Response(200, "Lấy list product thành công", products));
         }
 
+
+        /// <summary>
+        /// Get product by ID
+        /// </summary>
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProductDetailResponse>> GetById(int id)
         {
@@ -112,6 +122,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
         }
 
+        /// <summary>
+        /// Get product by slug
+        /// </summary>
         [HttpGet("{slug}")]
         public async Task<ActionResult<ProductDetailResponse>> GetBySlug(string slug)
         {
@@ -135,6 +148,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
         }
 
+        /// <summary>
+        /// Add product
+        /// </summary>
         [HttpPost("add")]
         public async Task<ActionResult<ProductResponse>> AddProduct([FromBody] AddProductRequest request)
         {
@@ -163,6 +179,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             }
         }
 
+        /// <summary>
+        /// Update product
+        /// </summary>
         [HttpPost("update/{productId}")]
         public async Task<ActionResult<ProductResponse>> UpdateProduct(int productId,
             [FromBody] UpdateProductRequest request)
@@ -196,6 +215,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             }
         }
 
+        /// <summary>
+        /// Disable product
+        /// </summary>
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> StatusProduct(int id, [FromBody] UpdateStatusProductRequest request)
         {
@@ -209,6 +231,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
         }
 
+        /// <summary>
+        /// Delete product
+        /// </summary>
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {

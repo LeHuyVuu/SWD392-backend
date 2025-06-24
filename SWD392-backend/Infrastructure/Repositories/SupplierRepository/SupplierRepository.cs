@@ -40,6 +40,15 @@ public class SupplierRepository : ISupplierRepository
         };
     }
 
+    public async Task<product?> GetProductByIdAsync(int id, int productId)
+    {
+        return await _context.products
+                                .Include(p => p.categories)
+                                .Include(p => p.supplier)
+                                .Include(p => p.product_images)
+                                .FirstOrDefaultAsync(p => p.Id == productId && p.SupplierId == id);
+    }
+
     public async Task<supplier?> GetSupplierByIdAsync(int id)
     {
         return await _context.suppliers.FirstOrDefaultAsync(s => s.Id == id);
