@@ -121,7 +121,11 @@ using SWD392_backend.Models.Request;
             {
                 query = _unitOfWork.OrderRepository
                     .GetAll()
-                    .Include(order => order.orders_details )
+                    .Include(o => o.user)
+                    .Include(o => o.supplier)
+                    .Include(o => o.orders_details)
+                        .ThenInclude(od => od.product)
+                            .ThenInclude(od => od.product_images)
                     .Where(o => o.UserId == id);
 
                 Console.WriteLine(query.ToString());
@@ -130,7 +134,11 @@ using SWD392_backend.Models.Request;
             {
                 query = _unitOfWork.OrderRepository
                     .GetAll()
-                    .Include(order =>order.orders_details)
+                    .Include(o => o.user)
+                    .Include(o => o.supplier)
+                    .Include(o => o.orders_details)
+                        .ThenInclude(od => od.product)
+                            .ThenInclude(od => od.product_images)
                     .Where(o => o.SupplierId == id);
                 Console.WriteLine(query.ToString());
 

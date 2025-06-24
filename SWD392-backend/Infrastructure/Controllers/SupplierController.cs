@@ -107,7 +107,7 @@ namespace SWD392_backend.Infrastructure.Controllers
                 if (result == null)
                     return Ok(HTTPResponse<object>.Response(400, "Not Found", result));
 
-                return Ok(HTTPResponse<object>.Response(200, "Lấy danh sách đơn hàng  thành công", result));
+                return Ok(HTTPResponse<object>.Response(200, "Lấy danh sách đơn hàng thành công", result));
             }
             catch (Exception ex)
             {
