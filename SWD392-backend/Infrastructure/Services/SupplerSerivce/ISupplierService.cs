@@ -11,4 +11,5 @@ public interface ISupplierService
 
     Task<PagedResult<ProductResponse>> GetPagedProductsAsync(int supplierId, int pageNumber, int pageSize);
     Task<ProductDetailResponse> GetProductByIdAsync(int id, int productId);
+    Task<product> GetProductToRemoveAsync(int id, int productId);
 }

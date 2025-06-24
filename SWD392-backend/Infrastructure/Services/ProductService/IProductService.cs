@@ -16,6 +16,6 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
         Task<ProductResponse> AddProductAsync(int id, AddProductRequest product);
         Task<ProductResponse> UpdateProductAsync(int id, int productId, UpdateProductRequest request);
         Task<bool> UpdateProductStatusAsync(int id, UpdateStatusProductRequest request);
-        Task<bool> RemoveProductStatusAsync(int id);
+        Task<bool> RemoveProductStatusAsync(int supplierId, int productId);
     }
 }

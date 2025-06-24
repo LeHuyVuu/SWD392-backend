@@ -161,16 +161,16 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             return true;
         }
 
-        public async Task<bool> RemoveProductStatusAsync(int id)
+        public async Task<bool> RemoveProductStatusAsync(int supplierId, int productId)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var product = await _supplierService.GetProductToRemoveAsync(supplierId, productId);
             if (product == null)
                 return false;
 
-            var listUrls = await _productImageService.GetAllImages(id);
+            var listUrls = await _productImageService.GetAllImages(productId);
 
             // Remove image
-            await _productRepository.RemoveImagesByProductIdAsync(id);
+            await _productRepository.RemoveImagesByProductIdAsync(productId);
 
             // Remove image from s3
             if (listUrls.Count > 0)
@@ -183,7 +183,7 @@ namespace SWD392_backend.Infrastructure.Services.ProductService
             await _unitOfWork.SaveAsync();
 
             // Remove from els
-            await _elasticSearchService.RemoveProductAsync(id);
+            await _elasticSearchService.RemoveProductAsync(productId);
     
             return true;
         }

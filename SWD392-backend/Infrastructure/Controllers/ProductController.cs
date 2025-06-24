@@ -17,6 +17,7 @@ using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
 using StackExchange.Redis;
+using Elastic.Clients.Elasticsearch.Requests;
 
 namespace SWD392_backend.Infrastructure.Controllers
 {
@@ -234,17 +235,36 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// <summary>
         /// Delete product
         /// </summary>
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        [HttpDelete("{productId:int}")]
+        public async Task<IActionResult> DeleteProduct(int productId)
         {
-            var response = await _productService.RemoveProductStatusAsync(id);
-            if (!response)
-                return BadRequest(HTTPResponse<object>.Response(400, "Xóa sản phẩm thất bại", response));
+            try
+            {
+                var role = User.FindFirst("Role")?.Value;
+                if (string.IsNullOrEmpty(role))
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Role claim not found.", null));
 
-            await _cache.RemoveAsync($"products:id:{id}");
-            await ClearProductListCacheAsync();
+                string? idClaimType = role == "CUSTOMER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
+                if (idClaimType == null)
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Unsupported role.", null));
 
-            return Ok(HTTPResponse<object>.Response(200, "Xóa sản phẩm thành công", response));
+                var idClaim = User.FindFirst(idClaimType)?.Value;
+                if (string.IsNullOrEmpty(idClaim) || !int.TryParse(idClaim, out int id))
+                    return BadRequest(HTTPResponse<object>.Response(400, $"Invalid or missing {idClaimType}.", null));
+
+                var result = await _productService.RemoveProductStatusAsync(id, productId);
+                if (!result)
+                    return BadRequest(HTTPResponse<object>.Response(400, "Xóa sản phẩm thất bại", null));
+
+                await _cache.RemoveAsync($"products:id:{productId}");
+                await ClearProductListCacheAsync();
+
+                return Ok(HTTPResponse<object>.Response(200, "Xóa sản phẩm thành công", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
         }
     }
 }

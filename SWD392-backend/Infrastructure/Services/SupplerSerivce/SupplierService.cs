@@ -57,6 +57,20 @@ public class SupplierService : ISupplierService
         return productDto;
     }
 
+    public async Task<product> GetProductToRemoveAsync(int id, int productId)
+    {
+        var supplier = await _supploerRepository.GetSupplierByIdAsync(id);
+        if (supplier == null)
+            return null;
+
+        var product = await _supploerRepository.GetProductByIdAsync(id, productId);
+
+        if (product == null)
+            return null;
+
+        return product;
+    }
+
     public async Task<supplier> GetSupplierByIdAsync(int id)
     {
         return await _supploerRepository.GetSupplierByIdAsync(id);
