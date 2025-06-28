@@ -19,5 +19,5 @@ public interface IOrderService
     Task<int> GetTotalOrdersAsync();
 
     Task<PagedResult<OrderResponse>> GetOrdersToShipper(int userId, int pageNumber, int pageSize);
-    void UpdateOrderStatus(string orderId, int productId, OrderStatus status);
+    Task UpdateOrderStatus(string orderId, int productId, OrderStatus status);
 }

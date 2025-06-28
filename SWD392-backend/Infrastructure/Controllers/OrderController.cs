@@ -83,7 +83,8 @@ public class OrderController : ControllerBase
             if (cachedData != null)
             {
                 var cachedStatuses = JsonSerializer.Deserialize<List<string>>(cachedData);
-                return Ok(HTTPResponse<List<string>>.Response(200, "Fetched statuses from cache successfully.", cachedStatuses));
+                return Ok(HTTPResponse<List<string>>.Response(200, "Fetched statuses from cache successfully.",
+                    cachedStatuses));
             }
 
             List<OrderStatus> allowedStatuses;
@@ -149,7 +150,7 @@ public class OrderController : ControllerBase
             if (orderId.IsNullOrEmpty() || productId <= 0)
                 return BadRequest("Invalid orderId or productId.");
 
-            _orderService.UpdateOrderStatus(orderId, productId, status);
+            await _orderService.UpdateOrderStatus(orderId, productId, status); // ✅ await ở đây
 
             return Ok(new
             {
