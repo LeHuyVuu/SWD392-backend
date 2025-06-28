@@ -17,6 +17,7 @@ using SWD392_backend.Models;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
 using StackExchange.Redis;
+using Elastic.Clients.Elasticsearch.Requests;
 
 namespace SWD392_backend.Infrastructure.Controllers
 {
@@ -48,6 +49,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             }
         }
 
+        /// <summary>
+        /// Search product
+        /// </summary>
         [HttpGet("search")]
         public async Task<ActionResult<List<ProductResponse>>> SearchProduct(
             [FromQuery] string q = "",
@@ -65,6 +69,9 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return Ok(response);
         }
 
+        /// <summary>
+        /// Get list product
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<PagedResult<ProductResponse>>> GetProducts(
             [FromQuery] int page = 1,
@@ -89,6 +96,10 @@ namespace SWD392_backend.Infrastructure.Controllers
             return Ok(HTTPResponse<object>.Response(200, "Lấy list product thành công", products));
         }
 
+
+        /// <summary>
+        /// Get product by ID
+        /// </summary>
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProductDetailResponse>> GetById(int id)
         {
@@ -112,6 +123,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
         }
 
+        /// <summary>
+        /// Get product by slug
+        /// </summary>
         [HttpGet("{slug}")]
         public async Task<ActionResult<ProductDetailResponse>> GetBySlug(string slug)
         {
@@ -135,6 +149,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
         }
 
+        /// <summary>
+        /// Add product
+        /// </summary>
         [HttpPost("add")]
         public async Task<ActionResult<ProductResponse>> AddProduct([FromBody] AddProductRequest request)
         {
@@ -163,6 +180,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             }
         }
 
+        /// <summary>
+        /// Update product
+        /// </summary>
         [HttpPost("update/{productId}")]
         public async Task<ActionResult<ProductResponse>> UpdateProduct(int productId,
             [FromBody] UpdateProductRequest request)
@@ -196,6 +216,9 @@ namespace SWD392_backend.Infrastructure.Controllers
             }
         }
 
+        /// <summary>
+        /// Disable product
+        /// </summary>
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> StatusProduct(int id, [FromBody] UpdateStatusProductRequest request)
         {
@@ -209,17 +232,39 @@ namespace SWD392_backend.Infrastructure.Controllers
             return Ok(HTTPResponse<object>.Response(200, "Cập nhật sản phẩm thành công", response));
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        /// <summary>
+        /// Delete product
+        /// </summary>
+        [HttpDelete("{productId:int}")]
+        public async Task<IActionResult> DeleteProduct(int productId)
         {
-            var response = await _productService.RemoveProductStatusAsync(id);
-            if (!response)
-                return BadRequest(HTTPResponse<object>.Response(400, "Xóa sản phẩm thất bại", response));
+            try
+            {
+                var role = User.FindFirst("Role")?.Value;
+                if (string.IsNullOrEmpty(role))
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Role claim not found.", null));
 
-            await _cache.RemoveAsync($"products:id:{id}");
-            await ClearProductListCacheAsync();
+                string? idClaimType = role == "CUSTOMER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
+                if (idClaimType == null)
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Unsupported role.", null));
 
-            return Ok(HTTPResponse<object>.Response(200, "Xóa sản phẩm thành công", response));
+                var idClaim = User.FindFirst(idClaimType)?.Value;
+                if (string.IsNullOrEmpty(idClaim) || !int.TryParse(idClaim, out int id))
+                    return BadRequest(HTTPResponse<object>.Response(400, $"Invalid or missing {idClaimType}.", null));
+
+                var result = await _productService.RemoveProductStatusAsync(id, productId);
+                if (!result)
+                    return BadRequest(HTTPResponse<object>.Response(400, "Xóa sản phẩm thất bại", null));
+
+                await _cache.RemoveAsync($"products:id:{productId}");
+                await ClearProductListCacheAsync();
+
+                return Ok(HTTPResponse<object>.Response(200, "Xóa sản phẩm thành công", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
         }
     }
 }

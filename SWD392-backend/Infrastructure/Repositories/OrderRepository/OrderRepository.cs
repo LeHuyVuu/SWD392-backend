@@ -42,7 +42,11 @@ public class OrderRepository : IOrderRepository
                         .CountAsync();
 
         var orders = await _context.orders
+                    .Include(o => o.user)
+                    .Include(o => o.supplier)
                     .Include(o => o.orders_details)
+                        .ThenInclude(od => od.product)
+                            .ThenInclude(od => od.product_images)
                     .Where(o => o.AreaCode == areaCode)
                     .OrderByDescending(o => o.CreatedAt)
                     .Skip((pageNumber - 1) * pageSize)

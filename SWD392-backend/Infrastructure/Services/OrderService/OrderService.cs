@@ -112,6 +112,7 @@ public class OrderService : IOrderService
     }
 
 
+
     public async Task<object> GetOrdersByRoleAsync(string role, int id, int page, int pageSize)
     {
         IQueryable<order> query;
@@ -122,7 +123,6 @@ public class OrderService : IOrderService
                 .GetAll()
                 .Include(order => order.orders_details)
                 .Where(o => o.UserId == id);
-
             Console.WriteLine(query.ToString());
         }
         else if (role == "SUPPLIER")
@@ -238,5 +238,4 @@ public class OrderService : IOrderService
         _unitOfWork.OrdersDetailRepository.Update(x);
         await _unitOfWork.SaveAsync(); // ✅ đúng cách
     }
-
 }
