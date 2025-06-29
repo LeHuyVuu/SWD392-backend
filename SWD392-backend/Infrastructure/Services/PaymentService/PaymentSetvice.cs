@@ -30,8 +30,8 @@ public class PaymentService
             },
             ApplicationContext = new ApplicationContext
             {
-                ReturnUrl = "https://tiki.vn/success.html",
-                CancelUrl = "https://tiki.vn/error.html"
+                ReturnUrl = "http://localhost:3000/checkout/success",
+                CancelUrl = "http://localhost:3000/checkout/fail"
             }
         };
 
