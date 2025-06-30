@@ -24,6 +24,7 @@ public class SupplierRepository : ISupplierRepository
         var products = await _context.products
                             .Include(p => p.product_attributes)
                             .Include(p => p.product_images)
+                            .Include(p => p.categories)
                             .Where(p => p.SupplierId == supplierId)
                             .OrderByDescending(p => p.CreatedAt)
                             .AsNoTracking()

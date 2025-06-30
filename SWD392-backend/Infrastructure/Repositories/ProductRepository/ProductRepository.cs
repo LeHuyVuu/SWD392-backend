@@ -62,6 +62,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductRepository
             var products = await _context.products
                             .Include(p => p.product_attributes)
                             .Include(p => p.product_images)
+                            .Include(p => p.categories)
                             .Where(p => p.IsActive)
                             .OrderByDescending(p => p.CreatedAt)
                             .AsNoTracking() 

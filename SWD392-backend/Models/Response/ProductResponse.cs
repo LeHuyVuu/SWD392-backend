@@ -25,6 +25,7 @@ namespace SWD392_backend.Models.Response
 
         // Relations
         public int CategoriesId { get; set; }
+        public string CategoryName { get; set; }
         public int SupplierId { get; set; }
 
         // Metadata
