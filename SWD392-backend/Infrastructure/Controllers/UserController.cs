@@ -134,7 +134,15 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-        
+        /// <summary>
+        /// Lấy tổng số người dùng đã đăng ký trong một tháng cụ thể của một năm.
+        /// </summary>
+        /// <param name="month">Tháng cần thống kê (từ 1 đến 12).</param>
+        /// <param name="year">Năm cần thống kê (lớn hơn 2000, nhỏ hơn hoặc bằng năm hiện tại).</param>
+        /// <returns>
+        /// Trả về tổng số người dùng đã đăng ký trong tháng và năm tương ứng.
+        /// </returns>
+
         [HttpGet("usersbymonth")]
         public async Task<IActionResult> GetTotalUsersInMonth([FromQuery] int month, [FromQuery] int year)
         {
@@ -154,6 +162,30 @@ namespace SWD392_backend.Infrastructure.Controllers
 
             return Ok(HTTPResponse<object>.Response(200, "Lấy tổng người dùng theo tháng thành công", result));
         }
+        /// <summary>
+        /// Lấy tổng số người dùng đã đăng ký trong một ngày cụ thể.
+        /// </summary>
+        /// <param name="day">Ngày cần thống kê (định dạng yyyy-MM-dd, ví dụ: 2025-06-30).</param>
+        /// <returns>
+        /// Trả về tổng số người dùng đã đăng ký đúng vào ngày đó.
+        /// </returns>
+
+        [HttpGet("usersbyday")]
+        public async Task<IActionResult> GetUserCountByExactDay([FromQuery] DateTime day)
+        {
+            if (day == default)
+                return BadRequest(HTTPResponse<object>.Response(400, "Ngày không hợp lệ", null));
+
+            var total = await _userService.GetUserCountByExactDay(day);
+
+            return Ok(HTTPResponse<object>.Response(200, "Thành công", new
+            {
+                date = day.ToString("yyyy-MM-dd"),
+                total
+            }));
+        }
+
+
 
     }
 }

@@ -2,6 +2,8 @@
 using SWD392_backend.Context;
 using SWD392_backend.Entities;
 using Microsoft.EntityFrameworkCore;
+using SWD392_backend.Models.Response;
+
 namespace SWD392_backend.Infrastructure.Repositories.UserRepository
 {
     public class UserRepository : IUserRepository
@@ -45,6 +47,12 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
                 .CountAsync();
         }
 
+        public async Task<int> CountUsersBetween(DateTime start, DateTime end)
+        {
+            return await _context.users
+                .Where(u => u.CreatedAt >= start && u.CreatedAt < end)
+                .CountAsync();
+        }
 
     }
 }
