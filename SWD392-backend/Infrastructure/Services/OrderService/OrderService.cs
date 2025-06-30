@@ -238,4 +238,62 @@ public class OrderService : IOrderService
         _unitOfWork.OrdersDetailRepository.Update(x);
         await _unitOfWork.SaveAsync(); // ✅ đúng cách
     }
+
+    public async Task<int> CountOrdersByMonthAsync(int month, int year)
+    {
+        // Validate
+        if (year < 2000 || year > DateTime.Now.Year + 1)
+        {
+            throw new ArgumentException("Year out of range");
+        }
+
+        if (month < 1 || month > 12)
+        {
+            throw new ArgumentException("Month must be between 1 and 12");
+        }
+
+        var startDate = DateTime.SpecifyKind(new DateTime(year, month, 1), DateTimeKind.Utc);
+        var endDate = startDate.AddMonths(1);
+
+        return await _orderRepository.CountOrdersByMonthAsync(startDate, endDate);
+    }
+
+    public async Task<int> CountOrdersByDayAsync(int day, int month, int year)
+    {
+        if (year < 2000 || year > DateTime.Now.Year + 1)
+        {
+            throw new ArgumentException("Year is out of range.");
+        }
+        if (month < 1 || month > 12)
+        {
+            throw new ArgumentException("Month must be between 1 and 12.");
+        }
+        if (day < 1 || day > 31)
+        {
+            throw new ArgumentException("Day must be between 1 and 31.");
+        }
+
+        if (!DateTime.TryParse($"{year}-{month}-{day}", out var dateOnly))
+        {
+            throw new ArgumentException("Invalid date.");
+        }
+
+        var startDate = DateTime.SpecifyKind(new DateTime(year, month, day, 0, 0, 0), DateTimeKind.Utc);
+        var endDate = startDate.AddDays(1);
+
+        return await _orderRepository.CountOrdersByDayAsync(startDate, endDate);
+
+    }
+
+    public async Task<(int totalOrders, int totalUsers)> GetSummaryThisMonthAsync()
+    {
+        var now = DateTime.UtcNow;
+        var startDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var endDate = now;
+
+        var totalOrders = await _orderRepository.CountOrdersInRangeAsync(startDate, endDate);
+        var totalUsers = await _orderRepository.CountNewUsersInRangeAsync(startDate, endDate);
+
+        return (totalOrders, totalUsers);
+    }
 }

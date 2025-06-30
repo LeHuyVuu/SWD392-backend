@@ -20,4 +20,8 @@ public interface IOrderService
 
     Task<PagedResult<OrderResponse>> GetOrdersToShipper(int userId, int pageNumber, int pageSize);
     Task UpdateOrderStatus(string orderId, int productId, OrderStatus status);
+    Task<int> CountOrdersByMonthAsync(int month, int year);
+    Task<int> CountOrdersByDayAsync(int day, int month, int year);
+
+    Task<(int totalOrders, int totalUsers)> GetSummaryThisMonthAsync();
 }

@@ -17,4 +17,10 @@ public interface IOrderRepository
     Task<PagedResult<order>> GetOrdersToShipperAsync(string areaCode, int pageNumber, int pageSize);
 
     orders_detail GetOrdersDetail(string orderId, int productId);
+
+    Task<int> CountOrdersByMonthAsync(DateTime startDate, DateTime endDate);
+    Task<int> CountOrdersByDayAsync(DateTime startDate, DateTime endDate);
+
+    Task<int> CountOrdersInRangeAsync(DateTime startDate, DateTime endDate);
+    Task<int> CountNewUsersInRangeAsync(DateTime startDate, DateTime endDate);
 }

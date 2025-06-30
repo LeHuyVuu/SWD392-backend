@@ -75,7 +75,33 @@ public class OrderRepository : IOrderRepository
         return await _context.orders.CountAsync();
     }
 
+    public async Task<int> CountOrdersByMonthAsync(DateTime startDate, DateTime endDate)
+    {
+        return await _context.orders
+                    .Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate)
+                    .CountAsync();
+    }
 
+    public async Task<int> CountOrdersByDayAsync(DateTime startDate, DateTime endDate)
+    {
+        return await _context.orders
+                    .Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate)
+                    .CountAsync();
+    }
+
+    public async Task<int> CountOrdersInRangeAsync(DateTime startDate, DateTime endDate)
+    {
+        return await _context.orders
+            .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate)
+            .CountAsync();
+    }
+
+    public async Task<int> CountNewUsersInRangeAsync(DateTime startDate, DateTime endDate)
+    {
+        return await _context.users
+            .Where(u => u.CreatedAt >= startDate && u.CreatedAt <= endDate)
+            .CountAsync();
+    }
 
     // Các method khác nếu cần
 }
