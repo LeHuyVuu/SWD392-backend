@@ -22,6 +22,7 @@ public interface IOrderRepository
     Task<PagedResult<order>> GetOrdersByMonthAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize);
 
     Task<int> CountOrdersByDayAsync(DateTime startDate, DateTime endDate);
+    Task<PagedResult<order>> GetOrdersByDayAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize);
 
     Task<int> CountOrdersInRangeAsync(DateTime startDate, DateTime endDate);
     Task<int> CountNewUsersInRangeAsync(DateTime startDate, DateTime endDate);

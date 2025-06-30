@@ -38,18 +38,12 @@ namespace SWD392_backend.Infrastructure.Controllers
         }
 
         [HttpGet("ordersbyday")]
-        public async Task<IActionResult> GetOrdersByMonth([FromQuery] int day, [FromQuery] int month, [FromQuery] int year)
+        public async Task<IActionResult> GetOrdersByMonth([FromQuery] int day, [FromQuery] int month, [FromQuery] int year, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var count = await _orderService.CountOrdersByDayAsync(day, month, year);
-                return Ok(new
-                {
-                    year,
-                    month,
-                    day,
-                    totalOrders = count
-                });
+                var result = await _orderService.CountOrdersByDayAsync(day, month, year, pageNumber, pageSize);
+                return Ok(HTTPResponse<object>.Response(400, "Get Succesfully", result));
             }
             catch (ArgumentException ex)
             {

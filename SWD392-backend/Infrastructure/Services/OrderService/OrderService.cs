@@ -275,7 +275,7 @@ public class OrderService : IOrderService
         };
     }
 
-    public async Task<int> CountOrdersByDayAsync(int day, int month, int year)
+    public async Task<ReportOrderResponse> CountOrdersByDayAsync(int day, int month, int year, int pageNumber, int pageSize)
     {
         if (year < 2000 || year > DateTime.Now.Year + 1)
         {
@@ -298,7 +298,25 @@ public class OrderService : IOrderService
         var startDate = DateTime.SpecifyKind(new DateTime(year, month, day, 0, 0, 0), DateTimeKind.Utc);
         var endDate = startDate.AddDays(1);
 
-        return await _orderRepository.CountOrdersByDayAsync(startDate, endDate);
+        var count = await _orderRepository.CountOrdersByDayAsync(startDate, endDate);
+        var orders = await _orderRepository.GetOrdersByDayAsync(startDate, endDate, pageNumber, pageSize);
+
+        var ordersDtos = _mapper.Map<List<OrderResponse>>(orders.Items);
+
+        return new ReportOrderResponse
+        {
+            year = year,
+            month = month,
+            day = day,
+            TotalOrders = orders.TotalItems,
+            orders = new PagedResult<OrderResponse>
+            {
+                Items = ordersDtos,
+                TotalItems = orders.TotalItems,
+                Page = pageNumber,
+                PageSize = pageSize
+            }
+        };
 
     }
 
