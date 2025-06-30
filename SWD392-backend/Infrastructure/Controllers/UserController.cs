@@ -134,5 +134,26 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+        
+        [HttpGet("usersbymonth")]
+        public async Task<IActionResult> GetTotalUsersInMonth([FromQuery] int month, [FromQuery] int year)
+        {
+            if (month < 1 || month > 12 || year > DateTime.Now.Year)
+            {
+                return BadRequest(HTTPResponse<object>.Response(400, "Tháng hoặc năm không hợp lệ.", null));
+            }
+
+            int total = await _userService.GetTotalUsersByMonth(month, year);
+
+            var result = new
+            {
+                Month = month,
+                Year = year,
+                Total = total
+            };
+
+            return Ok(HTTPResponse<object>.Response(200, "Lấy tổng người dùng theo tháng thành công", result));
+        }
+
     }
 }

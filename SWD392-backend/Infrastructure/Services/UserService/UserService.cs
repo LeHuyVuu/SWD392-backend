@@ -70,5 +70,11 @@ namespace SWD392_backend.Infrastructure.Services.UserService
                 throw new Exception("Lỗi không xác định khi thêm người dùng. " + ex.Message);
             }
         }
+        
+        
+        public async Task<int> GetTotalUsersByMonth(int month, int year)
+        {
+            return await _userRepository.GetTotalUserByMonth(month, year);
+        }
     }
 }

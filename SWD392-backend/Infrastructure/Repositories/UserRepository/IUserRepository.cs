@@ -13,5 +13,6 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
 
 
         Task<user?> GetUserByEmail(string requestEmail);
+        Task<int> GetTotalUserByMonth(int month, int year);
     }
 }

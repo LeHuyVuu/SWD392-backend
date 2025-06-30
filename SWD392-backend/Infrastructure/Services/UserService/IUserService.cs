@@ -12,6 +12,9 @@ namespace SWD392_backend.Infrastructure.Services.UserService
         Task<int> GetTotalUserAsync();
         
         Task AddUserAsync(UserRequest request);
+        
+        Task<int> GetTotalUsersByMonth(int month, int year);
+
 
     }
 }
