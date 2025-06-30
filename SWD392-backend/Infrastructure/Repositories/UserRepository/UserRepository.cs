@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Context;
 using SWD392_backend.Entities;
-
+using Microsoft.EntityFrameworkCore;
 namespace SWD392_backend.Infrastructure.Repositories.UserRepository
 {
     public class UserRepository : IUserRepository
@@ -35,5 +35,16 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
         {
             return await _context.users.Where(u => u.Email == requestEmail).FirstOrDefaultAsync();
         }
+
+        public async Task<int> GetTotalUserByMonth(int month, int year)
+        {
+            var start = new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var end = start.AddMonths(1);
+            return await _context.users
+                .Where(u => u.CreatedAt >= start && u.CreatedAt < end)
+                .CountAsync();
+        }
+
+
     }
 }
