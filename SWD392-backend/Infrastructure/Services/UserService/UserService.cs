@@ -2,6 +2,7 @@
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
 using SWD392_backend.Models.Requests;
+using SWD392_backend.Models.Response;
 using web_api_base.Helper;
 
 
@@ -76,5 +77,15 @@ namespace SWD392_backend.Infrastructure.Services.UserService
         {
             return await _userRepository.GetTotalUserByMonth(month, year);
         }
+
+        public async Task<int> GetUserCountByExactDay(DateTime day)
+        {
+            var start = DateTime.SpecifyKind(day.Date, DateTimeKind.Utc);
+            var end = start.AddDays(1);
+
+            return await _userRepository.CountUsersBetween(start, end);
+        }
+
+
     }
 }
