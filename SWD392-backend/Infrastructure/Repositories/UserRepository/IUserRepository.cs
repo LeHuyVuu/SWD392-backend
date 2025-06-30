@@ -12,5 +12,6 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
         Task<int> CountAsync();
 
 
+        Task<user?> GetUserByEmail(string requestEmail);
     }
 }

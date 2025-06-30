@@ -31,6 +31,9 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
           return  await _context.users.CountAsync();
         }
 
-        
+        public async Task<user?> GetUserByEmail(string requestEmail)
+        {
+            return await _context.users.Where(u => u.Email == requestEmail).FirstOrDefaultAsync();
+        }
     }
 }
