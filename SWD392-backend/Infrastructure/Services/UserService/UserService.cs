@@ -1,5 +1,8 @@
-﻿using SWD392_backend.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
+using SWD392_backend.Models.Requests;
+using web_api_base.Helper;
 
 
 namespace SWD392_backend.Infrastructure.Services.UserService
@@ -19,17 +22,52 @@ namespace SWD392_backend.Infrastructure.Services.UserService
         {
             return await _userRepository.GetAllUserAsync();
         }
-        
+
         public async Task<user?> GetUserByIdAsync(int id)
         {
             return await _userRepository.GetUserByIdAsync(id);
         }
-        
+
         public async Task<int> GetTotalUserAsync()
         {
             return await _unitOfWork.UserRepository.CountAsync();
         }
 
+        public async Task AddUserAsync(UserRequest request)
+        {
+            // Kiểm tra email đã tồn tại chưa
+            var existingUser = await _userRepository.GetUserByEmail(request.Email);
+            if (existingUser != null)
+            {
+                throw new Exception("Email đã tồn tại trong hệ thống.");
+            }
 
+            var user = new user
+            {
+                Username = request.Username,
+                Email = request.Email,
+                FullName = request.Fullname,
+                ImageUrl = "https://i.pravatar.cc/300",
+                Password = PasswordHelper.HashPassword(request.Password),
+                Role = request.Role,
+                Phone = request.Phone,
+                Address = request.Address,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            try
+            {
+                _unitOfWork.UserRepository.AddAsync(user);
+                await _unitOfWork.SaveAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new Exception("Không thể thêm người dùng vào cơ sở dữ liệu. Chi tiết: " + dbEx.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi không xác định khi thêm người dùng. " + ex.Message);
+            }
+        }
     }
 }

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using SWD392_backend.Infrastructure.Services.UserService;
 using System.Text.Json;
+using Elastic.Clients.Elasticsearch.Security;
+using SWD392_backend.Models.Requests;
 
 namespace SWD392_backend.Infrastructure.Controllers
 {
@@ -112,6 +114,24 @@ namespace SWD392_backend.Infrastructure.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUser([FromBody] UserRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                await _userService.AddUserAsync(request);
+                return Ok(new { message = "Người dùng đã được thêm thành công." });
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi tại đây nếu có hệ thống logging
+                return StatusCode(500, new { error = ex.Message });
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using SWD392_backend.Entities;
 
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
+using SWD392_backend.Models.Requests;
 
 namespace SWD392_backend.Infrastructure.Services.UserService
 {
@@ -9,6 +10,8 @@ namespace SWD392_backend.Infrastructure.Services.UserService
         Task<List<user>> GetAllUserAsync();
         Task<user?> GetUserByIdAsync(int id);
         Task<int> GetTotalUserAsync();
+        
+        Task AddUserAsync(UserRequest request);
 
     }
 }
