@@ -1,7 +1,9 @@
-﻿using Elastic.Clients.Elasticsearch.Inference;
+﻿using cybersoft_final_project.Models;
+using Elastic.Clients.Elasticsearch.Inference;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SWD392_backend.Infrastructure.Services.OrderService;
+using SWD392_backend.Models;
 using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Controllers
@@ -18,25 +20,20 @@ namespace SWD392_backend.Infrastructure.Controllers
         }
 
         [HttpGet("ordersbymonth")]
-        public async Task<IActionResult> GetOrdersByMonth([FromQuery] int month, [FromQuery] int year)
+        public async Task<ActionResult<ReportOrderResponse>> GetOrdersByMonth([FromQuery] int month, [FromQuery] int year, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var count = await _orderService.CountOrdersByMonthAsync(month, year);
-                return Ok(new
-                {
-                    year,
-                    month,
-                    totalOrders = count
-                });
+                var result = await _orderService.CountOrdersByMonthAsync(month, year, pageNumber, pageSize);
+                return Ok(HTTPResponse<object>.Response(400, "Get Succesfully", result));
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(HTTPResponse<object>.Response(400, ex.Message, null));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Internal server error", details = ex.Message });
+                return BadRequest(HTTPResponse<object>.Response(400, ex.Message, null));
             }
         }
 

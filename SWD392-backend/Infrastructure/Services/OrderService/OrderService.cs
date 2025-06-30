@@ -239,7 +239,7 @@ public class OrderService : IOrderService
         await _unitOfWork.SaveAsync(); // ✅ đúng cách
     }
 
-    public async Task<int> CountOrdersByMonthAsync(int month, int year)
+    public async Task<ReportOrderResponse> CountOrdersByMonthAsync(int month, int year, int pageNumber, int pageSize)
     {
         // Validate
         if (year < 2000 || year > DateTime.Now.Year + 1)
@@ -255,7 +255,24 @@ public class OrderService : IOrderService
         var startDate = DateTime.SpecifyKind(new DateTime(year, month, 1), DateTimeKind.Utc);
         var endDate = startDate.AddMonths(1);
 
-        return await _orderRepository.CountOrdersByMonthAsync(startDate, endDate);
+        var count = await _orderRepository.CountOrdersByMonthAsync(startDate, endDate);
+        var orders = await _orderRepository.GetOrdersByMonthAsync(startDate, endDate, pageNumber, pageSize);
+
+        var ordersDtos = _mapper.Map<List<OrderResponse>>(orders.Items);
+
+        return new ReportOrderResponse
+        {
+            year = year,
+            month = month,
+            TotalOrders = orders.TotalItems,
+            orders = new PagedResult<OrderResponse>
+            {
+                Items = ordersDtos,
+                TotalItems = orders.TotalItems,
+                Page = pageNumber,
+                PageSize = pageSize
+            }
+        };
     }
 
     public async Task<int> CountOrdersByDayAsync(int day, int month, int year)

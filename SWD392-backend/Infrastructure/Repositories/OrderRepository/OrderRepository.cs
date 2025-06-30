@@ -103,5 +103,33 @@ public class OrderRepository : IOrderRepository
             .CountAsync();
     }
 
+    public async Task<PagedResult<order>> GetOrdersByMonthAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize)
+    {
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+        pageSize = pageSize < 1 ? 10 : pageSize;
+
+        var totalItems = await CountOrdersByMonthAsync(startDate, endDate);
+
+        var orders = await _context.orders
+                    .Include(o => o.user)
+                    .Include(o => o.supplier)
+                    .Include(o => o.orders_details)
+                        .ThenInclude(od => od.product)
+                            .ThenInclude(od => od.product_images)
+                    .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate)
+                    .OrderByDescending(o => o.CreatedAt)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+        return new PagedResult<order>
+        {
+            Items = orders,
+            TotalItems = totalItems,
+            Page = pageNumber,
+            PageSize = pageSize
+        };
+    }
+
     // Các method khác nếu cần
 }
