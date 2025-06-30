@@ -50,6 +50,7 @@ namespace SWD392_backend.Infrastructure.Services.UserService
                 ImageUrl = "https://i.pravatar.cc/300",
                 Password = PasswordHelper.HashPassword(request.Password),
                 Role = request.Role,
+                IsActive = true,
                 Phone = request.Phone,
                 Address = request.Address,
                 CreatedAt = DateTime.UtcNow
