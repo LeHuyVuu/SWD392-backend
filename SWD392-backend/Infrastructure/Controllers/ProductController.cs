@@ -129,22 +129,22 @@ namespace SWD392_backend.Infrastructure.Controllers
         [HttpGet("{slug}")]
         public async Task<ActionResult<ProductDetailResponse>> GetBySlug(string slug)
         {
-            string cacheKey = $"products:slug:{slug}";
-            var cachedData = await _cache.GetStringAsync(cacheKey);
-            if (cachedData != null)
-            {
-                var cachedResult = JsonSerializer.Deserialize<ProductDetailResponse>(cachedData);
-                return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm từ cache", cachedResult));
-            }
+            //string cacheKey = $"products:slug:{slug}";
+            //var cachedData = await _cache.GetStringAsync(cacheKey);
+            //if (cachedData != null)
+            //{
+            //    var cachedResult = JsonSerializer.Deserialize<ProductDetailResponse>(cachedData);
+            //    return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm từ cache", cachedResult));
+            //}
 
             var products = await _productService.GetBySlugAsync(slug);
             if (products == null)
                 return BadRequest(HTTPResponse<object>.Response(400, "Không có sản phẩm trùng khớp", null));
 
-            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(products), new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
-            });
+            //await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(products), new DistributedCacheEntryOptions
+            //{
+            //    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+            //});
 
             return Ok(HTTPResponse<object>.Response(200, "Lấy sản phẩm thành công", products));
         }
