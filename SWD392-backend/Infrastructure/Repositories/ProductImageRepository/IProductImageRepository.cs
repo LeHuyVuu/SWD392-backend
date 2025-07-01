@@ -9,5 +9,6 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductImageRepository
         Task<List<product_image>> FindAllMainImage(int productId);
         Task<product_image> GetProductImageByProductIdAsync(int productId);
         Task<List<string>> GetAllImagesAsync(int productId);
+        Task DeleteProductImagesByProductIdAsync(int id);
     }
 }

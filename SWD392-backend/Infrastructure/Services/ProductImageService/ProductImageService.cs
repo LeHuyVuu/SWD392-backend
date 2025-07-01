@@ -54,6 +54,11 @@ namespace SWD392_backend.Infrastructure.Services.ProductImageService
             return productImage;
         }
 
+        public async Task DeleteProductImagesByProductIdAsync(int id)
+        {
+            await _productImageRepository.DeleteProductImagesByProductIdAsync(id);
+        }
+
         public async Task<List<string>> GetAllImages(int productId)
         {
             var listImageUrls = await _productImageRepository.GetAllImagesAsync(productId);

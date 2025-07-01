@@ -36,6 +36,8 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
             if (product == null)
                 return false;
 
+            await _productImageService.DeleteProductImagesByProductIdAsync(id);
+
             int index = 0;
             foreach (var url in imageUrl)
             {

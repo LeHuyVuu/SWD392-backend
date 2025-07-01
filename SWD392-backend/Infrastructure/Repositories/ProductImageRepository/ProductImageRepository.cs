@@ -24,6 +24,13 @@ namespace SWD392_backend.Infrastructure.Repositories.ProductImageRepository
             return _context.product_images.AddRangeAsync(images);
         }
 
+        public async Task DeleteProductImagesByProductIdAsync(int id)
+        {
+            var images = _context.product_images.Where(x => x.ProductsId == id);
+            _context.product_images.RemoveRange(images);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<List<product_image>> FindAllMainImage(int productId)
         {
             return await _context.product_images
