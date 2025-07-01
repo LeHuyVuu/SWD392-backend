@@ -53,6 +53,8 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
             // Save
             await _unitOfWork.SaveAsync();
 
+            product = await _productService.GetByIdEntityAsync(id);
+
             // Update to els
             await _elasticSearchService.UpdateProductAsync(product);
 
