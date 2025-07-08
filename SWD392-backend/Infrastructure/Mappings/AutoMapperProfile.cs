@@ -34,6 +34,7 @@ namespace SWD392_backend.Infrastructure.Mappings
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.product.Name))
                 .ForMember(dest => dest.ProductImage, opt => opt.MapFrom(src => src.product.product_images.FirstOrDefault(p => p.IsMain).ProductImageUrl));
+    
 
             CreateMap<ReviewRequest, product_review>();
             CreateMap<product_review, ReviewResponse>();

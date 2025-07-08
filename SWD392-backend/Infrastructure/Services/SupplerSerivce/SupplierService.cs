@@ -21,6 +21,28 @@ public class SupplierService : ISupplierService
         _mapper = mapper;
     }
 
+    public async Task<OrderResponse> GetOrderByIdAsync(int id, Guid orderId)
+    {
+        var supplier = await _supploerRepository.GetSupplierByIdAsync(id);       
+        if (supplier == null)
+        {
+            Console.WriteLine("SUPPLIER NOT FOUND");
+            return null;
+        }
+            
+
+        var order = await _supploerRepository.GetOrderByIdAsync(id, orderId);
+        if (order == null)
+        {
+            Console.WriteLine("ORDER NOT FOUND");
+            return null;
+        }
+
+
+        var orderDto = _mapper.Map<OrderResponse>(order);
+        return orderDto;
+    }
+
     public async Task<PagedResult<OrderResponse>> GetPagedOrdersAsync(int supplierId, int pageNumber, int pageSize)
     {
         var supplier = await _supploerRepository.GetSupplierByIdAsync(supplierId);

@@ -88,5 +88,17 @@ public class SupplierRepository : ISupplierRepository
     {
         return await _context.suppliers.CountAsync();
     }
+
+    public async Task<order?> GetOrderByIdAsync(int id, Guid orderId)
+    {
+        return await _context.orders
+                    .Include(o => o.user)
+                    .Include(o => o.supplier)
+                    .Include(o => o.orders_details)
+                        .ThenInclude(od => od.product)
+                            .ThenInclude(od => od.product_images)
+                    .Where(o => o.SupplierId == id)
+                    .FirstOrDefaultAsync(o => o.Id == orderId);
+    }
 }
 
