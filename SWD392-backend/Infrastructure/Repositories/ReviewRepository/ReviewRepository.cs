@@ -37,7 +37,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ReviewRepository
             pageSize = pageSize < 1 ? 10 : pageSize;
 
             // Total items
-            var totalItems = await _context.product_reviews.CountAsync();
+            var totalItems = await _context.product_reviews.Where(r => r.ProductId == productId).CountAsync();
 
             var reviews = await _context.product_reviews
                             .Where(r => r.ProductId == productId)
