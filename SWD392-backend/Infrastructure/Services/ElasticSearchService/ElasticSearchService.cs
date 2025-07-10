@@ -55,6 +55,9 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
                     Value = categoryId.Value
                 });
 
+            // Filter is active
+            filters.Add(new TermQuery("isActive") { Value = true });
+
             // Create query
             Query query;
             if (string.IsNullOrEmpty(q))
