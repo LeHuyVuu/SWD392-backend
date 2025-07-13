@@ -44,18 +44,28 @@ namespace SWD392_backend.Infrastructure.Controllers
                 if (string.IsNullOrEmpty(idClaim) || !int.TryParse(idClaim, out int id))
                     return BadRequest(HTTPResponse<object>.Response(400, $"Invalid or missing {idClaimType}.", null));
 
-                // Tạo key cache theo shipper + page
-                string cacheKey = $"shipper:orders:{id}:page:{pageNumber}:size:{pageSize}";
+                // Tạo key cache theo role + id + page
+                string cacheKey = $"orders:{role.ToLower()}:{id}:page:{pageNumber}:size:{pageSize}";
+
                 var cachedData = await _cache.GetStringAsync(cacheKey);
+
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
                 if (cachedData != null)
                 {
-                    var result = JsonSerializer.Deserialize<object>(cachedData);
+                    var result = JsonSerializer.Deserialize<object>(cachedData, jsonOptions);
                     return Ok(HTTPResponse<object>.Response(200, "Fetched from cache", result));
                 }
 
+                // Gọi từ service để lấy dữ liệu thật
                 var freshData = await _orderService.GetOrdersToShipper(id, pageNumber, pageSize);
 
-                var serializedData = JsonSerializer.Serialize(freshData);
+                // Serialize với camelCase trước khi lưu vào cache
+                var serializedData = JsonSerializer.Serialize(freshData, jsonOptions);
+
                 await _cache.SetStringAsync(cacheKey, serializedData, new DistributedCacheEntryOptions
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30)
@@ -68,6 +78,7 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
             }
         }
+
 
         [HttpPost("assign_area")]
         public async Task<IActionResult> AssignArea([FromBody] AssignAreaRequest request)
