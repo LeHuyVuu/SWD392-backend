@@ -57,50 +57,50 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// <response code="401">User chưa đăng nhập hoặc không có quyền.</response>
         /// <response code="404">Không tìm thấy dữ liệu liên quan (ví dụ sản phẩm, user).</response>
         /// <response code="500">Lỗi hệ thống khi tạo đơn hàng.</response>
-        [HttpPost("checkout")]
-        public async Task<IActionResult> Checkout([FromBody] OrderCheckoutDTO orderCheckoutDto)
-        {
-            // Lấy userId từ claim, nếu không có trả về 401 Unauthorized
-            var userIdClaim = User.FindFirst("UserId")?.Value;
-            if (string.IsNullOrEmpty(userIdClaim))
-                return Unauthorized(HTTPResponse<object>.Response(401, "UserId claim not found. Unauthorized.", null));
-
-            if (!int.TryParse(userIdClaim, out int userId))
-                return BadRequest(HTTPResponse<object>.Response(400, "Invalid UserId claim format.", null));
-
-            if (!ModelState.IsValid)
-                return BadRequest(HTTPResponse<object>.Response(400, "Invalid request data.", ModelState));
-
-            try
+            [HttpPost("checkout")]
+            public async Task<IActionResult> Checkout([FromBody] OrderCheckoutDTO orderCheckoutDto)
             {
-                if (orderCheckoutDto.Distance < 1)
+                // Lấy userId từ claim, nếu không có trả về 401 Unauthorized
+                var userIdClaim = User.FindFirst("UserId")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized(HTTPResponse<object>.Response(401, "UserId claim not found. Unauthorized.", null));
+
+                if (!int.TryParse(userIdClaim, out int userId))
+                    return BadRequest(HTTPResponse<object>.Response(400, "Invalid UserId claim format.", null));
+
+                if (!ModelState.IsValid)
+                    return BadRequest(HTTPResponse<object>.Response(400, "Invalid request data.", ModelState));
+
+                try
                 {
-                    return BadRequest(HTTPResponse<object>.Response(400, "Distance must be at least 1 km.", null));
+                    if (orderCheckoutDto.Distance < 1)
+                    {
+                        return BadRequest(HTTPResponse<object>.Response(400, "Distance must be at least 1 km.", null));
+                    }
+                    if (orderCheckoutDto.Distance > 1000)
+                    {
+                        return BadRequest(HTTPResponse<object>.Response(400, "Distance must not exceed 1000 km.", null));
+                    }
+                    var result = await _orderService.CheckoutAsync(orderCheckoutDto, userId);
+                    if (result)
+                        return Ok(HTTPResponse<object>.Response(200, "Order created successfully", null));
+                    else
+                        return StatusCode(500, HTTPResponse<object>.Response(500, "Failed to create order", null));
                 }
-                if (orderCheckoutDto.Distance > 1000)
+                catch (ArgumentException argEx)
                 {
-                    return BadRequest(HTTPResponse<object>.Response(400, "Distance must not exceed 1000 km.", null));
+                    // Ví dụ lỗi về dữ liệu đầu vào không hợp lệ
+                    return BadRequest(HTTPResponse<object>.Response(400, argEx.Message, null));
                 }
-                var result = await _orderService.CheckoutAsync(orderCheckoutDto, userId);
-                if (result)
-                    return Ok(HTTPResponse<object>.Response(200, "Order created successfully", null));
-                else
-                    return StatusCode(500, HTTPResponse<object>.Response(500, "Failed to create order", null));
+                catch (KeyNotFoundException keyEx)
+                {
+                    // Ví dụ lỗi do foreign key không tồn tại (sản phẩm, user, supplier ...)
+                    return NotFound(HTTPResponse<object>.Response(404, keyEx.Message, null));
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.ToString()));
+                }
             }
-            catch (ArgumentException argEx)
-            {
-                // Ví dụ lỗi về dữ liệu đầu vào không hợp lệ
-                return BadRequest(HTTPResponse<object>.Response(400, argEx.Message, null));
-            }
-            catch (KeyNotFoundException keyEx)
-            {
-                // Ví dụ lỗi do foreign key không tồn tại (sản phẩm, user, supplier ...)
-                return NotFound(HTTPResponse<object>.Response(404, keyEx.Message, null));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.ToString()));
-            }
-        }
     }
 }
