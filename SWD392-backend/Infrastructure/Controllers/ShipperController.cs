@@ -1,4 +1,5 @@
 ﻿using cybersoft_final_project.Models;
+using Elastic.Clients.Elasticsearch.Requests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
@@ -106,6 +107,39 @@ namespace SWD392_backend.Infrastructure.Controllers
                     return BadRequest(HTTPResponse<object>.Response(400, "Something wrong", result));
 
                 return Ok(HTTPResponse<object>.Response(200, "Update successfully", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
+        }
+
+        [HttpGet("{orderId:guid}")]
+        public async Task<IActionResult> GetOrderById(Guid orderId)
+        {
+            try
+            {
+                var role = User.FindFirst("Role")?.Value;
+
+                if (string.IsNullOrEmpty(role))
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Role claim not found.", null));
+
+                string? idClaimType = role == "SHIPPER" ? "UserId" : role == "SUPPLIER" ? "SupplierId" : null;
+
+                if (idClaimType == null)
+                    return Unauthorized(HTTPResponse<object>.Response(401, "Unsupported role.", null));
+
+                var idClaim = User.FindFirst(idClaimType)?.Value;
+
+                if (string.IsNullOrEmpty(idClaim) || !int.TryParse(idClaim, out int id))
+                    return BadRequest(HTTPResponse<object>.Response(400, $"Invalid or missing {idClaimType}.", null));
+
+                var result = await _shipperService.GetOrderByIdAsync(id, orderId);
+
+                if (result == null)
+                    return BadRequest(HTTPResponse<object>.Response(400, "Something wrong", result));
+
+                return Ok(HTTPResponse<object>.Response(200, "Get order successfully", result));
             }
             catch (Exception ex)
             {

@@ -6,5 +6,7 @@ namespace SWD392_backend.Infrastructure.Repositories.ShipperRepository
     {
         Task<bool> AssignAreaAsync(shipper shipper);
         Task<shipper> GetShipperByUserIdAsync(int userId);
+
+        Task<order> GetOrderByIdAsync(Guid orderId);
     }
 }

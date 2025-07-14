@@ -20,6 +20,17 @@ namespace SWD392_backend.Infrastructure.Repositories.ShipperRepository
             return affectedRows > 0;
         }
 
+        public async Task<order?> GetOrderByIdAsync(Guid orderId)
+        {
+            return await _context.orders
+                        .Include(o => o.orders_details)
+                            .ThenInclude(od => od.product)
+                                .ThenInclude(od => od.product_images)
+                        .Include(o => o.user)
+                        .Include(o => o.supplier)
+                        .FirstOrDefaultAsync(o => o.Id == orderId);
+        }
+
         public async Task<shipper?> GetShipperByUserIdAsync(int userId)
         {
             return await _context.shipper.FirstOrDefaultAsync(s => s.UserId == userId);

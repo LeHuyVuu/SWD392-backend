@@ -1,6 +1,8 @@
-﻿using SWD392_backend.Entities;
+﻿using AutoMapper;
+using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.ShipperRepository;
 using SWD392_backend.Models.Request;
+using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Services.ShipperService
 {
@@ -8,11 +10,13 @@ namespace SWD392_backend.Infrastructure.Services.ShipperService
     {
         private readonly IShipperRepository _shipperRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ShipperService(IShipperRepository shipperRepository, IUnitOfWork unitOfWork)
+        public ShipperService(IShipperRepository shipperRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _shipperRepository = shipperRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<bool> AssignAreaAsync(int userId, AssignAreaRequest request)
@@ -29,6 +33,19 @@ namespace SWD392_backend.Infrastructure.Services.ShipperService
             await _unitOfWork.SaveAsync();
 
             return true;
+        }
+
+        public async Task<OrderResponse> GetOrderByIdAsync(int id, Guid orderId)
+        {
+            var shipper = await _shipperRepository.GetShipperByUserIdAsync(id);
+            if (shipper == null)
+                return null;
+
+            var order = await _shipperRepository.GetOrderByIdAsync(orderId);
+
+            var orderDto = _mapper.Map<OrderResponse>(order);
+
+            return orderDto;
         }
 
         public async Task<shipper> GetShipperByUserIdAsync(int userId)
