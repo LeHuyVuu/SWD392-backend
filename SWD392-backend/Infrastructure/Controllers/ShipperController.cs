@@ -146,5 +146,7 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
             }
         }
+
+        
     }
 }

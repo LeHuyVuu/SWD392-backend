@@ -112,9 +112,16 @@ public class SupplierService : ISupplierService
         return product;
     }
 
-    public async Task<supplier> GetSupplierByIdAsync(int id)
+    public async Task<SupplierProfileResponse> GetSupplierByIdAsync(int id)
     {
-        return await _supploerRepository.GetSupplierByIdAsync(id);
+        var supplier = await _supploerRepository.GetSupplierByIdAsync(id);
+
+        if (supplier == null)
+            return null;
+
+        var supplierDto = _mapper.Map<SupplierProfileResponse>(supplier);
+
+        return supplierDto;
     }
 
     public async Task<int> GetTotalSuppliersAsync()

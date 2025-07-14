@@ -11,6 +11,12 @@ namespace SWD392_backend.Infrastructure.Mappings
     {
         public AutoMapperProfile()
         {
+            CreateMap<user, UserProfileResponse>();
+            CreateMap<shipper, ShipperProfileResponse>()
+                .ForMember(dest => dest.UserProfile, opt => opt.MapFrom(src => src.user));
+            CreateMap<supplier, SupplierProfileResponse>()
+                .ForMember(dest => dest.UserProfile, opt => opt.MapFrom(src => src.user))
+                .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.Name));
             CreateMap<product, ProductResponse>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.product_images.Count(i => i.IsMain) > 0 ? src.product_images.FirstOrDefault(i => i.IsMain).ProductImageUrl : "https://placehold.co/150"))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(p => p.categories.Name));

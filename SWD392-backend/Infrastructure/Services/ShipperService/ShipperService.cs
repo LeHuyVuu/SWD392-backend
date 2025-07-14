@@ -48,9 +48,16 @@ namespace SWD392_backend.Infrastructure.Services.ShipperService
             return orderDto;
         }
 
-        public async Task<shipper> GetShipperByUserIdAsync(int userId)
+        public async Task<ShipperProfileResponse> GetShipperByUserIdAsync(int userId)
         {
-            return await _shipperRepository.GetShipperByUserIdAsync(userId);
+            var shipper = await _shipperRepository.GetShipperByUserIdAsync(userId);
+
+            if (shipper == null)
+                return null;
+
+            var shipperDto = _mapper.Map<ShipperProfileResponse>(shipper);
+
+            return shipperDto;
         }
     }
 }

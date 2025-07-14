@@ -8,7 +8,7 @@ namespace SWD392_backend.Infrastructure.Services.UserService
     public interface IUserService
     {
         Task<List<user>> GetAllUserAsync();
-        Task<user?> GetUserByIdAsync(int id);
+        Task<UserProfileResponse> GetUserByIdAsync(int id);
         Task<int> GetTotalUserAsync();
 
         Task AddUserAsync(UserRequest request);

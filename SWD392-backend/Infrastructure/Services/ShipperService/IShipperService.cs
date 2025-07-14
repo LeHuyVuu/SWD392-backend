@@ -8,6 +8,6 @@ namespace SWD392_backend.Infrastructure.Services.ShipperService
     {
         Task<bool> AssignAreaAsync(int userId, AssignAreaRequest request);
         Task<OrderResponse> GetOrderByIdAsync(int id, Guid orderId);
-        Task<shipper> GetShipperByUserIdAsync(int userId);
+        Task<ShipperProfileResponse> GetShipperByUserIdAsync(int userId);
     }
 }

@@ -7,6 +7,9 @@ using SWD392_backend.Infrastructure.Services.UserService;
 using System.Text.Json;
 using Elastic.Clients.Elasticsearch.Security;
 using SWD392_backend.Models.Requests;
+using System.Security.Claims;
+using SWD392_backend.Infrastructure.Services.ShipperService;
+using SWD392_backend.Infrastructure.Services.SupplerSerivce;
 
 namespace SWD392_backend.Infrastructure.Controllers
 {
@@ -16,12 +19,16 @@ namespace SWD392_backend.Infrastructure.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ISupplierService _supplierService;
+        private readonly IShipperService _shipperService;
         private readonly IDistributedCache _cache;
 
-        public UserController(IUserService userService, IDistributedCache cache)
+        public UserController(IUserService userService, IDistributedCache cache, IShipperService shipperService, ISupplierService supplierService)
         {
             _userService = userService;
             _cache = cache;
+            _shipperService = shipperService;
+            _supplierService = supplierService;
         }
 
         /// <summary>
@@ -97,19 +104,40 @@ namespace SWD392_backend.Infrastructure.Controllers
         [HttpGet("/profile")]
         public async Task<IActionResult> GetUserProfile()
         {
-            var userId = User.FindFirst("UserId")?.Value;
+            var role = User.FindFirst("Role")?.Value;
 
-            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int id))
-                return Unauthorized(HTTPResponse<object>.Response(401, "UserId claim not found or invalid", null));
+            if (string.IsNullOrEmpty(role))
+                return Unauthorized(HTTPResponse<object>.Response(401, "Role claim not found.", null));
+
+            string? claimType = role switch
+            {
+                "CUSTOMER" => "UserId",
+                "SHIPPER" => "UserId",
+                "SUPPLIER" => "SupplierId",
+                _ => null
+            };
+
+            if (string.IsNullOrEmpty(claimType))
+                return Unauthorized(HTTPResponse<object>.Response(401, "Unsupported role", null));
+
+            var idValue = User.FindFirst(claimType)?.Value;
+
+            if (string.IsNullOrEmpty(idValue) || !int.TryParse(idValue, out int id))
+                return Unauthorized(HTTPResponse<object>.Response(401, $"{claimType} claim not found or invalid", null));
 
             try
             {
-                var user = await _userService.GetUserByIdAsync(id);
+                object? profile = role switch
+                {
+                    "CUSTOMER" => await _userService.GetUserByIdAsync(id),
+                    "SUPPLIER" => await _supplierService.GetSupplierByIdAsync(id),
+                    "SHIPPER" => await _shipperService.GetShipperByUserIdAsync(id)
+                };
 
-                if (user == null)
-                    return NotFound(HTTPResponse<object>.Response(404, "User not found", null));
+                if (profile == null)
+                    return NotFound(HTTPResponse<object>.Response(404, $"{role} not found", null));
 
-                return Ok(HTTPResponse<object>.Response(200, "User fetched successfully", user));
+                return Ok(HTTPResponse<object>.Response(200, $"{role} fetched successfully", profile));
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
 using SWD392_backend.Models.Requests;
@@ -12,11 +13,13 @@ namespace SWD392_backend.Infrastructure.Services.UserService
     {
         private readonly IUserRepository _userRepository;
         private IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<List<user>> GetAllUserAsync()
@@ -24,9 +27,16 @@ namespace SWD392_backend.Infrastructure.Services.UserService
             return await _userRepository.GetAllUserAsync();
         }
 
-        public async Task<user?> GetUserByIdAsync(int id)
+        public async Task<UserProfileResponse> GetUserByIdAsync(int id)
         {
-            return await _userRepository.GetUserByIdAsync(id);
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            if (user == null)
+                return null;
+
+            var userDto = _mapper.Map<UserProfileResponse>(user);
+
+            return userDto;
         }
 
         public async Task<int> GetTotalUserAsync()

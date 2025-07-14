@@ -81,7 +81,9 @@ public class SupplierRepository : ISupplierRepository
 
     public async Task<supplier?> GetSupplierByIdAsync(int id)
     {
-        return await _context.suppliers.FirstOrDefaultAsync(s => s.Id == id);
+        return await _context.suppliers
+                                .Include(s => s.user)
+                                .FirstOrDefaultAsync(s => s.Id == id);
     }
 
     public async Task<int> GetTotalCountAsync()

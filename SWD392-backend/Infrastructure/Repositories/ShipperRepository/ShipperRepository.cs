@@ -33,7 +33,9 @@ namespace SWD392_backend.Infrastructure.Repositories.ShipperRepository
 
         public async Task<shipper?> GetShipperByUserIdAsync(int userId)
         {
-            return await _context.shipper.FirstOrDefaultAsync(s => s.UserId == userId);
+            return await _context.shipper
+                        .Include(s => s.user)
+                        .FirstOrDefaultAsync(s => s.UserId == userId);
         }
     }
 }
