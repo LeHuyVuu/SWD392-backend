@@ -1,11 +1,12 @@
 ﻿using SWD392_backend.Entities;
+using SWD392_backend.Models;
 using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Repositories.UserRepository
 {
     public interface IUserRepository
     {
-        Task<List<user>> GetAllUserAsync();
+        Task<PagedResult<user>> GetAllUserAsync(int pageNumber, int pageSize);
         Task<user?> GetUserByIdAsync(int id);
         
         Task AddAsync(user entity);

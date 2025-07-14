@@ -3,6 +3,7 @@ using SWD392_backend.Context;
 using SWD392_backend.Entities;
 using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Models.Response;
+using SWD392_backend.Models;
 
 namespace SWD392_backend.Infrastructure.Repositories.UserRepository
 {
@@ -15,9 +16,28 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
             _context = context;
         }
 
-        public async Task<List<user>> GetAllUserAsync()
+        public async Task<PagedResult<user>> GetAllUserAsync(int pageNumber, int pageSize)
         {
-            return await _context.users.ToListAsync();
+            pageNumber = pageNumber < 1 ? 1 : pageNumber;
+            pageSize = pageSize < 1 ? 10 : pageSize;
+
+            // Total items
+            var totalItems = await _context.users.CountAsync();
+
+            var users = await _context.users
+                            .OrderByDescending(u => u.CreatedAt)
+                            .AsNoTracking()
+                            .Skip((pageNumber - 1) * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+
+            return new PagedResult<user>
+            {
+                Items = users,
+                TotalItems = totalItems,
+                Page = pageNumber,
+                PageSize = pageSize
+            };
         }
         public async Task<user?> GetUserByIdAsync(int id)
         {

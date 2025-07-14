@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
+using SWD392_backend.Models;
 using SWD392_backend.Models.Requests;
 using SWD392_backend.Models.Response;
 using web_api_base.Helper;
@@ -22,9 +23,21 @@ namespace SWD392_backend.Infrastructure.Services.UserService
             _mapper = mapper;
         }
 
-        public async Task<List<user>> GetAllUserAsync()
+        public async Task<PagedResult<UserProfileResponse>> GetAllUserAsync(int pageNumber, int pageSize)
         {
-            return await _userRepository.GetAllUserAsync();
+            var pagedResult = await _userRepository.GetAllUserAsync(pageNumber, pageSize);
+
+            // Model mapper
+            var userDtos = _mapper.Map<List<UserProfileResponse>>(pagedResult.Items);
+
+
+            return new PagedResult<UserProfileResponse>
+            {
+                Items = userDtos,
+                TotalItems = pagedResult.TotalItems,
+                Page = pagedResult.Page,
+                PageSize = pagedResult.PageSize
+            };
         }
 
         public async Task<UserProfileResponse> GetUserByIdAsync(int id)

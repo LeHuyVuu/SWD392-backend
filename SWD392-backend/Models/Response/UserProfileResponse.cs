@@ -11,7 +11,7 @@
         public string ImageUrl { get; set; }
         public bool IsActive { get; set; }
         public string Role { get; set; }        
-        public DateTime CreateAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
     }
 }

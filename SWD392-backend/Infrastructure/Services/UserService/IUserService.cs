@@ -1,5 +1,6 @@
 ﻿using SWD392_backend.Entities;
 using SWD392_backend.Infrastructure.Repositories.UserRepository;
+using SWD392_backend.Models;
 using SWD392_backend.Models.Requests;
 using SWD392_backend.Models.Response;
 
@@ -7,7 +8,7 @@ namespace SWD392_backend.Infrastructure.Services.UserService
 {
     public interface IUserService
     {
-        Task<List<user>> GetAllUserAsync();
+        Task<PagedResult<UserProfileResponse>> GetAllUserAsync(int pageNumber, int pageSize);
         Task<UserProfileResponse> GetUserByIdAsync(int id);
         Task<int> GetTotalUserAsync();
 

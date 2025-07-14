@@ -10,6 +10,10 @@ using SWD392_backend.Models.Requests;
 using System.Security.Claims;
 using SWD392_backend.Infrastructure.Services.ShipperService;
 using SWD392_backend.Infrastructure.Services.SupplerSerivce;
+using SWD392_backend.Models.Response;
+using AutoMapper;
+using SWD392_backend.Entities;
+using SWD392_backend.Models;
 
 namespace SWD392_backend.Infrastructure.Controllers
 {
@@ -22,13 +26,15 @@ namespace SWD392_backend.Infrastructure.Controllers
         private readonly ISupplierService _supplierService;
         private readonly IShipperService _shipperService;
         private readonly IDistributedCache _cache;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserService userService, IDistributedCache cache, IShipperService shipperService, ISupplierService supplierService)
+        public UserController(IUserService userService, IDistributedCache cache, IShipperService shipperService, ISupplierService supplierService, IMapper mapper)
         {
             _userService = userService;
             _cache = cache;
             _shipperService = shipperService;
             _supplierService = supplierService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -36,19 +42,23 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// </summary>
         /// <returns>Danh sách tất cả người dùng.</returns>
         [HttpGet("GetAllUser")]
-        public async Task<IActionResult> GetAllUser()
+        public async Task<IActionResult> GetAllUser(bool forceRefresh = false, int pageNumber = 1, int pageSize = 10)
         {
             try
             {
                 string cacheKey = "users:all";
+
+                if (forceRefresh)
+                    await _cache.RemoveAsync(cacheKey);
+
                 var cachedData = await _cache.GetStringAsync(cacheKey);
                 if (cachedData != null)
                 {
-                    var users = JsonSerializer.Deserialize<object>(cachedData);
+                    var users = JsonSerializer.Deserialize<PagedResult<UserProfileResponse>>(cachedData);
                     return Ok(HTTPResponse<object>.Response(200, "Fetched all users from cache.", users));
                 }
 
-                var usersFromDb = await _userService.GetAllUserAsync();
+                var usersFromDb = await _userService.GetAllUserAsync(pageNumber, pageSize);
 
                 var serialized = JsonSerializer.Serialize(usersFromDb);
                 await _cache.SetStringAsync(cacheKey, serialized, new DistributedCacheEntryOptions
