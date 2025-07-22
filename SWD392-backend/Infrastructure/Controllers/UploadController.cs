@@ -38,7 +38,7 @@ namespace SWD392_backend.Infrastructure.Controllers
         public async Task<ActionResult<UploadProductImgResponse>> GetPresignedUrl([FromBody] UploadProductImgsRequest request, [FromBody] bool isSupplierId = false)
         {
 
-            var upload = await _uploadService.UploadMultipleImage(request);
+            var upload = await _uploadService.UploadMultipleImage(request, isSupplierId);
 
             if (upload == null)
                 return BadRequest(HTTPResponse<object>.Response(400, "Có lỗi xảy ra", null));
