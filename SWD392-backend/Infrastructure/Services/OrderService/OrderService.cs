@@ -236,7 +236,10 @@ public class OrderService : IOrderService
 
         if (status == OrderStatus.Delivered)
         {
-            x.order.DeliveriedAt = DateTime.UtcNow;
+            var order = await _orderRepository.GetOrderByIdAsync(x.OrderId);
+            order.DeliveriedAt = DateTime.UtcNow;
+
+            _unitOfWork.OrderRepository.Update(order);
         }
 
         _unitOfWork.OrdersDetailRepository.Update(x);
