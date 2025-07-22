@@ -39,11 +39,11 @@ public partial class supplier
     // Thêm các trường mới vào đây
     [Column("front_image")]
     [StringLength(255)]
-    public string? FrontImageCCCD { get; set; } = null!; // Mặt trước CCCD
+    public string? FrontImageCCCD { get; set; } // Mặt trước CCCD
 
     [Column("back_image")]
     [StringLength(255)]
-    public string? BackImageCCCD { get; set; } = null!; // Mặt sau CCCD
+    public string? BackImageCCCD { get; set; } // Mặt sau CCCD
 
     [InverseProperty("supplier")]
     public virtual ICollection<order> orders { get; set; } = new List<order>();

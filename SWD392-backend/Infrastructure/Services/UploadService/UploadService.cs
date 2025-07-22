@@ -5,6 +5,7 @@ using SWD392_backend.Infrastructure.Services.ElasticSearchService;
 using SWD392_backend.Infrastructure.Services.ProductImageService;
 using SWD392_backend.Infrastructure.Services.ProductService;
 using SWD392_backend.Infrastructure.Services.S3Service;
+using SWD392_backend.Infrastructure.Services.SupplerSerivce;
 using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
 
@@ -16,10 +17,11 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
         private readonly IProductImageService _productImageService;
+        private readonly ISupplierService _supplierService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IElasticSearchService _elasticSearchService;
 
-        public UploadService(IUnitOfWork unitOfWork, IS3Service s3Service, ICategoryService categoryService, IProductService productService, IProductImageService productImageService, IElasticSearchService elasticSearchService)
+        public UploadService(IUnitOfWork unitOfWork, IS3Service s3Service, ICategoryService categoryService, IProductService productService, IProductImageService productImageService, IElasticSearchService elasticSearchService, ISupplierService supplierService)
         {
             _unitOfWork = unitOfWork;
             _s3Service = s3Service;
@@ -27,6 +29,7 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
             _productService = productService;
             _productImageService = productImageService;
             _elasticSearchService = elasticSearchService;
+            _supplierService = supplierService;
         }
 
         public async Task<bool> ConfirmUploadImage(int id, List<string> imageUrl)
@@ -63,9 +66,20 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
             return true;
         }
 
-        public async Task<UploadMultipleProductImgsResponse> UploadMultipleImage(UploadProductImgsRequest request)
+        public async Task<bool> ConfirmUploadSupplierImage(int id, List<string> imageUrl)
         {
-            var categorySlug = await _categoryService.GetCategorySlugByIdAsync(request.CategoryId);
+            var supplier = await _supplierService.GetSupplierByIdAsync(id);
+
+            if (supplier == null)
+                return false;
+
+            var check = await _supplierService.AddIdCardImagesAsync(id, imageUrl);
+
+            return check;
+        }
+
+        public async Task<UploadMultipleProductImgsResponse> UploadMultipleImage(UploadProductImgsRequest request, bool isSupplierId)
+        {
             var uploads = new List<UploadProductImgResponse>();
             var cdnDomain = Environment.GetEnvironmentVariable("CDN_DOMAIN");
 
@@ -83,7 +97,19 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
                     "image/avif" => "avif",
                     _ => "img"
                 };
-                var key = $"{categorySlug}/{request.ProductSlug}-{Guid.NewGuid()}-{request.ProductId}_{request.SupplierId}_{i+1}.{extension}";
+
+                string key;
+
+                if (!isSupplierId)
+                {
+                    var categorySlug = await _categoryService.GetCategorySlugByIdAsync(request.CategoryId);
+                    key = $"{categorySlug}/{request.ProductSlug}-{Guid.NewGuid()}-{request.ProductId}_{request.SupplierId}_{i + 1}.{extension}";
+                }
+                else
+                {
+                    key = $"suppliers/{request.SupplierId}/idcard-{Guid.NewGuid()}.{extension}";
+                }
+
                 var url = _s3Service.GeneratePreSignedURL(key, contentType);
 
                 // Generate image link

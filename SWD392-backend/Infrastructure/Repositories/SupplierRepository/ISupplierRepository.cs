@@ -14,4 +14,8 @@ public interface ISupplierRepository
     Task<order> GetOrderByIdAsync(int id, Guid orderId);
     Task AddAsync(supplier supplier);
    Task<List<SupplierResponse>> GetAllSupplierAsync();
+
+    Task<bool> AddIdCardImagesAsync(int id, List<string> imageUrl);
+    Task<bool> DeleteIdCardImagesById(int id);
+
 }
