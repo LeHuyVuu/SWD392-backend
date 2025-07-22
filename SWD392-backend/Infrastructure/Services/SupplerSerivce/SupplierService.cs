@@ -146,4 +146,9 @@ public class SupplierService : ISupplierService
     {
         return  await _supploerRepository.GetAllSupplierAsync();
     }
+
+    public async Task<bool?> UpdatePermissionsAsync(int supplierId)
+    {
+        return await _supploerRepository.UpdatePermission(supplierId);
+    }
 }
