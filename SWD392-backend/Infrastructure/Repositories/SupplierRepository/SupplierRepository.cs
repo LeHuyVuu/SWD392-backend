@@ -102,5 +102,10 @@ public class SupplierRepository : ISupplierRepository
                     .Where(o => o.SupplierId == id)
                     .FirstOrDefaultAsync(o => o.Id == orderId);
     }
+
+    public async Task AddAsync(supplier supplier)
+    {
+       await _context.suppliers.AddAsync(supplier);
+    }
 }
 

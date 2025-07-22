@@ -118,7 +118,7 @@ builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(dataSour
 // DI các Repository và Service
 // Service
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IAuthService,AuthService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
