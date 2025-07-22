@@ -194,7 +194,7 @@ namespace SWD392_backend.Infrastructure.Controllers
             }
         }
         
-        [HttpPost("update-permission/{supplierId}")]
+        [HttpPut("update-permission/{supplierId}")]
         public async Task<IActionResult> UpdatePermission(int supplierId)
         {
             try

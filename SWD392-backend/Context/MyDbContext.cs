@@ -148,6 +148,7 @@ public partial class MyDbContext : DbContext
 
             entity.HasOne(d => d.user).WithMany(p => p.suppliers)
                 .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)  // Cascade delete instead of ClientSetNull
                 .HasConstraintName("fk_suppliers_user");
         });
 
