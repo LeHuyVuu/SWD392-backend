@@ -177,5 +177,26 @@ namespace SWD392_backend.Infrastructure.Controllers
                 Email = request.Email
             }));
         }
+        
+        
+        [HttpGet("suppliers")]
+        public async Task<IActionResult> GetAllSuppliers()
+        {
+            try
+            {
+                var suppliers = await _supplierService.GetAllSuppliersAsync();
+
+                return Ok(HTTPResponse<object>.Response(200, "Fetched suppliers successfully", suppliers));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
+        }
+
+        
+        
+        
+        
     }
 }

@@ -2,6 +2,7 @@
 using SWD392_backend.Context;
 using SWD392_backend.Entities;
 using SWD392_backend.Models;
+using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Repositories.SupplierRepository;
 
@@ -106,6 +107,25 @@ public class SupplierRepository : ISupplierRepository
     public async Task AddAsync(supplier supplier)
     {
        await _context.suppliers.AddAsync(supplier);
+    }
+
+    public async Task<List<SupplierResponse>> GetAllSupplierAsync()
+    {
+        return  await _context.suppliers
+            .Select(s => new SupplierResponse
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Slug = s.Slug,
+                Description = s.Description,
+                ImageUrl = s.ImageUrl,
+                IsVerified = s.IsVerified,
+                FrontImageCCCD = s.FrontImageCCCD,
+                BackImageCCCD = s.BackImageCCCD,
+                RegisteredAt = s.RegisteredAt,
+                UserId = s.user.Id
+            })
+            .ToListAsync();
     }
 }
 
