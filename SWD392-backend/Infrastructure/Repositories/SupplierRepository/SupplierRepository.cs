@@ -161,7 +161,9 @@ public class SupplierRepository : ISupplierRepository
         }
         else
         {
-            supplier.user.Role = "CUSTOMER";
+            var user = _context.users.FirstOrDefault(u => u.Id == supplier.user.Id);
+            _context.users.Remove(user);
+            _context.suppliers.Remove(supplier);
         }
 
 
