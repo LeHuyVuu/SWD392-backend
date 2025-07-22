@@ -19,5 +19,5 @@ public interface ISupplierService
         Task<List<SupplierResponse>> GetAllSuppliersAsync();
 
 
-        Task<bool?> UpdatePermissionsAsync(int supplierId);
+        Task<bool?> UpdatePermissionsAsync(int supplierI,  bool approve);
 }
