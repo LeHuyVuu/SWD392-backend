@@ -195,11 +195,11 @@ namespace SWD392_backend.Infrastructure.Controllers
         }
         
         [HttpPut("update-permission/{supplierId}")]
-        public async Task<IActionResult> UpdatePermission(int supplierId)
+        public async Task<IActionResult> UpdatePermission(int supplierId, [FromQuery] bool approve)
         {
             try
             {
-                var result = await _supplierService.UpdatePermissionsAsync(supplierId);
+                var result = await _supplierService.UpdatePermissionsAsync(supplierId, approve);
 
                 // Nếu cập nhật thành công
                 if (result == true)
@@ -223,6 +223,7 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
             }
         }
+
 
     }
 }

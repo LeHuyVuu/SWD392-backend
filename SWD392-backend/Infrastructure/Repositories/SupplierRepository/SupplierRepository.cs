@@ -138,7 +138,7 @@ public class SupplierRepository : ISupplierRepository
        return true;
     }
 
-    public async Task<bool> UpdatePermission(int supplierId)
+    public async Task<bool> UpdatePermission(int supplierId, bool approve)
     {
         // Tìm supplier và bao gồm thông tin user
         var supplier = await _context.suppliers
@@ -151,27 +151,30 @@ public class SupplierRepository : ISupplierRepository
             return false; // Supplier không tồn tại
         }
 
-        // Cập nhật trạng thái 'IsVerified' của supplier
-        supplier.IsVerified = !supplier.IsVerified;
-
-        if (supplier.IsVerified)
+        if (approve)
         {
-            // Cập nhật role của user thành 'customer'
+            // Cập nhật trạng thái 'IsVerified' của supplier thành true
+            supplier.IsVerified = true;
+            // Không thay đổi role của user, chỉ cập nhật trạng thái verified
             supplier.user.Role = "SUPPLIER";
         }
         else
         {
+            // Xóa user và supplier khỏi database
             var user = _context.users.FirstOrDefault(u => u.Id == supplier.user.Id);
-            _context.users.Remove(user);
+            if (user != null)
+            {
+                _context.users.Remove(user);
+            }
             _context.suppliers.Remove(supplier);
         }
-
 
         // Lưu thay đổi vào database
         await _context.SaveChangesAsync();
 
         return true; // Cập nhật thành công
     }
+
 
 
     public async Task<List<SupplierResponse>> GetAllSupplierAsync()

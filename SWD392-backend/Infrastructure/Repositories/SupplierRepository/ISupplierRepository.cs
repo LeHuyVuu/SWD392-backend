@@ -18,5 +18,5 @@ public interface ISupplierRepository
     Task<bool> AddIdCardImagesAsync(int id, List<string> imageUrl);
     Task<bool> DeleteIdCardImagesById(int id);
 
-    Task<bool> UpdatePermission(int supplierId);
+    Task<bool> UpdatePermission(int supplierId, bool approve);
 }
