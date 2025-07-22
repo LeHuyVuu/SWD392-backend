@@ -35,6 +35,15 @@ public partial class supplier
     [Column("image_url")]
     [StringLength(255)]
     public string ImageUrl { get; set; } = null!;
+    
+    // Thêm các trường mới vào đây
+    [Column("front_image")]
+    [StringLength(255)]
+    public string? FrontImageCCCD { get; set; } = null!; // Mặt trước CCCD
+
+    [Column("back_image")]
+    [StringLength(255)]
+    public string? BackImageCCCD { get; set; } = null!; // Mặt sau CCCD
 
     [InverseProperty("supplier")]
     public virtual ICollection<order> orders { get; set; } = new List<order>();
