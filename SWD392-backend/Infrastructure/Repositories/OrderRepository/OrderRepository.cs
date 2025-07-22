@@ -64,12 +64,9 @@ public class OrderRepository : IOrderRepository
         };
     }
 
-    public orders_detail? GetOrdersDetail(string orderId, int productId)
+    public async Task<List<orders_detail>> GetOrdersDetail(string orderId)
     {
-        return   _context.orders_details.FirstOrDefault(p => p.OrderId.ToString() == orderId && p.ProductId == productId);
-  
-
-        
+        return await  _context.orders_details.Where(od => od.OrderId.ToString() == orderId).ToListAsync();
     }
 
     public async Task<int> GetTotalOrdersAsync()

@@ -16,7 +16,7 @@ public interface IOrderRepository
 
     Task<PagedResult<order>> GetOrdersToShipperAsync(string areaCode, int shipperId, int pageNumber, int pageSize);
 
-    orders_detail GetOrdersDetail(string orderId, int productId);
+    Task<List<orders_detail>> GetOrdersDetail(string orderId);
 
     Task<int> CountOrdersByMonthAsync(DateTime startDate, DateTime endDate);
     Task<PagedResult<order>> GetOrdersByMonthAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize);

@@ -229,27 +229,28 @@ public class OrderService : IOrderService
         };
     }
 
-    public async Task UpdateOrderStatus(string orderId, int productId, OrderStatus status)
+    public async Task UpdateOrderStatus(string orderId, OrderStatus status)
     {
-        var x = _unitOfWork.OrderRepository.GetOrdersDetail(orderId, productId);
-        x.Status = status;
+        var list = await _unitOfWork.OrderRepository.GetOrdersDetail(orderId);
+        foreach (var orderDetail in list)
+        {
+            orderDetail.Status = status;
+            _unitOfWork.OrdersDetailRepository.Update(orderDetail);
+        }
 
         if (status == OrderStatus.Delivered)
         {
-            var order = await _orderRepository.GetOrderByIdAsync(x.OrderId);
+            var order = await _orderRepository.GetOrderByIdAsync(Guid.Parse(orderId));
             order.DeliveriedAt = DateTime.UtcNow;
-
             _unitOfWork.OrderRepository.Update(order);
         }
-
-        _unitOfWork.OrdersDetailRepository.Update(x);
 
         if (status == OrderStatus.Preparing)
         {
             await AssignShipperToOrderAsync(Guid.Parse(orderId));
         }
 
-        await _unitOfWork.SaveAsync(); // ✅ đúng cách
+        await _unitOfWork.SaveAsync();
     }
 
     public async Task<ReportOrderResponse> CountOrdersByMonthAsync(int month, int year, int pageNumber, int pageSize)

@@ -143,20 +143,19 @@ public class OrderController : ControllerBase
     }
 
     [HttpPut("update-status")]
-    public async Task<IActionResult> UpdateStatus(string orderId, int productId, OrderStatus status)
+    public async Task<IActionResult> UpdateStatus(string orderId, OrderStatus status)
     {
         try
         {
-            if (orderId.IsNullOrEmpty() || productId <= 0)
+            if (orderId.IsNullOrEmpty())
                 return BadRequest("Invalid orderId or productId.");
 
-            await _orderService.UpdateOrderStatus(orderId, productId, status); // ✅ await ở đây
+            await _orderService.UpdateOrderStatus(orderId, status);
 
             return Ok(new
             {
                 message = "Order detail status updated successfully.",
                 orderId,
-                productId,
                 newStatus = status.ToString()
             });
         }

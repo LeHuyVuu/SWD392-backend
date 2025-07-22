@@ -19,7 +19,7 @@ public interface IOrderService
     Task<int> GetTotalOrdersAsync();
 
     Task<PagedResult<OrderResponse>> GetOrdersToShipper(int userId, int pageNumber, int pageSize);
-    Task UpdateOrderStatus(string orderId, int productId, OrderStatus status);
+    Task UpdateOrderStatus(string orderId, OrderStatus status);
     Task<ReportOrderResponse> CountOrdersByMonthAsync(int month, int year, int pageNumber, int pageSize);
     Task<ReportOrderResponse> CountOrdersByDayAsync(int day, int month, int year, int pageNumber, int pageSize);
 
