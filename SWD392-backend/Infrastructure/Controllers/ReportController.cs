@@ -25,7 +25,7 @@ namespace SWD392_backend.Infrastructure.Controllers
             try
             {
                 var result = await _orderService.CountOrdersByMonthAsync(month, year, pageNumber, pageSize);
-                return Ok(HTTPResponse<object>.Response(400, "Get Succesfully", result));
+                return Ok(HTTPResponse<object>.Response(200, "Get Succesfully", result));
             }
             catch (ArgumentException ex)
             {
@@ -43,7 +43,7 @@ namespace SWD392_backend.Infrastructure.Controllers
             try
             {
                 var result = await _orderService.CountOrdersByDayAsync(day, month, year, pageNumber, pageSize);
-                return Ok(HTTPResponse<object>.Response(400, "Get Succesfully", result));
+                return Ok(HTTPResponse<object>.Response(200, "Get Succesfully", result));
             }
             catch (ArgumentException ex)
             {

@@ -124,6 +124,8 @@ namespace SWD392_backend.Infrastructure.Services.ElasticSearchService
 
         public async Task UpdateProductAsync(product product)
         {
+            Console.WriteLine($"---------------------------{product.IsActive} || {product.Id}");
+
             var doc = _mapper.Map<ProductElasticDoc>(product);
             var id = product.Id.ToString();
 
