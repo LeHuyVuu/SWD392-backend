@@ -226,9 +226,13 @@ public class OrderService : IOrderService
     {
         var x = _unitOfWork.OrderRepository.GetOrdersDetail(orderId, productId);
         x.Status = status;
-        _unitOfWork.OrdersDetailRepository.Update(x);
 
-        Console.WriteLine(status);
+        if (status == OrderStatus.Delivered)
+        {
+            x.order.DeliveriedAt = DateTime.UtcNow;
+        }
+
+        _unitOfWork.OrdersDetailRepository.Update(x);
 
         if (status == OrderStatus.Preparing)
         {
