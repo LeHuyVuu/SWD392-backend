@@ -2,6 +2,7 @@
 using SWD392_backend.Context;
 using SWD392_backend.Entities;
 using SWD392_backend.Models;
+using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Repositories.SupplierRepository;
 
@@ -108,6 +109,7 @@ public class SupplierRepository : ISupplierRepository
     {
         await _context.suppliers.AddAsync(supplier);
     }
+
     public async Task<bool> AddIdCardImagesAsync(int id, List<string> imageUrl)
     {
         var supplier = await GetSupplierByIdAsync(id);
@@ -132,8 +134,27 @@ public class SupplierRepository : ISupplierRepository
         supplier.FrontImageCCCD = null;
         supplier.BackImageCCCD = null;
 
-        _context.SaveChanges();
-        return true;
+       _context.SaveChanges();
+       return true;
+    }
+
+    public async Task<List<SupplierResponse>> GetAllSupplierAsync()
+    {
+        return  await _context.suppliers
+            .Select(s => new SupplierResponse
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Slug = s.Slug,
+                Description = s.Description,
+                ImageUrl = s.ImageUrl,
+                IsVerified = s.IsVerified,
+                FrontImageCCCD = s.FrontImageCCCD,
+                BackImageCCCD = s.BackImageCCCD,
+                RegisteredAt = s.RegisteredAt,
+                UserId = s.user.Id
+            })
+            .ToListAsync();
     }
 }
 

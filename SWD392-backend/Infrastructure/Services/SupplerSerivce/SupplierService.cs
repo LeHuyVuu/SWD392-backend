@@ -140,5 +140,10 @@ public class SupplierService : ISupplierService
     {
         return await _unitOfWork.SupplierRepository.GetTotalCountAsync();
     }
-
+    
+    
+    public async Task<List<SupplierResponse>> GetAllSuppliersAsync()
+    {
+        return  await _supploerRepository.GetAllSupplierAsync();
+    }
 }
