@@ -17,5 +17,7 @@ namespace SWD392_backend.Infrastructure.Services.UserService
         Task<int> GetTotalUsersByMonth(int month, int year);
 
         Task<int> GetUserCountByExactDay(DateTime day);
+
+        Task<user> UpdateUserStatusAsync(int userId);
     }
 }

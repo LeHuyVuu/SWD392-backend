@@ -108,6 +108,12 @@ namespace SWD392_backend.Infrastructure.Services.UserService
 
             return await _userRepository.CountUsersBetween(start, end);
         }
+        
+        
+        public async Task<user> UpdateUserStatusAsync(int userId)
+        {
+            return await _userRepository.UpdateUserStatusAsync(userId);
+        }
 
 
     }
