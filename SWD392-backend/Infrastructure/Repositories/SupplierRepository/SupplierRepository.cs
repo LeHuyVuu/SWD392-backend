@@ -107,7 +107,9 @@ public class SupplierRepository : ISupplierRepository
 
     public async Task AddAsync(supplier supplier)
     {
-       await _context.suppliers.AddAsync(supplier);
+        await _context.suppliers.AddAsync(supplier);
+    }
+
     public async Task<bool> AddIdCardImagesAsync(int id, List<string> imageUrl)
     {
         var supplier = await GetSupplierByIdAsync(id);
@@ -132,8 +134,8 @@ public class SupplierRepository : ISupplierRepository
         supplier.FrontImageCCCD = null;
         supplier.BackImageCCCD = null;
 
-        _context.SaveChanges();
-
+       _context.SaveChanges();
+       return true;
     }
 
     public async Task<List<SupplierResponse>> GetAllSupplierAsync()
