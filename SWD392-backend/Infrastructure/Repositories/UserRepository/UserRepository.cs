@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Elastic.Clients.Elasticsearch.Security;
+using Microsoft.EntityFrameworkCore;
 using SWD392_backend.Context;
 using SWD392_backend.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -25,11 +26,11 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
             var totalItems = await _context.users.CountAsync();
 
             var users = await _context.users
-                            .OrderByDescending(u => u.CreatedAt)
-                            .AsNoTracking()
-                            .Skip((pageNumber - 1) * pageSize)
-                            .Take(pageSize)
-                            .ToListAsync();
+                .OrderByDescending(u => u.CreatedAt)
+                .AsNoTracking()
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
             return new PagedResult<user>
             {
@@ -39,6 +40,7 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
                 PageSize = pageSize
             };
         }
+
         public async Task<user?> GetUserByIdAsync(int id)
         {
             return await _context.users.FindAsync(id);
@@ -48,9 +50,10 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
         {
             await _context.users.AddAsync(entity);
         }
+
         public async Task<int> CountAsync()
         {
-          return  await _context.users.CountAsync();
+            return await _context.users.CountAsync();
         }
 
         public async Task<user?> GetUserByEmail(string requestEmail)
@@ -74,5 +77,18 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
                 .CountAsync();
         }
 
+        public async Task<user> UpdateUserStatusAsync(int? userId)
+        {
+            var existingUser = await _context.users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (existingUser == null)
+                return null;
+            existingUser.IsActive = !existingUser.IsActive;
+    
+            _context.users.Update(existingUser);
+            await _context.SaveChangesAsync();
+
+            return existingUser;
+        }
     }
 }

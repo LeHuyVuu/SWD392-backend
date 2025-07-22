@@ -19,5 +19,7 @@ namespace SWD392_backend.Infrastructure.Repositories.UserRepository
         
         Task<int> CountUsersBetween(DateTime start, DateTime end);
 
+        Task<user> UpdateUserStatusAsync(int? userId);
+
     }
 }

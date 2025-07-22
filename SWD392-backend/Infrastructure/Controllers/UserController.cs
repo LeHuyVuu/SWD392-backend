@@ -222,6 +222,30 @@ namespace SWD392_backend.Infrastructure.Controllers
                 total
             }));
         }
+        
+        
+        [HttpPut("UpdateUserStatus/{userId}")]
+        public async Task<IActionResult> UpdateUserStatus(int userId)
+        {
+            try
+            {
+                var updatedUser = await _userService.UpdateUserStatusAsync(userId);
+
+                if (updatedUser == null)
+                    return NotFound(HTTPResponse<object>.Response(404, "Người dùng không tồn tại.", null));
+
+                // Xóa cache của tất cả người dùng sau khi cập nhật
+                await _cache.RemoveAsync("users:all");
+
+                return Ok(HTTPResponse<object>.Response(200, "Cập nhật người dùng thành công.", updatedUser));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
+        }
+
+
 
 
 
