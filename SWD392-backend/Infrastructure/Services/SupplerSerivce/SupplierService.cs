@@ -21,6 +21,18 @@ public class SupplierService : ISupplierService
         _mapper = mapper;
     }
 
+    public async Task<bool> AddIdCardImagesAsync(int id, List<string> imageUrl)
+    {
+        // Clear old images
+        var checkDelete = await _supploerRepository.DeleteIdCardImagesById(id);
+
+        if (!checkDelete)
+            return false;
+
+        return await _supploerRepository.AddIdCardImagesAsync(id, imageUrl);
+
+    }
+
     public async Task<OrderResponse> GetOrderByIdAsync(int id, Guid orderId)
     {
         var supplier = await _supploerRepository.GetSupplierByIdAsync(id);       
