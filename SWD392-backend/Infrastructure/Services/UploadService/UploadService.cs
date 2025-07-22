@@ -107,7 +107,7 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
                 }
                 else
                 {
-                    key = $"suppliers/{request.SupplierId}/idcard-{Guid.NewGuid()}.{extension}";
+                    key = $"suppliers/idcard-{Guid.NewGuid()}.{extension}";
                 }
 
                 var url = _s3Service.GeneratePreSignedURL(key, contentType);
