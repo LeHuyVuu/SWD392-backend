@@ -152,10 +152,18 @@ public class SupplierRepository : ISupplierRepository
         }
 
         // Cập nhật trạng thái 'IsVerified' của supplier
-        supplier.IsVerified = true;
+        supplier.IsVerified = !supplier.IsVerified;
 
-        // Cập nhật role của user thành 'customer'
-        supplier.user.Role = "SUPPLIER";
+        if (supplier.IsVerified)
+        {
+            // Cập nhật role của user thành 'customer'
+            supplier.user.Role = "SUPPLIER";
+        }
+        else
+        {
+            supplier.user.Role = "CUSTOMER";
+        }
+
 
         // Lưu thay đổi vào database
         await _context.SaveChangesAsync();
