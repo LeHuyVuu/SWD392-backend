@@ -356,7 +356,7 @@ public class OrderService : IOrderService
                                         .Select(g => new
                                         {
                                             ShipperId = g.Key,
-                                            Count = g.Sum(o => o.orders_details.Count(od => od.Status == OrderStatus.Preparing || od.Status == OrderStatus.Delivery))
+                                            Count = g.Sum(o => o.orders_details.Count(od => od.Status == OrderStatus.Preparing || od.Status == OrderStatus.Delivery || od.Status == OrderStatus.Delivered  || od.Status == OrderStatus.Refunding || od.Status == OrderStatus.Returned || od.Status == OrderStatus.Refunded || od.Status == OrderStatus.Cancelled))
                                         })
                                         .ToList();
 
