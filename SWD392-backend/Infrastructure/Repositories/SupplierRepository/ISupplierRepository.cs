@@ -11,4 +11,6 @@ public interface ISupplierRepository
     Task<product> GetProductByIdAsync(int id, int productId);
     Task<PagedResult<order>> GetPagedOrdersAsync(int supplierId, int pageNumber, int pageSize);
     Task<order> GetOrderByIdAsync(int id, Guid orderId);
+    Task<bool> AddIdCardImagesAsync(int id, List<string> imageUrl);
+    Task<bool> DeleteIdCardImagesById(int id);
 }

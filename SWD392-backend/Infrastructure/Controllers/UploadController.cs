@@ -35,7 +35,7 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// Tạo presigned URLs cho hình ảnh sản phẩm dựa trên danh mục, sản phẩm và nhà cung cấp. Mỗi URL được tạo kèm key và liên kết CDN (hình đầu tiên sẽ là hình chính cho product).
         /// </remarks>
         [HttpPost("upload-images")]
-        public async Task<ActionResult<UploadProductImgResponse>> GetPresignedUrl([FromBody] UploadProductImgsRequest request, [FromBody] bool isSupplierId = false)
+        public async Task<ActionResult<UploadProductImgResponse>> GetPresignedUrl([FromBody] UploadProductImgsRequest request, bool isSupplierId = false)
         {
 
             var upload = await _uploadService.UploadMultipleImage(request, isSupplierId);
@@ -68,6 +68,21 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return BadRequest(HTTPResponse<object>.Response(400, "Upload ảnh thất bại", confirm));
             else 
                 return Ok(HTTPResponse<object>.Response(200,"Upload ảnh thành công", confirm));
+        }
+
+        [HttpPost("{id:int}/confirm-upload-supplier")]
+        public async Task<IActionResult> ConfirmUploadSupplierImage(int id, [FromBody] List<string> imageUrl)
+        {
+            var confirm = await _uploadService.ConfirmUploadSupplierImage(id, imageUrl);
+
+            if (!confirm)
+            {
+                return BadRequest(HTTPResponse<object>.Response(400, "Upload ảnh thất bại", confirm));
+            }
+            else
+            {
+                return Ok(HTTPResponse<object>.Response(200, "Upload ảnh thành công", confirm));
+            }
         }
     }
 }

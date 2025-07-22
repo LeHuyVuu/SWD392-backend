@@ -102,5 +102,33 @@ public class SupplierRepository : ISupplierRepository
                     .Where(o => o.SupplierId == id)
                     .FirstOrDefaultAsync(o => o.Id == orderId);
     }
+
+    public async Task<bool> AddIdCardImagesAsync(int id, List<string> imageUrl)
+    {
+        var supplier = await GetSupplierByIdAsync(id);
+
+        if (supplier == null)
+            return false;
+
+        supplier.FrontImageCCCD = imageUrl.Count > 0 ? imageUrl[0] : null;
+        supplier.BackImageCCCD = imageUrl.Count > 1 ? imageUrl[1] : null;
+
+        _context.SaveChanges();
+        return true;
+    }
+
+    public async Task<bool> DeleteIdCardImagesById(int id)
+    {
+        var supplier = await GetSupplierByIdAsync(id);
+
+        if (supplier == null)
+            return false;
+
+        supplier.FrontImageCCCD = null;
+        supplier.BackImageCCCD = null;
+
+        _context.SaveChanges();
+        return true;
+    }
 }
 
