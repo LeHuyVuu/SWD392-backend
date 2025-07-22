@@ -17,6 +17,7 @@ public interface ISupplierService
     Task<bool> AddIdCardImagesAsync(int id, List<string> imageUrl);
 
         Task<List<SupplierResponse>> GetAllSuppliersAsync();
-    
 
+
+        Task<bool?> UpdatePermissionsAsync(int supplierId);
 }

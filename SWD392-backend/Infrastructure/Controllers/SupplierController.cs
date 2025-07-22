@@ -193,10 +193,36 @@ namespace SWD392_backend.Infrastructure.Controllers
                 return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
             }
         }
+        
+        [HttpPost("update-permission/{supplierId}")]
+        public async Task<IActionResult> UpdatePermission(int supplierId)
+        {
+            try
+            {
+                var result = await _supplierService.UpdatePermissionsAsync(supplierId);
 
-        
-        
-        
-        
+                // Nếu cập nhật thành công
+                if (result == true)
+                {
+                    return Ok(HTTPResponse<object>.Response(200, "Permission updated successfully.", null));
+                }
+                // Nếu thất bại trong việc cập nhật quyền
+                else if (result == false)
+                {
+                    return BadRequest(HTTPResponse<object>.Response(400, "Failed to update permission.", null));
+                }
+                // Nếu không tìm thấy nhà cung cấp
+                else
+                {
+                    return BadRequest(HTTPResponse<object>.Response(400, "Supplier not found.", null));
+                }
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi khi có sự cố
+                return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
+            }
+        }
+
     }
 }
