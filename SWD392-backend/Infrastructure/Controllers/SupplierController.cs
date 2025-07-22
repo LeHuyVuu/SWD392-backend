@@ -2,8 +2,10 @@
 using Elastic.Clients.Elasticsearch.Requests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SWD392_backend.Infrastructure.Services.AuthService;
 using SWD392_backend.Infrastructure.Services.SupplerSerivce;
 using SWD392_backend.Models;
+using SWD392_backend.Models.Request;
 using SWD392_backend.Models.Response;
 
 namespace SWD392_backend.Infrastructure.Controllers
@@ -13,10 +15,12 @@ namespace SWD392_backend.Infrastructure.Controllers
     public class SupplierController : ControllerBase
     {
         private readonly ISupplierService _supplierService;
+        private readonly IAuthService _authService;
 
-        public SupplierController(ISupplierService supplierService)
+        public SupplierController(ISupplierService supplierService, IAuthService authService)
         {
             _supplierService = supplierService;
+            _authService = authService;
         }
 
         /// <summary>
@@ -146,6 +150,32 @@ namespace SWD392_backend.Infrastructure.Controllers
             {
                 return StatusCode(500, HTTPResponse<object>.Response(500, "Internal server error", ex.Message));
             }
+        }
+        
+        
+        /// <summary>
+        /// Đăng ký tài khoản mới
+        /// </summary>
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterSupplierRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(HTTPResponse<object>.Response(400, "Dữ liệu không hợp lệ", null));
+            }
+
+            var (success, message) = await _authService.RegisterSupplierAsync(request.Phone, request.Password, request.Email, request.Fullname, request);
+
+            if (!success)
+            {
+                return BadRequest(HTTPResponse<object>.Response(400, message.ToString(), null));
+            }
+
+            return Ok(HTTPResponse<object>.Response(200, message.ToString(), new
+            {
+                Username = request.Phone,
+                Email = request.Email
+            }));
         }
     }
 }

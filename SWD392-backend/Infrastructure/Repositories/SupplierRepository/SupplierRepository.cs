@@ -103,6 +103,10 @@ public class SupplierRepository : ISupplierRepository
                     .FirstOrDefaultAsync(o => o.Id == orderId);
     }
 
+
+    public async Task AddAsync(supplier supplier)
+    {
+       await _context.suppliers.AddAsync(supplier);
     public async Task<bool> AddIdCardImagesAsync(int id, List<string> imageUrl)
     {
         var supplier = await GetSupplierByIdAsync(id);
@@ -128,7 +132,7 @@ public class SupplierRepository : ISupplierRepository
         supplier.BackImageCCCD = null;
 
         _context.SaveChanges();
-        return true;
+
     }
 }
 

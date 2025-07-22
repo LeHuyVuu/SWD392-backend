@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using web_api_base.Helper; // sửa theo namespace dự án bạn
 using Microsoft.Extensions.Configuration;
+using SWD392_backend.Models.Request;
 
 namespace SWD392_backend.Infrastructure.Services.AuthService
 {
@@ -26,7 +27,8 @@ namespace SWD392_backend.Infrastructure.Services.AuthService
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<(bool Success, string Message, string? Token)> LoginAsync(string emailOrPhone, string password)
+        public async Task<(bool Success, string Message, string? Token)> LoginAsync(string emailOrPhone,
+            string password)
         {
             var user = _context.users.FirstOrDefault(u => u.Phone == emailOrPhone || u.Email == emailOrPhone);
             if (user == null || !PasswordHelper.VerifyPassword(password, user.Password))
@@ -65,7 +67,8 @@ namespace SWD392_backend.Infrastructure.Services.AuthService
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMonths(5),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                SigningCredentials =
+                    new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = _config["Jwt:Issuer"],
                 Audience = _config["Jwt:Audience"]
             };
@@ -123,6 +126,92 @@ namespace SWD392_backend.Infrastructure.Services.AuthService
             await _unitOfWork.SaveAsync();
 
             return (true, "Đăng ký thành công");
+        }
+
+        public async Task<(bool success, object message)> RegisterSupplierAsync(string requestPhone,
+            string requestPassword, string requestEmail, string requestFullname,
+            RegisterSupplierRequest registerSupplierRequest)
+        {
+            // Kiểm tra dữ liệu đầu vào
+            if (string.IsNullOrWhiteSpace(requestPhone))
+                return (false, "Số điện thoại không được để trống.");
+
+            if (string.IsNullOrWhiteSpace(requestEmail))
+                return (false, "Email không được để trống.");
+
+            if (string.IsNullOrWhiteSpace(requestFullname))
+                return (false, "Họ và tên không được để trống.");
+
+            if (string.IsNullOrWhiteSpace(requestPassword))
+                return (false, "Mật khẩu không được để trống.");
+
+            // Kiểm tra tồn tại phone/email
+            if (_context.users.Any(u => u.Phone.ToLower() == requestPhone.ToLower()))
+                return (false, "Số điện thoại đã tồn tại.");
+
+            if (_context.users.Any(u => u.Email.ToLower() == requestEmail.ToLower()))
+                return (false, "Email đã được sử dụng.");
+
+            // Tạo username từ fullname: loại bỏ khoảng trắng, viết thường
+            var username = new string(requestFullname.Where(c => !char.IsWhiteSpace(c)).ToArray()).ToLower();
+
+            // Mã hóa mật khẩu
+            var hashedPassword = PasswordHelper.HashPassword(requestPassword);
+
+            // Tạo user
+            var newUser = new user
+            {
+                Username = username,
+                Password = hashedPassword,
+                Email = requestEmail,
+                Address = string.Empty,
+                Role = "CUSTOMER",
+                FullName = requestFullname,
+                Phone = requestPhone,
+                ImageUrl = "http://default-avatar.com/avatar.png",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            // Start transaction
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Add the user and save changes
+                    await _unitOfWork.UserRepository.AddAsync(newUser);
+                    await _unitOfWork.SaveAsync(); // Save the user first to generate the UserId
+
+                    // Create supplier and associate it with the user
+                    var supplier = new supplier
+                    {
+                        UserId = newUser.Id, // Ensure this is the correct UserId
+                        Name = requestFullname,
+                        Slug = requestFullname.ToLower().Replace(" ", "-"),
+                        RegisteredAt = DateTime.UtcNow,
+                        IsVerified = false,
+                        Description = "description",
+                        ImageUrl = "http://default-avatar.com/avatar.png",
+                        FrontImageCCCD = registerSupplierRequest.front_image, // Assuming it's part of the request
+                        BackImageCCCD = registerSupplierRequest.back_image // Assuming it's part of the request
+                    };
+
+                    // Add supplier and save changes
+                    await _unitOfWork.SupplierRepository.AddAsync(supplier);
+                    await _unitOfWork.SaveAsync();
+
+                    // Commit the transaction
+                    await transaction.CommitAsync();
+
+                    return (true, "Đăng ký thành công");
+                }
+                catch (Exception ex)
+                {
+                    // Rollback the transaction if something fails
+                    await transaction.RollbackAsync();
+                    return (false, $"Đã có lỗi xảy ra: {ex.Message}");
+                }
+            }
         }
     }
 }
