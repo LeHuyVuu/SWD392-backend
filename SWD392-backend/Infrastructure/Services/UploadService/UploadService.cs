@@ -63,9 +63,8 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
             return true;
         }
 
-        public async Task<UploadMultipleProductImgsResponse> UploadMultipleImage(UploadProductImgsRequest request)
+        public async Task<UploadMultipleProductImgsResponse> UploadMultipleImage(UploadProductImgsRequest request, bool isSupplierId)
         {
-            var categorySlug = await _categoryService.GetCategorySlugByIdAsync(request.CategoryId);
             var uploads = new List<UploadProductImgResponse>();
             var cdnDomain = Environment.GetEnvironmentVariable("CDN_DOMAIN");
 
@@ -83,7 +82,19 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
                     "image/avif" => "avif",
                     _ => "img"
                 };
-                var key = $"{categorySlug}/{request.ProductSlug}-{Guid.NewGuid()}-{request.ProductId}_{request.SupplierId}_{i+1}.{extension}";
+
+                string key;
+
+                if (!isSupplierId)
+                {
+                    var categorySlug = await _categoryService.GetCategorySlugByIdAsync(request.CategoryId);
+                    key = $"{categorySlug}/{request.ProductSlug}-{Guid.NewGuid()}-{request.ProductId}_{request.SupplierId}_{i + 1}.{extension}";
+                }
+                else
+                {
+                    key = $"suppliers/{request.SupplierId}/idcard-{Guid.NewGuid()}.{extension}";
+                }
+
                 var url = _s3Service.GeneratePreSignedURL(key, contentType);
 
                 // Generate image link

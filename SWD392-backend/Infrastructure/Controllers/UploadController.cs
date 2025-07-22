@@ -35,7 +35,7 @@ namespace SWD392_backend.Infrastructure.Controllers
         /// Tạo presigned URLs cho hình ảnh sản phẩm dựa trên danh mục, sản phẩm và nhà cung cấp. Mỗi URL được tạo kèm key và liên kết CDN (hình đầu tiên sẽ là hình chính cho product).
         /// </remarks>
         [HttpPost("upload-images")]
-        public async Task<ActionResult<UploadProductImgResponse>> GetPresignedUrl([FromBody] UploadProductImgsRequest request)
+        public async Task<ActionResult<UploadProductImgResponse>> GetPresignedUrl([FromBody] UploadProductImgsRequest request, [FromBody] bool isSupplierId = false)
         {
 
             var upload = await _uploadService.UploadMultipleImage(request);

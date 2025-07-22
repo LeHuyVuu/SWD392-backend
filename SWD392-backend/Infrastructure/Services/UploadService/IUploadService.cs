@@ -6,6 +6,6 @@ namespace SWD392_backend.Infrastructure.Services.UploadService
     public interface IUploadService
     {
         Task<bool> ConfirmUploadImage(int id, List<string> imageUrl);
-        Task<UploadMultipleProductImgsResponse> UploadMultipleImage(UploadProductImgsRequest request);
+        Task<UploadMultipleProductImgsResponse> UploadMultipleImage(UploadProductImgsRequest request, bool isSupplierId);
     }
 }
