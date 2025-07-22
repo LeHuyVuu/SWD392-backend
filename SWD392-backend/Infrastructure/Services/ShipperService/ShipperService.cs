@@ -35,6 +35,11 @@ namespace SWD392_backend.Infrastructure.Services.ShipperService
             return true;
         }
 
+        public async Task<List<shipper>> GetAllShippers(string areaCode)
+        {
+            return await _shipperRepository.GetAllShipper(areaCode);
+        }
+
         public async Task<OrderResponse> GetOrderByIdAsync(int id, Guid orderId)
         {
             var shipper = await _shipperRepository.GetShipperByUserIdAsync(id);

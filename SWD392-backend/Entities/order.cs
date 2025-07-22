@@ -32,6 +32,9 @@ public partial class order
     [StringLength(32)]
     public string? AreaCode { get; set; }
 
+    [Column("shipper_id")]
+    public int? ShipperId { get; set; }
+
     [Column("supplier_id")]
     public int SupplierId { get; set; }
 

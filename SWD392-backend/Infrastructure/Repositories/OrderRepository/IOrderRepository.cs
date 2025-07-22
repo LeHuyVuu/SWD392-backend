@@ -14,7 +14,7 @@ public interface IOrderRepository
 
     Task<int> GetTotalOrdersAsync();
 
-    Task<PagedResult<order>> GetOrdersToShipperAsync(string areaCode, int pageNumber, int pageSize);
+    Task<PagedResult<order>> GetOrdersToShipperAsync(string areaCode, int shipperId, int pageNumber, int pageSize);
 
     orders_detail GetOrdersDetail(string orderId, int productId);
 
@@ -26,4 +26,8 @@ public interface IOrderRepository
 
     Task<int> CountOrdersInRangeAsync(DateTime startDate, DateTime endDate);
     Task<int> CountNewUsersInRangeAsync(DateTime startDate, DateTime endDate);
+
+    Task<order> GetOrderByIdAsync(Guid orderId);
+
+    void Update(order order);
 }

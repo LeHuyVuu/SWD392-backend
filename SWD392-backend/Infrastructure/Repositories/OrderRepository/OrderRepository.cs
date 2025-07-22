@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using SWD392_backend.Models;
 using SWD392_backend.Entities.Enums;
+using System.Collections.Generic;
 
 public class OrderRepository : IOrderRepository
 {
@@ -31,14 +32,14 @@ public class OrderRepository : IOrderRepository
             .AsQueryable(); // Quan trọng để chuỗi LINQ hoạt động
     }
 
-    public async Task<PagedResult<order>> GetOrdersToShipperAsync(string areaCode, int pageNumber, int pageSize)
+    public async Task<PagedResult<order>> GetOrdersToShipperAsync(string areaCode, int shipperId, int pageNumber, int pageSize)
     {
         pageNumber = pageNumber < 1 ? 1 : pageNumber;
         pageSize = pageSize < 1 ? 10 : pageSize;
 
         //Total items
         var totalItems = await _context.orders
-                        .Where(o => o.AreaCode == areaCode)
+                        .Where(o => o.AreaCode == areaCode && o.ShipperId == shipperId)
                         .CountAsync();
 
         var orders = await _context.orders
@@ -47,7 +48,8 @@ public class OrderRepository : IOrderRepository
                     .Include(o => o.orders_details)
                         .ThenInclude(od => od.product)
                             .ThenInclude(od => od.product_images)
-                    .Where(o => o.AreaCode == areaCode)
+                    .Where(o => o.AreaCode == areaCode && o.ShipperId == shipperId)
+                    .Where(o => o.orders_details.Any(od => od.Status == OrderStatus.Preparing || od.Status == OrderStatus.Delivery || od.Status == OrderStatus.Delivered))
                     .OrderByDescending(o => o.CreatedAt)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
@@ -159,5 +161,15 @@ public class OrderRepository : IOrderRepository
         };
     }
 
+    public async Task<order?> GetOrderByIdAsync(Guid orderId)
+    {
+        return await _context.orders
+                    .FirstOrDefaultAsync(o => o.Id == orderId);
+    }
+
+    public void Update(order order)
+    {
+        _context.orders.Update(order);
+    }
     // Các method khác nếu cần
 }

@@ -122,6 +122,10 @@ public class OrderService : IOrderService
             query = _unitOfWork.OrderRepository
                 .GetAll()
                 .Include(order => order.orders_details)
+                    .ThenInclude(od => od.product)
+                        .ThenInclude(od => od.product_images)
+                .Include(o => o.user)
+                .Include(o => o.supplier)
                 .Where(o => o.UserId == id);
             Console.WriteLine(query.ToString());
         }
@@ -181,8 +185,8 @@ public class OrderService : IOrderService
 
         orderDetail.Status = dto.NewStatus;
         _unitOfWork.OrdersDetailRepository.Update(orderDetail);
-        await _unitOfWork.SaveAsync();
 
+        await _unitOfWork.SaveAsync();
         return true;
     }
 
@@ -205,22 +209,9 @@ public class OrderService : IOrderService
                 PageSize = 0
             };
 
-        var pagedResult = await _orderRepository.GetOrdersToShipperAsync(shipper.AreaCode, pageNumber, pageSize);
+        var pagedResult = await _orderRepository.GetOrdersToShipperAsync(shipper.AreaCode, shipper.Id, pageNumber, pageSize);
 
-        var itemAvailable = new List<order>();
-
-        foreach (var item in pagedResult.Items)
-        {
-            if (item.orders_details.Any(od => od.Status == OrderStatus.Preparing ||
-                                              od.Status == OrderStatus.Delivery ||
-                                              od.Status == OrderStatus.Delivered
-                ))
-            {
-                itemAvailable.Add(item);
-            }
-        }
-
-        var ordersDtos = _mapper.Map<List<OrderResponse>>(itemAvailable);
+        var ordersDtos = _mapper.Map<List<OrderResponse>>(pagedResult.Items);
 
         return new PagedResult<OrderResponse>
         {
@@ -236,6 +227,14 @@ public class OrderService : IOrderService
         var x = _unitOfWork.OrderRepository.GetOrdersDetail(orderId, productId);
         x.Status = status;
         _unitOfWork.OrdersDetailRepository.Update(x);
+
+        Console.WriteLine(status);
+
+        if (status == OrderStatus.Preparing)
+        {
+            await AssignShipperToOrderAsync(Guid.Parse(orderId));
+        }
+
         await _unitOfWork.SaveAsync(); // ✅ đúng cách
     }
 
@@ -330,5 +329,52 @@ public class OrderService : IOrderService
         var totalUsers = await _orderRepository.CountNewUsersInRangeAsync(startDate, endDate);
 
         return (totalOrders, totalUsers);
+    }
+
+    public async Task AssignShipperToOrderAsync(Guid orderId)
+    {
+        var order = await _orderRepository.GetOrderByIdAsync(orderId);
+
+        if (order == null)
+            throw new Exception("Order not found");
+
+        if (order.ShipperId != null)
+            throw new Exception("Order already assigned");
+
+        var shippersInArea = await _shipperService.GetAllShippers(order.AreaCode);
+
+        if (shippersInArea == null || shippersInArea.Count == 0)
+            throw new Exception("No shipper available in this area.");
+
+        var ordersInArea = await _orderRepository.GetAll()
+                                .Where(o => o.AreaCode == order.AreaCode && o.ShipperId != null)
+                                .Include(o => o.orders_details)
+                                .ToListAsync();
+
+        var activeOrdersByShipper = ordersInArea
+                                        .GroupBy(o => o.ShipperId)
+                                        .Select(g => new
+                                        {
+                                            ShipperId = g.Key,
+                                            Count = g.Sum(o => o.orders_details.Count(od => od.Status == OrderStatus.Preparing || od.Status == OrderStatus.Delivery))
+                                        })
+                                        .ToList();
+
+        var selectedShipper = shippersInArea
+                                .Select(shipper => new
+                                {
+                                    Shipper = shipper,
+                                    OrderCount = activeOrdersByShipper.FirstOrDefault(o => o.ShipperId == shipper.Id)?.Count ?? 0
+                                })
+                                .OrderBy(x => x.OrderCount)
+                                .FirstOrDefault();
+
+        if (selectedShipper == null)
+            throw new Exception("No available shipper found.");
+
+        order.ShipperId = selectedShipper.Shipper.Id;
+
+        _unitOfWork.OrderRepository.Update(order);
+        await _unitOfWork.SaveAsync();
     }
 }

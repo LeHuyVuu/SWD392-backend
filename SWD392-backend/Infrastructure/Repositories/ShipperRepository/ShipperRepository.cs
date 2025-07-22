@@ -20,6 +20,11 @@ namespace SWD392_backend.Infrastructure.Repositories.ShipperRepository
             return affectedRows > 0;
         }
 
+        public async Task<List<shipper>> GetAllShipper(string areaCode)
+        {
+            return await _context.shipper.Where(s => s.AreaCode == areaCode).ToListAsync();
+        }
+
         public async Task<order?> GetOrderByIdAsync(Guid orderId)
         {
             return await _context.orders

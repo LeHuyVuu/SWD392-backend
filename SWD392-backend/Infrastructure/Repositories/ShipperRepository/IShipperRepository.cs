@@ -8,5 +8,6 @@ namespace SWD392_backend.Infrastructure.Repositories.ShipperRepository
         Task<shipper> GetShipperByUserIdAsync(int userId);
 
         Task<order> GetOrderByIdAsync(Guid orderId);
+        Task<List<shipper>> GetAllShipper(string areaCode);
     }
 }
