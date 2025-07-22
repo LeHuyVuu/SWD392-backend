@@ -84,6 +84,8 @@ public class OrderService : IOrderService
                     Status = OrderStatus.Pending
                 };
 
+                orderDetail.order.PaidAt = DateTime.UtcNow;
+
                 await _unitOfWork.OrdersDetailRepository.AddAsync(orderDetail);
             }
 
